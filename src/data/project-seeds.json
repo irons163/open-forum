@@ -15,6 +15,31 @@
     "highlight": "多代理協作框架，適合展示近期 AI agent 類專案的動能。"
   },
   {
+    "repo": "huggingface/transformers",
+    "category": "AI",
+    "highlight": "模型與推論生態核心專案，能拉高 AI 類別的代表性。"
+  },
+  {
+    "repo": "ollama/ollama",
+    "category": "AI",
+    "highlight": "本地模型部署代表，適合觀察開源 AI 工具鏈的實際熱度。"
+  },
+  {
+    "repo": "vllm-project/vllm",
+    "category": "AI",
+    "highlight": "高效 LLM serving 基礎設施，能補齊模型推理層的觀察面。"
+  },
+  {
+    "repo": "langchain-ai/langgraph",
+    "category": "AI",
+    "highlight": "Agent workflow 類別的關鍵專案，適合追蹤 AI 編排框架走勢。"
+  },
+  {
+    "repo": "comfyanonymous/ComfyUI",
+    "category": "AI",
+    "highlight": "影像生成工作流代表，能讓 AI 類別不只集中在文字工具。"
+  },
+  {
     "repo": "vercel/next.js",
     "category": "前端",
     "highlight": "React 生態核心框架，對前端趨勢榜有很強代表性。"
@@ -28,6 +53,31 @@
     "repo": "tailwindlabs/tailwindcss",
     "category": "前端",
     "highlight": "設計系統與前端工作流常用工具，社群聲量穩定。"
+  },
+  {
+    "repo": "facebook/react",
+    "category": "前端",
+    "highlight": "前端核心底座之一，適合當大盤基準。"
+  },
+  {
+    "repo": "vuejs/core",
+    "category": "前端",
+    "highlight": "Vue 生態核心專案，能把前端分類補得更完整。"
+  },
+  {
+    "repo": "nuxt/nuxt",
+    "category": "前端",
+    "highlight": "全端框架與內容型網站常用選擇，討論熱度穩定。"
+  },
+  {
+    "repo": "withastro/astro",
+    "category": "前端",
+    "highlight": "內容站與 islands 架構代表，和這個站自身技術棧也有呼應。"
+  },
+  {
+    "repo": "remix-run/react-router",
+    "category": "前端",
+    "highlight": "React 路由與資料流基礎建設，能補齊前端工程面觀察。"
   },
   {
     "repo": "microsoft/playwright",
@@ -45,6 +95,31 @@
     "highlight": "元件庫與設計系統類專案的社群代表之一，話題性高。"
   },
   {
+    "repo": "biomejs/biome",
+    "category": "工具",
+    "highlight": "前端 lint / format 整合工具的新一代代表，增長速度值得看。"
+  },
+  {
+    "repo": "vercel/turborepo",
+    "category": "工具",
+    "highlight": "monorepo 工作流代表，對大型前端與全端團隊很有參考性。"
+  },
+  {
+    "repo": "pnpm/pnpm",
+    "category": "工具",
+    "highlight": "JavaScript 套件管理熱門選項，能補足基礎工具層的榜單。"
+  },
+  {
+    "repo": "docker/compose",
+    "category": "工具",
+    "highlight": "本地開發與部署協作常用工具，適合當工程類穩定樣本。"
+  },
+  {
+    "repo": "n8n-io/n8n",
+    "category": "工具",
+    "highlight": "工作流自動化代表專案，橫跨 no-code 與工程社群。"
+  },
+  {
     "repo": "supabase/supabase",
     "category": "後端",
     "highlight": "BaaS 生態代表，適合放在後端與資料平台類別。"
@@ -58,5 +133,30 @@
     "repo": "payloadcms/payload",
     "category": "後端",
     "highlight": "近年討論度很高的內容平台與 headless CMS，成長曲線明顯。"
+  },
+  {
+    "repo": "fastapi/fastapi",
+    "category": "後端",
+    "highlight": "Python API 開發代表框架，能補足後端分類的語言多樣性。"
+  },
+  {
+    "repo": "appwrite/appwrite",
+    "category": "後端",
+    "highlight": "開源 BaaS 與後端平台代表，適合和 Supabase 做對照。"
+  },
+  {
+    "repo": "strapi/strapi",
+    "category": "後端",
+    "highlight": "headless CMS 長期熱門選項，適合拉高內容平台類別密度。"
+  },
+  {
+    "repo": "honojs/hono",
+    "category": "後端",
+    "highlight": "輕量 Web framework 代表，近年在 TypeScript 社群聲量高。"
+  },
+  {
+    "repo": "directus/directus",
+    "category": "後端",
+    "highlight": "資料驅動內容平台代表，能補足 API-first 後台型產品觀察。"
   }
 ]

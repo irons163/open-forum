@@ -10,7 +10,7 @@
   "langchain-ai/langchain": [
     {
       "date": "2026-04-19",
-      "stars": 134018,
+      "stars": 134022,
       "forks": 22146,
       "pushedAt": "2026-04-19T07:26:03Z"
     }
@@ -34,7 +34,7 @@
   "sveltejs/svelte": [
     {
       "date": "2026-04-19",
-      "stars": 86345,
+      "stars": 86346,
       "forks": 4889,
       "pushedAt": "2026-04-17T08:35:05Z"
     }
@@ -50,7 +50,7 @@
   "microsoft/playwright": [
     {
       "date": "2026-04-19",
-      "stars": 86794,
+      "stars": 86796,
       "forks": 5528,
       "pushedAt": "2026-04-19T02:37:03Z"
     }
@@ -58,7 +58,7 @@
   "astral-sh/uv": [
     {
       "date": "2026-04-19",
-      "stars": 83515,
+      "stars": 83516,
       "forks": 2958,
       "pushedAt": "2026-04-18T22:23:24Z"
     }
@@ -93,6 +93,166 @@
       "stars": 41898,
       "forks": 3602,
       "pushedAt": "2026-04-17T19:52:11Z"
+    }
+  ],
+  "huggingface/transformers": [
+    {
+      "date": "2026-04-19",
+      "stars": 159607,
+      "forks": 32925,
+      "pushedAt": "2026-04-19T08:54:00Z"
+    }
+  ],
+  "ollama/ollama": [
+    {
+      "date": "2026-04-19",
+      "stars": 169404,
+      "forks": 15682,
+      "pushedAt": "2026-04-19T02:26:28Z"
+    }
+  ],
+  "vllm-project/vllm": [
+    {
+      "date": "2026-04-19",
+      "stars": 77271,
+      "forks": 15805,
+      "pushedAt": "2026-04-19T09:57:40Z"
+    }
+  ],
+  "langchain-ai/langgraph": [
+    {
+      "date": "2026-04-19",
+      "stars": 29631,
+      "forks": 5065,
+      "pushedAt": "2026-04-19T00:57:17Z"
+    }
+  ],
+  "comfyanonymous/ComfyUI": [
+    {
+      "date": "2026-04-19",
+      "stars": 109243,
+      "forks": 12695,
+      "pushedAt": "2026-04-19T03:21:23Z"
+    }
+  ],
+  "facebook/react": [
+    {
+      "date": "2026-04-19",
+      "stars": 244582,
+      "forks": 50971,
+      "pushedAt": "2026-04-17T20:51:48Z"
+    }
+  ],
+  "vuejs/core": [
+    {
+      "date": "2026-04-19",
+      "stars": 53466,
+      "forks": 9091,
+      "pushedAt": "2026-04-18T18:41:53Z"
+    }
+  ],
+  "nuxt/nuxt": [
+    {
+      "date": "2026-04-19",
+      "stars": 60077,
+      "forks": 5593,
+      "pushedAt": "2026-04-18T19:51:40Z"
+    }
+  ],
+  "withastro/astro": [
+    {
+      "date": "2026-04-19",
+      "stars": 58576,
+      "forks": 3359,
+      "pushedAt": "2026-04-19T05:46:58Z"
+    }
+  ],
+  "remix-run/react-router": [
+    {
+      "date": "2026-04-19",
+      "stars": 56349,
+      "forks": 10848,
+      "pushedAt": "2026-04-16T22:56:05Z"
+    }
+  ],
+  "biomejs/biome": [
+    {
+      "date": "2026-04-19",
+      "stars": 24414,
+      "forks": 964,
+      "pushedAt": "2026-04-18T23:11:19Z"
+    }
+  ],
+  "vercel/turborepo": [
+    {
+      "date": "2026-04-19",
+      "stars": 30234,
+      "forks": 2310,
+      "pushedAt": "2026-04-16T20:44:25Z"
+    }
+  ],
+  "pnpm/pnpm": [
+    {
+      "date": "2026-04-19",
+      "stars": 34664,
+      "forks": 1400,
+      "pushedAt": "2026-04-19T09:11:51Z"
+    }
+  ],
+  "docker/compose": [
+    {
+      "date": "2026-04-19",
+      "stars": 37293,
+      "forks": 5778,
+      "pushedAt": "2026-04-16T07:25:57Z"
+    }
+  ],
+  "n8n-io/n8n": [
+    {
+      "date": "2026-04-19",
+      "stars": 184661,
+      "forks": 56941,
+      "pushedAt": "2026-04-19T09:47:26Z"
+    }
+  ],
+  "fastapi/fastapi": [
+    {
+      "date": "2026-04-19",
+      "stars": 97385,
+      "forks": 9093,
+      "pushedAt": "2026-04-17T11:43:13Z"
+    }
+  ],
+  "appwrite/appwrite": [
+    {
+      "date": "2026-04-19",
+      "stars": 55768,
+      "forks": 5244,
+      "pushedAt": "2026-04-19T09:03:45Z"
+    }
+  ],
+  "strapi/strapi": [
+    {
+      "date": "2026-04-19",
+      "stars": 71935,
+      "forks": 9659,
+      "pushedAt": "2026-04-17T18:51:51Z"
+    }
+  ],
+  "honojs/hono": [
+    {
+      "date": "2026-04-19",
+      "stars": 30012,
+      "forks": 1032,
+      "pushedAt": "2026-04-15T06:13:58Z"
+    }
+  ],
+  "directus/directus": [
+    {
+      "date": "2026-04-19",
+      "stars": 34836,
+      "forks": 4714,
+      "pushedAt": "2026-04-17T23:37:48Z"
     }
   ]
 }
