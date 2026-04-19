@@ -39,11 +39,11 @@ import { discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
       <div class="list-stack">
         <div class="flow-step">
           <strong>01. 提報</strong>
-          <p class="muted">使用者透過 Issue Form 填 repo 連結、推薦理由與分類。</p>
+          <p class="muted">使用者透過 Issue Form 填 repo 連結、分類、推薦理由與補充資訊。</p>
         </div>
         <div class="flow-step">
           <strong>02. 審核</strong>
-          <p class="muted">maintainer 將要追蹤的 repo 加入 `project-seeds.json`。</p>
+          <p class="muted">maintainer 依照標準確認活躍度、開源屬性與是否值得收進站內清單。</p>
         </div>
         <div class="flow-step">
           <strong>03. 討論</strong>
@@ -65,7 +65,7 @@ import { discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
       <div class="list-stack">
         <div class="stack-item">
           <strong>先做 curated</strong>
-          <p class="muted">第一版先挑 10 到 30 個你想追的 repo，比全站搜尋更容易建立品質感。</p>
+          <p class="muted">第一版先挑 30 到 50 個你真的想追的 repo，比全站搜尋更容易建立品質感。</p>
         </div>
         <div class="stack-item">
           <strong>再補自動榜單</strong>
@@ -107,6 +107,110 @@ import { discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
     </div>
   </section>
 
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Review Rules</p>
+          <h2>審核時先看這四件事</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="stack-item">
+          <strong>有持續維護</strong>
+          <p class="muted">近 30 到 90 天內最好有 commit、release 或活躍討論，不收長期停更的展示型 repo。</p>
+        </div>
+        <div class="stack-item">
+          <strong>真的可用或可學</strong>
+          <p class="muted">不是只有概念 demo，而是對開發者有參考價值、能上手、或能看出明確方向。</p>
+        </div>
+        <div class="stack-item">
+          <strong>分類清楚</strong>
+          <p class="muted">要能放進 AI、前端、工具、後端其中一類，首頁導覽才不會變得混亂。</p>
+        </div>
+        <div class="stack-item">
+          <strong>有推薦理由</strong>
+          <p class="muted">提報不能只有 repo 連結，至少要說明亮點、情境，或最近為什麼值得追。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">不上榜</p>
+          <h2>這幾種先不收</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="flow-step">
+          <strong>鏡像或搬運 repo</strong>
+          <p class="muted">沒有獨立維護脈絡、只是同步別人內容的倉庫先不收。</p>
+        </div>
+        <div class="flow-step">
+          <strong>資訊過少</strong>
+          <p class="muted">沒有 README、沒有使用情境、沒有推薦理由，維護者很難判斷價值。</p>
+        </div>
+        <div class="flow-step">
+          <strong>純行銷頁或封閉服務</strong>
+          <p class="muted">站上主軸是開源 repo，不先收只有 landing page 或封閉 SaaS 的投稿。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Weekly Rhythm</p>
+          <h2>用固定節奏經營，社群感會穩很多</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="flow-step">
+          <strong>週一整理提報</strong>
+          <p class="muted">把上週收到的推薦先分類，標記成待審核、待補資料、已納入或暫不收錄。</p>
+        </div>
+        <div class="flow-step">
+          <strong>週中更新榜單說明</strong>
+          <p class="muted">挑 1 到 3 個正在升溫的 repo，在首頁或 Discussions 補一句人工觀察。</p>
+        </div>
+        <div class="flow-step">
+          <strong>週末回顧</strong>
+          <p class="muted">整理哪些分類變熱、哪些專案新進榜，讓使用者知道這站不是靜態目錄。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Discussion Ideas</p>
+          <h2>值得開的社群主題</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="stack-item">
+          <strong>本週新進榜</strong>
+          <p class="muted">每週貼一篇短文，把新進榜和快速上升的 repo 拉到一起討論。</p>
+        </div>
+        <div class="stack-item">
+          <strong>同類型對比</strong>
+          <p class="muted">例如 Supabase vs Appwrite、Next.js vs Astro 這種題目最容易引出有價值的留言。</p>
+        </div>
+        <div class="stack-item">
+          <strong>你在用什麼</strong>
+          <p class="muted">鼓勵使用者分享實際採用經驗，會比只貼 star 數更有判斷價值。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="shell section-panel content-block">
     <div class="section-heading">
       <div>
@@ -119,7 +223,7 @@ import { discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
       {recommendIssueUrl && (
         <a class="list-link" href={recommendIssueUrl}>
           <h3>Issue Form</h3>
-          <p class="muted">讓使用者提交要推薦的新專案。</p>
+          <p class="muted">讓使用者提交要推薦的新專案，並附上推薦理由與補充資訊。</p>
         </a>
       )}
       {discussionsUrl && (
@@ -134,6 +238,10 @@ import { discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
           <p class="muted">在這裡開啟 Discussions、Pages，並管理 workflow。</p>
         </a>
       )}
+      <a class="list-link" href="/open-forum/rankings/">
+        <h3>熱度榜</h3>
+        <p class="muted">審核時可以先回榜單看目前各分類的代表專案與整體密度。</p>
+      </a>
     </div>
   </section>
 

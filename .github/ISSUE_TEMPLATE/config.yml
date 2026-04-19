@@ -1,1 +1,8 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Open Forum Discussions
+    url: https://github.com/irons163/open-forum/discussions
+    about: 想討論排行榜、同類工具比較或站點方向，優先到 Discussions。
+  - name: Open Forum Rankings
+    url: https://irons163.github.io/open-forum/rankings/
+    about: 先看目前榜單與分類，再決定要不要提報新的 repo。

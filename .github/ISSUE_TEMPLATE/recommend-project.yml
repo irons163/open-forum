@@ -23,6 +23,19 @@ body:
         - 後端
     validations:
       required: true
+  - type: dropdown
+    id: reason_type
+    attributes:
+      label: 推薦角度
+      description: 你是因為什麼想把這個 repo 推上站
+      options:
+        - 近期熱度上升
+        - 實用度高
+        - 技術方向值得關注
+        - 文件 / 開發體驗優秀
+        - 社群討論很多
+    validations:
+      required: true
   - type: textarea
     id: reason
     attributes:
@@ -32,8 +45,27 @@ body:
     validations:
       required: true
   - type: textarea
+    id: use_case
+    attributes:
+      label: 適合什麼人或什麼情境
+      description: 幫維護者快速判斷要怎麼介紹這個 repo
+      placeholder: 例如：適合正在找 AI agent workflow 的團隊、適合做內容站、適合取代某套舊工具
+    validations:
+      required: true
+  - type: textarea
     id: links
     attributes:
       label: 補充連結
       description: 官方網站、文件、demo、文章都可以附上
       placeholder: https://example.com
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提報前確認
+      options:
+        - label: 這是公開可存取的 GitHub repo
+          required: true
+        - label: 我已附上具體推薦理由，不只是貼連結
+          required: true
+        - label: 我確認這個 repo 目前仍有維護或具備持續討論價值
+          required: true
