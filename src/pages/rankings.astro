@@ -1,6 +1,21 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { formatCompactNumber, formatDate, formatMomentum, projects, relativeDays } from '../lib/projects';
+import {
+  activeProjects,
+  breakoutProjects,
+  buildTrendState,
+  discoveryProjects,
+  formatCompactNumber,
+  formatDate,
+  formatMomentum,
+  formatPercentage,
+  lastSyncedAt,
+  projects,
+  relativeDays,
+  scaleLeaderProjects,
+  totalStars,
+  trendingProjects,
+} from '../lib/projects';
 import { baseUrl } from '../lib/site';
 ---
 
@@ -27,6 +42,128 @@ import { baseUrl } from '../lib/site';
       </p>
     </div>
 
+    <div class="metric-grid" style="margin-top: 1.2rem;">
+      <div class="metric-card">
+        <span class="metric-label">追蹤專案</span>
+        <strong>{projects.length}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">近 30 天活躍</span>
+        <strong>{activeProjects}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">總 stars</span>
+        <strong>{formatCompactNumber(totalStars)}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">最近同步</span>
+        <strong>{formatDate(lastSyncedAt)}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Ranking Angles</p>
+        <h2>不要只看總星數，拆成幾種值得看的榜</h2>
+      </div>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="meta-pair">
+          <p class="eyebrow">7d 增量</p>
+          <span class="pill">Top Movers</span>
+        </div>
+        <div class="list-stack">
+          {trendingProjects.slice(0, 4).map((project, index) => (
+            <a class="list-link compact-link" href={`${baseUrl}projects/${project.slug}/`}>
+              <div class="rank-meta">
+                <span class="rank-number">{String(index + 1).padStart(2, '0')}</span>
+                <span>{formatMomentum(project)}</span>
+              </div>
+              <h3>{project.fullName}</h3>
+              <p class="muted">{project.highlight}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div class="insight-card">
+        <div class="meta-pair">
+          <p class="eyebrow">相對增幅</p>
+          <span class="pill">Breakout</span>
+        </div>
+        <div class="list-stack">
+          {breakoutProjects.slice(0, 4).map((project, index) => (
+            <a class="list-link compact-link" href={`${baseUrl}projects/${project.slug}/`}>
+              <div class="rank-meta">
+                <span class="rank-number">{String(index + 1).padStart(2, '0')}</span>
+                <span>{project.historyDays < 7 ? '觀察中' : `7d ${formatPercentage(project.growthRate7d)}`}</span>
+              </div>
+              <h3>{project.fullName}</h3>
+              <p class="muted">
+                {project.historyDays < 7
+                  ? '剛開始累積歷史資料，先觀察幾天。'
+                  : `相對於一週前，已成長 ${formatPercentage(project.growthRate7d)}。`}
+              </p>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div class="insight-card">
+        <div class="meta-pair">
+          <p class="eyebrow">值得挖掘</p>
+          <span class="pill">Discovery</span>
+        </div>
+        <div class="list-stack">
+          {discoveryProjects.slice(0, 4).map((project, index) => (
+            <a class="list-link compact-link" href={`${baseUrl}projects/${project.slug}/`}>
+              <div class="rank-meta">
+                <span class="rank-number">{String(index + 1).padStart(2, '0')}</span>
+                <span>{buildTrendState(project).label}</span>
+              </div>
+              <h3>{project.fullName}</h3>
+              <p class="muted">{buildTrendState(project).description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Scale Leaders</p>
+        <h2>大盤代表</h2>
+      </div>
+    </div>
+
+    <div class="list-stack">
+      {scaleLeaderProjects.slice(0, 3).map((project, index) => (
+        <a class="list-link compact-link" href={`${baseUrl}projects/${project.slug}/`}>
+          <div class="rank-meta">
+            <span class="rank-number">{String(index + 1).padStart(2, '0')}</span>
+            <span>{formatCompactNumber(project.stars)} stars</span>
+          </div>
+          <h3>{project.fullName}</h3>
+          <p class="muted">{project.highlight}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Master Ranking</p>
+        <h2>完整熱度排序</h2>
+      </div>
+    </div>
+
     {
       projects.length ? (
         <div class="rank-list" style="margin-top: 1.2rem;">
@@ -37,12 +174,19 @@ import { baseUrl } from '../lib/site';
                 <div class="rank-meta">
                   <span class="pill">{project.category}</span>
                   {project.language && <span class="pill subtle">{project.language}</span>}
+                  <span class:list={['trend-badge', `trend-${buildTrendState(project).tone}`]}>
+                    {buildTrendState(project).label}
+                  </span>
                 </div>
                 <h3>{project.fullName}</h3>
                 <p class="muted">{project.description}</p>
+                <p class="data-kicker">{buildTrendState(project).description}</p>
                 <div class="rank-meta">
                   <span>{formatCompactNumber(project.stars)} stars</span>
                   <span>{formatMomentum(project)}</span>
+                  <span>30d +{formatCompactNumber(project.delta30d)}</span>
+                  <span>{project.historyDays} 天樣本</span>
+                  <span>{project.historyDays < 7 ? '相對增幅累積中' : `7d 成長 ${formatPercentage(project.growthRate7d)}`}</span>
                   <span>趨勢分數 {formatCompactNumber(project.trendScore)}</span>
                   <span>{relativeDays(project.lastPushedAt)}</span>
                   <span>同步於 {formatDate(project.syncedAt)}</span>

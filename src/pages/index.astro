@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import {
   activeProjects,
+  breakoutProjects,
+  buildTrendState,
   categorySummaries,
   formatCompactNumber,
   formatMomentum,
@@ -15,7 +17,7 @@ import {
 } from '../lib/projects';
 import { baseUrl, discussionsUrl, recommendIssueUrl } from '../lib/site';
 
-const spotlightProject = trendingProjects[0] ?? projects[0];
+const spotlightProject = breakoutProjects[0] ?? trendingProjects[0] ?? projects[0];
 ---
 
 <Layout
@@ -85,10 +87,10 @@ const spotlightProject = trendingProjects[0] ?? projects[0];
           <div class="notice" style="margin-top: 1rem;">
             <div class="meta-pair">
               <span class="pill">{spotlightProject.category}</span>
-              <span>{formatMomentum(spotlightProject)}</span>
+              <span>{buildTrendState(spotlightProject).label}</span>
             </div>
             <h3 style="margin-bottom: 0.4rem;">焦點專案：{spotlightProject.fullName}</h3>
-            <p class="muted">{spotlightProject.highlight}</p>
+            <p class="muted">{buildTrendState(spotlightProject).description}</p>
             <div class="card-actions">
               <a class="button compact" href={`${baseUrl}projects/${spotlightProject.slug}/`}>看詳情</a>
               <a class="button ghost compact" href={spotlightProject.repoUrl} target="_blank" rel="noreferrer">
@@ -206,6 +208,7 @@ const spotlightProject = trendingProjects[0] ?? projects[0];
             <p class="muted">{project.highlight}</p>
             <div class="rank-meta">
               <span>{formatMomentum(project)}</span>
+              <span>{buildTrendState(project).label}</span>
               <span>{formatCompactNumber(project.stars)} stars</span>
             </div>
           </a>

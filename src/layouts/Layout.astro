@@ -469,7 +469,8 @@ const quickLinks = [
   .rank-list,
   .list-stack,
   .category-grid,
-  .mini-feed {
+  .mini-feed,
+  .insight-grid {
     display: grid;
     gap: 1rem;
   }
@@ -480,6 +481,10 @@ const quickLinks = [
 
   .category-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .insight-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .category-card {
@@ -496,6 +501,13 @@ const quickLinks = [
   .category-card h3 {
     margin: 0.8rem 0 0.45rem;
     font-size: 1.22rem;
+  }
+
+  .insight-card {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background: var(--panel-strong);
+    padding: 1rem;
   }
 
   .stat-line,
@@ -523,11 +535,21 @@ const quickLinks = [
     color: var(--text-soft);
   }
 
+  .data-kicker {
+    margin: 0.5rem 0 0;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
   .project-card h3,
   .rank-card h3,
   .list-link h3 {
     margin: 0.6rem 0 0.45rem;
     font-size: 1.35rem;
+  }
+
+  .compact-link h3 {
+    font-size: 1.12rem;
   }
 
   .owner-meta {
@@ -580,6 +602,38 @@ const quickLinks = [
   .pill.subtle,
   .tag {
     background: rgba(255, 255, 255, 0.72);
+  }
+
+  .trend-badge {
+    border-radius: 999px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .trend-tracking {
+    background: rgba(73, 86, 102, 0.14);
+    color: #425466;
+  }
+
+  .trend-surging {
+    background: rgba(239, 108, 0, 0.14);
+    color: #b45309;
+  }
+
+  .trend-rising {
+    background: rgba(15, 157, 138, 0.16);
+    color: #0f766e;
+  }
+
+  .trend-steady {
+    background: rgba(70, 88, 156, 0.12);
+    color: #475569;
+  }
+
+  .trend-cooling {
+    background: rgba(119, 82, 54, 0.14);
+    color: #7c5a3a;
   }
 
   .highlight-note {
@@ -723,7 +777,8 @@ const quickLinks = [
     .two-column,
     .detail-hero,
     .project-grid,
-    .category-grid {
+    .category-grid,
+    .insight-grid {
       grid-template-columns: 1fr;
     }
 

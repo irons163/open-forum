@@ -32,9 +32,16 @@ function daysSince(date) {
   return Math.max(0, Math.floor((Date.now() - new Date(date).getTime()) / dayInMs));
 }
 
-function computeTrendScore({ stars, forks, delta1d, delta7d, lastPushedAt }) {
+function computeTrendScore({ stars, forks, delta1d, delta7d, delta30d, lastPushedAt }) {
   const recencyBonus = Math.max(0, 35 - daysSince(lastPushedAt)) * 18;
-  return Math.round(stars * 0.16 + forks * 0.14 + delta1d * 40 + delta7d * 24 + recencyBonus);
+  return Math.round(
+    stars * 0.16 +
+      forks * 0.14 +
+      delta1d * 40 +
+      delta7d * 24 +
+      delta30d * 8 +
+      recencyBonus,
+  );
 }
 
 async function fetchRepo(fullName) {
@@ -69,14 +76,22 @@ for (const seed of seeds) {
         forks: repo.forks_count,
         pushedAt: repo.pushed_at,
       },
-    ].slice(-14);
+    ].slice(-45);
 
     history[seed.repo] = entries;
 
     const previousDay = entries.at(-2);
     const weeklyBase = entries.length > 7 ? entries.at(-8) : entries[0];
+    const monthlyBase = entries.length > 30 ? entries.at(-31) : entries[0];
     const delta1d = previousDay ? repo.stargazers_count - previousDay.stars : 0;
     const delta7d = weeklyBase ? repo.stargazers_count - weeklyBase.stars : 0;
+    const delta30d = monthlyBase ? repo.stargazers_count - monthlyBase.stars : 0;
+    const historyDays = entries.length;
+    const previousWeeklyStars = Math.max(1, repo.stargazers_count - delta7d);
+    const growthRate7d = Number(((delta7d / previousWeeklyStars) * 100).toFixed(2));
+    const starVelocity7d = Number(
+      (delta7d / Math.max(1, Math.min(7, Math.max(1, historyDays - 1)))).toFixed(1),
+    );
 
     nextProjects.push({
       slug: slugify(repo.full_name),
@@ -95,13 +110,18 @@ for (const seed of seeds) {
       forks: repo.forks_count,
       openIssues: repo.open_issues_count,
       watchers: repo.subscribers_count,
+      historyDays,
       delta1d,
       delta7d,
+      delta30d,
+      growthRate7d,
+      starVelocity7d,
       trendScore: computeTrendScore({
         stars: repo.stargazers_count,
         forks: repo.forks_count,
         delta1d,
         delta7d,
+        delta30d,
         lastPushedAt: repo.pushed_at,
       }),
       lastPushedAt: repo.pushed_at,

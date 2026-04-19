@@ -2,7 +2,15 @@
 import GiscusComments from '../../components/GiscusComments.astro';
 import Layout from '../../layouts/Layout.astro';
 import type { Project } from '../../lib/projects';
-import { formatCompactNumber, formatDate, projects, relativeDays } from '../../lib/projects';
+import {
+  buildTrendState,
+  formatCompactNumber,
+  formatDate,
+  formatMomentum,
+  formatPercentage,
+  projects,
+  relativeDays,
+} from '../../lib/projects';
 import { baseUrl, recommendIssueUrl } from '../../lib/site';
 
 export function getStaticPaths() {
@@ -79,13 +87,24 @@ const peers = projects
         </div>
         <div class="metric-card">
           <span class="metric-label">7d 增星</span>
-          <strong>+{formatCompactNumber(project.delta7d)}</strong>
+          <strong>{formatMomentum(project)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">30d 增星</span>
+          <strong>+{formatCompactNumber(project.delta30d)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">7d 成長率</span>
+          <strong>{project.historyDays < 7 ? '累積中' : formatPercentage(project.growthRate7d)}</strong>
         </div>
       </div>
 
       <div class="notice" style="margin-top: 1rem;">
+        <p>趨勢狀態：{buildTrendState(project).label}</p>
+        <p>{buildTrendState(project).description}</p>
         <p>最近更新：{relativeDays(project.lastPushedAt)}</p>
         <p>最後同步：{formatDate(project.syncedAt)}</p>
+        <p>追蹤樣本：{project.historyDays} 天</p>
         <p>License：{project.license || '未標示'}</p>
       </div>
     </aside>
