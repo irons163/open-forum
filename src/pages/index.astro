@@ -1,0 +1,338 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import {
+  activeProjects,
+  categorySummaries,
+  formatCompactNumber,
+  formatMomentum,
+  formatDate,
+  lastSyncedAt,
+  projects,
+  recentlyUpdatedProjects,
+  totalStars,
+  trendingProjects,
+} from '../lib/projects';
+import { baseUrl, discussionsUrl, recommendIssueUrl } from '../lib/site';
+
+const spotlightProject = trendingProjects[0] ?? projects[0];
+---
+
+<Layout
+  title="Open Forum | GitHub Pages 專案雷達"
+  description="用 GitHub Pages 做可推薦專案、追蹤熱度、附帶討論區的開源雷達站。"
+  current="home"
+>
+  <section class="shell">
+    <div class="announcement-strip section-panel">
+      <div class="announcement-copy">
+        <strong>Upcoming event: 每天自動刷新 GitHub 指標，逐步累積真正的熱度曲線。</strong>
+        <p class="muted">
+          這站用 GitHub Actions 定時同步 repo 資料。今天是 {formatDate(lastSyncedAt)} 的資料快照，
+          後續每天都會補齊 1d / 7d 的熱度增量。
+        </p>
+      </div>
+      <div class="announcement-meta">
+        <span class="chip">最近同步 {formatDate(lastSyncedAt)}</span>
+        <a class="button ghost compact" href={`${baseUrl}rankings/`}>查看榜單</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell hero-grid">
+    <div class="hero-card section-panel">
+      <p class="eyebrow">GitHub Pages Friendly</p>
+      <h1>推薦專案、追蹤熱度、順手把討論區一起帶上。</h1>
+      <p class="muted hero-lead">
+        這個版本是照你提供的站型去拆功能，但改成最適合 GitHub Pages 的做法：
+        靜態頁面負責展示、GitHub Actions 負責同步資料、GitHub Discussions / giscus 負責留言。
+      </p>
+      <div class="action-row">
+        <a class="button" href={`${baseUrl}rankings/`}>看熱度榜</a>
+        <a class="button ghost" href={recommendIssueUrl || `${baseUrl}community/`}>推薦專案</a>
+      </div>
+      <div class="chip-row">
+        <span class="chip">靜態部署</span>
+        <span class="chip">每日同步</span>
+        <span class="chip">社群提報</span>
+        <span class="chip">評論區預留</span>
+      </div>
+    </div>
+
+    <aside class="hero-aside section-panel">
+      <p class="eyebrow">站點快照</p>
+      <div class="metric-grid">
+        <div class="metric-card">
+          <span class="metric-label">追蹤 repo</span>
+          <strong>{projects.length}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">近 30 天活躍</span>
+          <strong>{activeProjects}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">總 stars</span>
+          <strong>{formatCompactNumber(totalStars)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">最近同步</span>
+          <strong>{formatDate(lastSyncedAt)}</strong>
+        </div>
+      </div>
+
+      {
+        spotlightProject && (
+          <div class="notice" style="margin-top: 1rem;">
+            <div class="meta-pair">
+              <span class="pill">{spotlightProject.category}</span>
+              <span>{formatMomentum(spotlightProject)}</span>
+            </div>
+            <h3 style="margin-bottom: 0.4rem;">焦點專案：{spotlightProject.fullName}</h3>
+            <p class="muted">{spotlightProject.highlight}</p>
+            <div class="card-actions">
+              <a class="button compact" href={`${baseUrl}projects/${spotlightProject.slug}/`}>看詳情</a>
+              <a class="button ghost compact" href={spotlightProject.repoUrl} target="_blank" rel="noreferrer">
+                GitHub
+              </a>
+            </div>
+          </div>
+        )
+      }
+    </aside>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Explore By Category</p>
+        <h2>先讓使用者從明確分類進站，再往下挑專案</h2>
+      </div>
+    </div>
+
+    <div class="category-grid">
+      {categorySummaries.map((summary) => (
+        <button
+          class="category-card"
+          type="button"
+          data-category-jump={summary.name}
+        >
+          <span class="pill">{summary.name}</span>
+          <h3>{summary.count} 個追蹤專案</h3>
+          <p class="muted">
+            目前累積 {formatCompactNumber(summary.stars)} stars，
+            其中 {summary.activeCount} 個專案近 30 天內有更新。
+          </p>
+          {summary.leadProject && (
+            <div class="stat-line">
+              <span>代表專案</span>
+              <strong>{summary.leadProject.fullName}</strong>
+            </div>
+          )}
+        </button>
+      ))}
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block" id="discover-projects" data-discover-section>
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">推薦專案</p>
+        <h2>先用 curated 清單上線，再慢慢打開社群提報</h2>
+      </div>
+      <a class="button ghost" href={`${baseUrl}community/`}>看社群流程</a>
+    </div>
+
+    <div class="search-row">
+      <input
+        class="search-input"
+        type="search"
+        placeholder="搜尋 repo、類別、描述或 topic"
+        data-project-search
+      />
+      <div class="search-caption">
+        <span class="project-count" data-search-count>顯示 {projects.length} / {projects.length}</span>
+        <span class="muted">可以直接搜 repo 名稱、owner、分類、語言或 topic</span>
+      </div>
+      <div class="filter-pills">
+        <button class="pill" type="button" data-category-button data-category="全部" data-active="true">
+          全部
+        </button>
+        {categorySummaries.map((summary) => (
+          <button class="pill" type="button" data-category-button data-category={summary.name} data-active="false">
+            {summary.name}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {
+      projects.length ? (
+        <>
+          <div class="project-grid">
+            {projects.map((project) => (
+              <ProjectCard project={project} />
+            ))}
+          </div>
+          <p class="empty-state muted" hidden data-empty-state>
+            沒找到符合條件的專案，換個關鍵字或分類試試看。
+          </p>
+        </>
+      ) : (
+        <div class="empty-state">
+          <p>目前還沒有專案資料。先執行 `npm run sync:data`，或等待 GitHub Actions 同步。</p>
+        </div>
+      )
+    }
+  </section>
+
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Top Movers</p>
+          <h2>這週聲量往上衝的專案</h2>
+        </div>
+        <a class="button ghost" href={`${baseUrl}rankings/`}>完整榜單</a>
+      </div>
+
+      <div class="list-stack">
+        {trendingProjects.map((project, index) => (
+          <a class="list-link" href={`${baseUrl}projects/${project.slug}/`}>
+            <div class="rank-meta">
+              <span class="rank-number">{String(index + 1).padStart(2, '0')}</span>
+              <span class="pill">{project.category}</span>
+            </div>
+            <h3>{project.fullName}</h3>
+            <p class="muted">{project.highlight}</p>
+            <div class="rank-meta">
+              <span>{formatMomentum(project)}</span>
+              <span>{formatCompactNumber(project.stars)} stars</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Recently Updated</p>
+          <h2>最近有在動的 repo</h2>
+        </div>
+      </div>
+
+      <div class="mini-feed">
+        {recentlyUpdatedProjects.map((project) => (
+          <a class="mini-feed-item" href={`${baseUrl}projects/${project.slug}/`}>
+            <div class="meta-pair">
+              <span class="pill">{project.category}</span>
+              <span>{formatDate(project.lastPushedAt)}</span>
+            </div>
+            <strong>{project.fullName}</strong>
+            <p class="muted">{project.description}</p>
+          </a>
+        ))}
+      </div>
+
+      <div class="notice">
+        <p>
+          {discussionsUrl
+            ? '如果你已經開啟 Discussions，這個模板會直接接上，首頁就能負責導流與整理。'
+            : '如果你還沒開啟 Discussions，也沒關係，先用 Issue Form 收件就能跑起來，之後再補留言區。'}
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  const searchInput = document.querySelector('[data-project-search]');
+  const categoryButtons = Array.from(document.querySelectorAll('[data-category-button]'));
+  const categoryJumpButtons = Array.from(document.querySelectorAll('[data-category-jump]'));
+  const projectCards = Array.from(document.querySelectorAll('[data-project-card]'));
+  const emptyState = document.querySelector('[data-empty-state]');
+  const searchCount = document.querySelector('[data-search-count]');
+  const discoverSection = document.querySelector('[data-discover-section]');
+  const params = new URLSearchParams(window.location.search);
+
+  let activeCategory = '全部';
+
+  function setActiveCategory(nextCategory) {
+    activeCategory = nextCategory;
+
+    for (const currentButton of categoryButtons) {
+      currentButton.setAttribute(
+        'data-active',
+        currentButton.getAttribute('data-category') === nextCategory ? 'true' : 'false',
+      );
+    }
+  }
+
+  function applyFilters() {
+    const keyword = (searchInput?.value || '').trim().toLowerCase();
+    let visibleCount = 0;
+
+    for (const card of projectCards) {
+      const category = card.getAttribute('data-category') || '';
+      const searchBlob = card.getAttribute('data-search') || '';
+      const matchesCategory = activeCategory === '全部' || category === activeCategory;
+      const matchesKeyword = !keyword || searchBlob.includes(keyword);
+      const visible = matchesCategory && matchesKeyword;
+
+      card.hidden = !visible;
+      if (visible) visibleCount += 1;
+    }
+
+    if (emptyState) {
+      emptyState.hidden = visibleCount !== 0;
+    }
+
+    if (searchCount) {
+      searchCount.textContent = `顯示 ${visibleCount} / ${projectCards.length}`;
+    }
+  }
+
+  searchInput?.addEventListener('input', applyFilters);
+
+  const initialKeyword = params.get('q') || '';
+  const initialCategory = params.get('category') || '';
+  const shouldJump =
+    params.get('jump') === 'discover-projects' ||
+    Boolean(initialKeyword) ||
+    Boolean(initialCategory);
+
+  if (searchInput && initialKeyword) {
+    searchInput.value = initialKeyword;
+  }
+
+  if (
+    initialCategory &&
+    categoryButtons.some((button) => button.getAttribute('data-category') === initialCategory)
+  ) {
+    setActiveCategory(initialCategory);
+  }
+
+  for (const button of categoryButtons) {
+    button.addEventListener('click', () => {
+      setActiveCategory(button.getAttribute('data-category') || '全部');
+      applyFilters();
+    });
+  }
+
+  for (const button of categoryJumpButtons) {
+    button.addEventListener('click', () => {
+      const nextCategory = button.getAttribute('data-category-jump') || '全部';
+      setActiveCategory(nextCategory);
+      applyFilters();
+      discoverSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  applyFilters();
+
+  if (shouldJump) {
+    requestAnimationFrame(() => {
+      discoverSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+</script>

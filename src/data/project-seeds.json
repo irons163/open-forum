@@ -1,0 +1,62 @@
+[
+  {
+    "repo": "openai/whisper",
+    "category": "AI",
+    "highlight": "多語音辨識代表作，適合放在 AI 應用和語音工具專區。"
+  },
+  {
+    "repo": "langchain-ai/langchain",
+    "category": "AI",
+    "highlight": "LLM 應用框架代表，可以觀察 AI 生態與應用層工具熱度。"
+  },
+  {
+    "repo": "microsoft/autogen",
+    "category": "AI",
+    "highlight": "多代理協作框架，適合展示近期 AI agent 類專案的動能。"
+  },
+  {
+    "repo": "vercel/next.js",
+    "category": "前端",
+    "highlight": "React 生態核心框架，對前端趨勢榜有很強代表性。"
+  },
+  {
+    "repo": "sveltejs/svelte",
+    "category": "前端",
+    "highlight": "偏產品導向、社群關注度高的前端框架，適合做對比觀察。"
+  },
+  {
+    "repo": "tailwindlabs/tailwindcss",
+    "category": "前端",
+    "highlight": "設計系統與前端工作流常用工具，社群聲量穩定。"
+  },
+  {
+    "repo": "microsoft/playwright",
+    "category": "工具",
+    "highlight": "E2E 測試與瀏覽器自動化主流工具，能帶出工程實務類內容。"
+  },
+  {
+    "repo": "astral-sh/uv",
+    "category": "工具",
+    "highlight": "近年成長很快的 Python 工具鏈，適合當熱度追蹤案例。"
+  },
+  {
+    "repo": "shadcn-ui/ui",
+    "category": "工具",
+    "highlight": "元件庫與設計系統類專案的社群代表之一，話題性高。"
+  },
+  {
+    "repo": "supabase/supabase",
+    "category": "後端",
+    "highlight": "BaaS 生態代表，適合放在後端與資料平台類別。"
+  },
+  {
+    "repo": "nestjs/nest",
+    "category": "後端",
+    "highlight": "Node.js 後端框架常青樹，穩定度和社群規模都適合列入榜單。"
+  },
+  {
+    "repo": "payloadcms/payload",
+    "category": "後端",
+    "highlight": "近年討論度很高的內容平台與 headless CMS，成長曲線明顯。"
+  }
+]

@@ -1,0 +1,143 @@
+---
+import GiscusComments from '../components/GiscusComments.astro';
+import Layout from '../layouts/Layout.astro';
+import { discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
+---
+
+<Layout
+  title="社群與提報 | Open Forum"
+  description="讓使用者推薦專案、補充理由，並且直接在 GitHub Discussions 討論。"
+  current="community"
+>
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <p class="eyebrow">Community Workflow</p>
+      <h1 class="detail-title">把「推薦專案」和「討論」都留在 GitHub 生態裡。</h1>
+      <p class="muted">
+        GitHub Pages 本身是靜態託管，所以最省力也最穩的做法是把提報、審核、討論拆成 GitHub 原生流程。
+        這樣你不用養後端，也能保留社群互動。
+      </p>
+
+      <div class="action-row">
+        {recommendIssueUrl && <a class="button" href={recommendIssueUrl}>提交推薦</a>}
+        {discussionsUrl && (
+          <a class="button ghost" href={discussionsUrl} target="_blank" rel="noreferrer">
+            打開 Discussions
+          </a>
+        )}
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">流程</p>
+          <h2>三步上線</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="flow-step">
+          <strong>01. 提報</strong>
+          <p class="muted">使用者透過 Issue Form 填 repo 連結、推薦理由與分類。</p>
+        </div>
+        <div class="flow-step">
+          <strong>02. 審核</strong>
+          <p class="muted">maintainer 將要追蹤的 repo 加入 `project-seeds.json`。</p>
+        </div>
+        <div class="flow-step">
+          <strong>03. 討論</strong>
+          <p class="muted">頁面下方掛 giscus，或直接把長討論導回 GitHub Discussions。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">維護建議</p>
+          <h2>如果你要慢慢把站做大</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="stack-item">
+          <strong>先做 curated</strong>
+          <p class="muted">第一版先挑 10 到 30 個你想追的 repo，比全站搜尋更容易建立品質感。</p>
+        </div>
+        <div class="stack-item">
+          <strong>再補自動榜單</strong>
+          <p class="muted">等社群開始穩定，再加 topic 搜尋、語言篩選或每週精選專欄。</p>
+        </div>
+        <div class="stack-item">
+          <strong>保留 GitHub 作為真實來源</strong>
+          <p class="muted">repo 詳細資料、Issue、Discussion 都回到 GitHub，頁面專注在整理和導流。</p>
+        </div>
+        <div class="stack-item">
+          <strong>給推薦內容一個簡單門檻</strong>
+          <p class="muted">可以要求提交者附上推薦理由、適用情境與補充連結，這樣首頁品質會穩很多。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">治理建議</p>
+          <h2>讓社群區比較不會失控</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="flow-step">
+          <strong>只收 GitHub repo</strong>
+          <p class="muted">不要一開始就開放太多外部連結型投稿，先聚焦在 GitHub repo 會比較容易維護。</p>
+        </div>
+        <div class="flow-step">
+          <strong>每週固定審核一次</strong>
+          <p class="muted">讓使用者知道提報不是即時上架，能避免首頁品質被大量噪音稀釋。</p>
+        </div>
+        <div class="flow-step">
+          <strong>討論與展示分開</strong>
+          <p class="muted">頁面負責整理與推薦，深度討論留給 Discussions，比直接自架留言系統穩很多。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">入口</p>
+        <h2>你會用到的管理入口</h2>
+      </div>
+    </div>
+
+    <div class="category-grid">
+      {recommendIssueUrl && (
+        <a class="list-link" href={recommendIssueUrl}>
+          <h3>Issue Form</h3>
+          <p class="muted">讓使用者提交要推薦的新專案。</p>
+        </a>
+      )}
+      {discussionsUrl && (
+        <a class="list-link" href={discussionsUrl}>
+          <h3>GitHub Discussions</h3>
+          <p class="muted">承接長文討論、投票、問答與社群公告。</p>
+        </a>
+      )}
+      {siteRepoUrl && (
+        <a class="list-link" href={siteRepoUrl}>
+          <h3>Repo 設定</h3>
+          <p class="muted">在這裡開啟 Discussions、Pages，並管理 workflow。</p>
+        </a>
+      )}
+    </div>
+  </section>
+
+  <section class="shell">
+    <GiscusComments />
+  </section>
+</Layout>

@@ -1,0 +1,98 @@
+{
+  "openai/whisper": [
+    {
+      "date": "2026-04-19",
+      "stars": 97996,
+      "forks": 12064,
+      "pushedAt": "2026-04-15T16:32:15Z"
+    }
+  ],
+  "langchain-ai/langchain": [
+    {
+      "date": "2026-04-19",
+      "stars": 133995,
+      "forks": 22141,
+      "pushedAt": "2026-04-19T01:57:49Z"
+    }
+  ],
+  "microsoft/autogen": [
+    {
+      "date": "2026-04-19",
+      "stars": 57194,
+      "forks": 8620,
+      "pushedAt": "2026-04-15T11:59:09Z"
+    }
+  ],
+  "vercel/next.js": [
+    {
+      "date": "2026-04-19",
+      "stars": 138998,
+      "forks": 30927,
+      "pushedAt": "2026-04-19T02:24:55Z"
+    }
+  ],
+  "sveltejs/svelte": [
+    {
+      "date": "2026-04-19",
+      "stars": 86344,
+      "forks": 4888,
+      "pushedAt": "2026-04-17T08:35:05Z"
+    }
+  ],
+  "tailwindlabs/tailwindcss": [
+    {
+      "date": "2026-04-19",
+      "stars": 94619,
+      "forks": 5199,
+      "pushedAt": "2026-04-17T16:29:18Z"
+    }
+  ],
+  "microsoft/playwright": [
+    {
+      "date": "2026-04-19",
+      "stars": 86779,
+      "forks": 5528,
+      "pushedAt": "2026-04-19T02:37:03Z"
+    }
+  ],
+  "astral-sh/uv": [
+    {
+      "date": "2026-04-19",
+      "stars": 83509,
+      "forks": 2957,
+      "pushedAt": "2026-04-18T22:23:24Z"
+    }
+  ],
+  "shadcn-ui/ui": [
+    {
+      "date": "2026-04-19",
+      "stars": 112594,
+      "forks": 8580,
+      "pushedAt": "2026-04-16T16:58:24Z"
+    }
+  ],
+  "supabase/supabase": [
+    {
+      "date": "2026-04-19",
+      "stars": 101093,
+      "forks": 12115,
+      "pushedAt": "2026-04-19T00:43:28Z"
+    }
+  ],
+  "nestjs/nest": [
+    {
+      "date": "2026-04-19",
+      "stars": 75246,
+      "forks": 8291,
+      "pushedAt": "2026-04-17T12:31:55Z"
+    }
+  ],
+  "payloadcms/payload": [
+    {
+      "date": "2026-04-19",
+      "stars": 41899,
+      "forks": 3600,
+      "pushedAt": "2026-04-17T19:52:11Z"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { formatCompactNumber, formatDate, formatMomentum, projects, relativeDays } from '../lib/projects';
+import { baseUrl } from '../lib/site';
+---
+
+<Layout
+  title="熱度榜 | Open Forum"
+  description="用 stars、近期增量與更新活躍度組成的 GitHub 專案熱度榜。"
+  current="rankings"
+>
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Trend Ranking</p>
+        <h2>熱度榜</h2>
+      </div>
+    </div>
+
+    <div class="notice">
+      <p>
+        趨勢分數會綜合 `stars`、`forks`、最近 1 天與 7 天的增星、以及最近一次 push 的新鮮度。
+        這樣做的好處是，不會只讓老牌超大 repo 永遠霸榜，也能把近期變熱的專案抓出來。
+      </p>
+      <p class="muted">
+        如果某個 repo 顯示「剛開始追蹤」，代表這是剛納入站內觀察名單，等歷史快照累積幾天後就會看到明確增量。
+      </p>
+    </div>
+
+    {
+      projects.length ? (
+        <div class="rank-list" style="margin-top: 1.2rem;">
+          {projects.map((project, index) => (
+            <article class="rank-card section-panel">
+              <div class="rank-number">{String(index + 1).padStart(2, '0')}</div>
+              <div>
+                <div class="rank-meta">
+                  <span class="pill">{project.category}</span>
+                  {project.language && <span class="pill subtle">{project.language}</span>}
+                </div>
+                <h3>{project.fullName}</h3>
+                <p class="muted">{project.description}</p>
+                <div class="rank-meta">
+                  <span>{formatCompactNumber(project.stars)} stars</span>
+                  <span>{formatMomentum(project)}</span>
+                  <span>趨勢分數 {formatCompactNumber(project.trendScore)}</span>
+                  <span>{relativeDays(project.lastPushedAt)}</span>
+                  <span>同步於 {formatDate(project.syncedAt)}</span>
+                </div>
+              </div>
+              <div class="card-actions">
+                <a class="button" href={`${baseUrl}projects/${project.slug}/`}>詳情</a>
+                <a class="button ghost" href={project.repoUrl} target="_blank" rel="noreferrer">GitHub</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <p>目前還沒有榜單資料。先執行 `npm run sync:data`。</p>
+        </div>
+      )
+    }
+  </section>
+</Layout>

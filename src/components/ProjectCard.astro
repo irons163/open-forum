@@ -1,0 +1,65 @@
+---
+import type { Project } from '../lib/projects';
+import { formatCompactNumber, formatMomentum, relativeDays } from '../lib/projects';
+
+const { project } = Astro.props as { project: Project };
+const baseUrl = import.meta.env.BASE_URL;
+const detailUrl = `${baseUrl}projects/${project.slug}/`;
+---
+
+<article
+  class="project-card section-panel"
+  data-project-card
+  data-category={project.category}
+  data-search={`${project.name} ${project.fullName} ${project.owner} ${project.category} ${project.language || ''} ${project.description} ${project.highlight} ${project.topics.join(' ')}`.toLowerCase()}
+>
+  <div class="card-band"></div>
+  <div class="card-top">
+    <span class="pill">{project.category}</span>
+    {project.language && <span class="pill subtle">{project.language}</span>}
+  </div>
+
+  <div class="owner-meta">
+    <img src={project.avatarUrl} alt={`${project.owner} avatar`} loading="lazy" />
+    <div>
+      <strong>{project.name}</strong>
+      <span class="muted">@{project.owner}</span>
+    </div>
+  </div>
+
+  <h3>{project.fullName}</h3>
+  <p class="muted">{project.description}</p>
+  <p class="highlight-note">{project.highlight}</p>
+
+  <div class="tag-row">
+    {project.topics.slice(0, 4).map((topic) => (
+      <span class="tag">#{topic}</span>
+    ))}
+  </div>
+
+  <div class="metric-strip">
+    <div>
+      <span class="metric-label">Stars</span>
+      <strong>{formatCompactNumber(project.stars)}</strong>
+    </div>
+    <div>
+      <span class="metric-label">熱度動能</span>
+      <strong>{formatMomentum(project)}</strong>
+    </div>
+    <div>
+      <span class="metric-label">活躍度</span>
+      <strong>{relativeDays(project.lastPushedAt)}</strong>
+    </div>
+  </div>
+
+  <div class="mini-metrics">
+    <span>Forks {formatCompactNumber(project.forks)}</span>
+    <span>Issues {formatCompactNumber(project.openIssues)}</span>
+    <span>Watchers {formatCompactNumber(project.watchers)}</span>
+  </div>
+
+  <div class="card-actions">
+    <a class="button" href={detailUrl}>看詳情</a>
+    <a class="button ghost" href={project.repoUrl} target="_blank" rel="noreferrer">GitHub</a>
+  </div>
+</article>

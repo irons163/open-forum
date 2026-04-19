@@ -1,0 +1,60 @@
+---
+const repo = import.meta.env.PUBLIC_GISCUS_REPO;
+const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID;
+const category = import.meta.env.PUBLIC_GISCUS_CATEGORY;
+const categoryId = import.meta.env.PUBLIC_GISCUS_CATEGORY_ID;
+const discussionsUrl = import.meta.env.PUBLIC_DISCUSSIONS_URL;
+const mapping = Astro.props.mapping ?? 'pathname';
+const term = Astro.props.term ?? '';
+const isReady = [repo, repoId, category, categoryId].every(Boolean);
+---
+
+<section class="section-panel comments-panel">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">討論區</p>
+      <h2>可以直接掛 GitHub Discussions</h2>
+    </div>
+  </div>
+
+  {
+    isReady ? (
+      <script
+        is:inline
+        src="https://giscus.app/client.js"
+        data-repo={repo}
+        data-repo-id={repoId}
+        data-category={category}
+        data-category-id={categoryId}
+        data-mapping={mapping}
+        data-term={term}
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="light_protanopia"
+        data-lang="zh-TW"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async
+      ></script>
+    ) : (
+      <div class="notice">
+        <p>
+          這個區塊已預留給 giscus。你只要在 repo 開啟 GitHub Discussions、安裝 giscus App，再把
+          `PUBLIC_GISCUS_*` 變數填進 `.env` 或 GitHub Actions variables，就能直接留言。
+        </p>
+        <div class="action-row">
+          {discussionsUrl && (
+            <a class="button" href={discussionsUrl} target="_blank" rel="noreferrer">
+              打開 GitHub Discussions
+            </a>
+          )}
+          <a class="button ghost" href="https://github.com/apps/giscus" target="_blank" rel="noreferrer">
+            安裝 giscus App
+          </a>
+        </div>
+      </div>
+    )
+  }
+</section>

@@ -1,0 +1,39 @@
+name: Recommend a project
+description: 提交想放進 Open Forum 的 GitHub 專案
+title: "[Recommend] "
+labels:
+  - recommend
+body:
+  - type: input
+    id: repo
+    attributes:
+      label: GitHub repo
+      description: 請填完整 repo URL
+      placeholder: https://github.com/owner/repo
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: 類別
+      options:
+        - AI
+        - 前端
+        - 工具
+        - 後端
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: 為什麼推薦
+      description: 這個專案值得被收進站上的原因
+      placeholder: 請說明功能亮點、適用情境、近期熱度或社群討論點
+    validations:
+      required: true
+  - type: textarea
+    id: links
+    attributes:
+      label: 補充連結
+      description: 官方網站、文件、demo、文章都可以附上
+      placeholder: https://example.com

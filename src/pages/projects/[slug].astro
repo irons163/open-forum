@@ -1,0 +1,141 @@
+---
+import GiscusComments from '../../components/GiscusComments.astro';
+import Layout from '../../layouts/Layout.astro';
+import type { Project } from '../../lib/projects';
+import { formatCompactNumber, formatDate, projects, relativeDays } from '../../lib/projects';
+import { baseUrl, recommendIssueUrl } from '../../lib/site';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props as { project: Project };
+const peers = projects
+  .filter((candidate) => candidate.category === project.category && candidate.slug !== project.slug)
+  .slice(0, 3);
+---
+
+<Layout
+  title={`${project.fullName} | Open Forum`}
+  description={project.description}
+  current=""
+>
+  <section class="shell detail-hero">
+    <div class="section-panel content-block">
+      <div class="owner-row">
+        <img src={project.avatarUrl} alt={`${project.owner} avatar`} loading="lazy" />
+        <div>
+          <div class="meta-line">
+            <span class="pill">{project.category}</span>
+            {project.language && <span class="pill subtle">{project.language}</span>}
+          </div>
+          <h1 class="detail-title">{project.fullName}</h1>
+        </div>
+      </div>
+
+      <p class="muted">{project.description}</p>
+      <p class="highlight-note">{project.highlight}</p>
+
+      <div class="tag-row">
+        {project.topics.map((topic) => (
+          <span class="tag">#{topic}</span>
+        ))}
+      </div>
+
+      <div class="card-actions">
+        <a class="button" href={project.repoUrl} target="_blank" rel="noreferrer">前往 GitHub</a>
+        {project.homepage && (
+          <a class="button ghost" href={project.homepage} target="_blank" rel="noreferrer">
+            官方網站
+          </a>
+        )}
+        {recommendIssueUrl && <a class="button ghost" href={recommendIssueUrl}>推薦類似專案</a>}
+      </div>
+    </div>
+
+    <aside class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">指標</p>
+          <h2>目前狀態</h2>
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card">
+          <span class="metric-label">Stars</span>
+          <strong>{formatCompactNumber(project.stars)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Forks</span>
+          <strong>{formatCompactNumber(project.forks)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">1d 增星</span>
+          <strong>+{formatCompactNumber(project.delta1d)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">7d 增星</span>
+          <strong>+{formatCompactNumber(project.delta7d)}</strong>
+        </div>
+      </div>
+
+      <div class="notice" style="margin-top: 1rem;">
+        <p>最近更新：{relativeDays(project.lastPushedAt)}</p>
+        <p>最後同步：{formatDate(project.syncedAt)}</p>
+        <p>License：{project.license || '未標示'}</p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">為什麼值得關注</p>
+          <h2>適合放進專案推薦站的原因</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="stack-item">
+          <strong>維持追蹤</strong>
+          <p class="muted">這個 repo 已被加入每日同步清單，會自動更新熱度與活躍度資料。</p>
+        </div>
+        <div class="stack-item">
+          <strong>有清楚定位</strong>
+          <p class="muted">目前分類在「{project.category}」，適合與同類工具放在一起做比較與導覽。</p>
+        </div>
+        <div class="stack-item">
+          <strong>討論入口現成</strong>
+          <p class="muted">你可以在這頁直接掛留言，也能把深度討論引導到 GitHub Discussions。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">同分類延伸</p>
+          <h2>你可能也想追</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {peers.map((peer) => (
+          <a class="list-link" href={`${baseUrl}projects/${peer.slug}/`}>
+            <h3>{peer.fullName}</h3>
+            <p class="muted">{peer.highlight}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="shell">
+    <GiscusComments />
+  </section>
+</Layout>
