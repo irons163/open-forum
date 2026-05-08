@@ -13,6 +13,7 @@ const navItems = [
   { key: 'home', label: '首頁', href: `${baseUrl}` },
   { key: 'rankings', label: '熱度榜', href: `${baseUrl}rankings/` },
   { key: 'community', label: '社群', href: `${baseUrl}community/` },
+  { key: 'launch', label: '檢查清單', href: `${baseUrl}launch/` },
 ];
 
 const quickLinks = [
@@ -22,6 +23,7 @@ const quickLinks = [
     label: summary.name,
     href: `${baseUrl}?category=${encodeURIComponent(summary.name)}#discover-projects`,
   })),
+  { label: '公開前檢查', href: `${baseUrl}launch/` },
   { label: '社群', href: `${baseUrl}community/` },
 ];
 ---
@@ -119,6 +121,7 @@ const quickLinks = [
         <div class="footer-links">
           <a href={`${baseUrl}rankings/`}>熱度榜</a>
           <a href={`${baseUrl}community/`}>社群流程</a>
+          <a href={`${baseUrl}launch/`}>公開前檢查</a>
           {siteRepoUrl && <a href={siteRepoUrl}>原始碼</a>}
         </div>
       </div>

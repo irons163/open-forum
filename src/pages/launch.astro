@@ -1,0 +1,143 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { baseUrl, discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
+
+const checklist = [
+  {
+    title: '首頁內容看起來像真的產品',
+    items: [
+      '首頁 Hero、榜單、社群頁都能正常開啟。',
+      '本週編輯推薦沒有過時內容或空卡片。',
+      '分類入口、搜尋與篩選都能正常互動。',
+    ],
+  },
+  {
+    title: '資料同步與榜單正常',
+    items: [
+      '首頁與熱度榜都有最新同步日期。',
+      '至少有一批 repo 已成功同步，榜單不是空的。',
+      '如果剛上線不久，接受 7d / 30d 還在累積中，但文案要說清楚。',
+    ],
+  },
+  {
+    title: '社群提報路徑可用',
+    items: [
+      'Issue Form 可以正常打開並填寫。',
+      'Discussions 已開啟，至少有一個可用分類。',
+      '社群頁有清楚寫出提報規則與不上榜條件。',
+    ],
+  },
+  {
+    title: '公開前最後確認',
+    items: [
+      '手機版首頁沒有爆版，卡片內容可閱讀。',
+      'GitHub Pages 已部署最新 commit。',
+      '如果要貼社群，先自己走一次首頁到詳情頁的完整路徑。',
+    ],
+  },
+];
+
+const afterLaunch = [
+  '上線後 24 小時內回頭看一次首頁、榜單、社群頁是否都還正常。',
+  '每週至少整理一次提報，把值得收錄與不收錄的標準維持一致。',
+  '等歷史資料累積一週後，再回頭看哪些 repo 的熱度描述需要調整。',
+];
+---
+
+<Layout
+  title="公開檢查清單 | Open Forum"
+  description="把 Open Forum 對外公開前，快速確認首頁、榜單、社群與資料同步是否都正常。"
+  current="launch"
+>
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <p class="eyebrow">Launch Checklist</p>
+      <h1 class="detail-title">公開前最後巡一遍，會省掉很多小尷尬。</h1>
+      <p class="muted">
+        這頁不是給開發用的技術文件，而是給你每次要公開貼站、更新大功能、或準備讓更多人進來看時，
+        快速確認站點狀態的營運清單。
+      </p>
+
+      <div class="action-row">
+        <a class="button" href={baseUrl}>回首頁看實站</a>
+        <a class="button ghost" href={`${baseUrl}rankings/`}>看熱度榜</a>
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">管理入口</p>
+          <h2>你最常會打開的地方</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {siteRepoUrl && (
+          <a class="list-link" href={siteRepoUrl} target="_blank" rel="noreferrer">
+            <h3>GitHub Repo</h3>
+            <p class="muted">看 commits、Actions、Pages 部署與 repo 設定。</p>
+          </a>
+        )}
+        {recommendIssueUrl && (
+          <a class="list-link" href={recommendIssueUrl} target="_blank" rel="noreferrer">
+            <h3>Issue Form</h3>
+            <p class="muted">測試社群提報流程是不是順的。</p>
+          </a>
+        )}
+        {discussionsUrl && (
+          <a class="list-link" href={discussionsUrl} target="_blank" rel="noreferrer">
+            <h3>Discussions</h3>
+            <p class="muted">確認是否有導流、回覆、以及可討論的主題。</p>
+          </a>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Before Public</p>
+          <h2>公開前檢查</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {checklist.map((group, index) => (
+          <div class="stack-item">
+            <strong>{String(index + 1).padStart(2, '0')} {group.title}</strong>
+            <ul class="muted" style="margin: 0.75rem 0 0; padding-left: 1.1rem;">
+              {group.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">After Launch</p>
+          <h2>公開後要盯的事</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {afterLaunch.map((item, index) => (
+          <div class="flow-step">
+            <strong>{String(index + 1).padStart(2, '0')}</strong>
+            <p class="muted">{item}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="notice">
+        <p>如果你之後要分享給朋友、貼社群、或當作品集，這頁就可以當你的固定 release checklist。</p>
+      </div>
+    </div>
+  </section>
+</Layout>
