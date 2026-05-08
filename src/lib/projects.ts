@@ -1,5 +1,6 @@
 import rawProjects from '../data/projects.generated.json';
 import rawEditorialNotes from '../data/editorial-notes.json';
+import rawWeeklyBrief from '../data/weekly-brief.json';
 
 export type Project = {
   slug: string;
@@ -43,6 +44,15 @@ const editorialNotes = rawEditorialNotes as {
   watchlist: Array<{
     title: string;
     description: string;
+  }>;
+};
+export const weeklyBrief = rawWeeklyBrief as {
+  weekLabel: string;
+  headline: string;
+  summary: string;
+  signals: Array<{
+    label: string;
+    text: string;
   }>;
 };
 const dayInMs = 1000 * 60 * 60 * 24;
