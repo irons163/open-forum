@@ -6,6 +6,8 @@ import {
   breakoutProjects,
   buildTrendState,
   categorySummaries,
+  editorialFeaturedProjects,
+  editorialWatchlist,
   formatCompactNumber,
   formatMomentum,
   formatDate,
@@ -101,6 +103,69 @@ const spotlightProject = breakoutProjects[0] ?? trendingProjects[0] ?? projects[
         )
       }
     </aside>
+  </section>
+
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Editorial Desk</p>
+          <h2>不只看數字，也給使用者一點編輯判斷</h2>
+        </div>
+        <a class="button ghost" href={`${baseUrl}community/`}>看提報規則</a>
+      </div>
+
+      <div class="list-stack">
+        {editorialFeaturedProjects.map((entry) => (
+          <article class="stack-item">
+            <div class="rank-meta">
+              <span class="pill">{entry.project.category}</span>
+              <span class="pill subtle">{entry.angle}</span>
+              <span>{entry.kicker}</span>
+            </div>
+            <h3>{entry.project.fullName}</h3>
+            <p class="muted">{entry.summary}</p>
+            <p class="data-kicker">{entry.whyNow}</p>
+            <div class="rank-meta">
+              <span>{formatCompactNumber(entry.project.stars)} stars</span>
+              <span>{formatMomentum(entry.project)}</span>
+              <span>{buildTrendState(entry.project).label}</span>
+            </div>
+            <div class="card-actions">
+              <a class="button compact" href={`${baseUrl}projects/${entry.project.slug}/`}>看詳情</a>
+              <a class="button ghost compact" href={entry.project.repoUrl} target="_blank" rel="noreferrer">
+                GitHub
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Next To Watch</p>
+          <h2>接下來可以持續經營的題目</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {editorialWatchlist.map((item, index) => (
+          <div class="flow-step">
+            <strong>{String(index + 1).padStart(2, '0')} {item.title}</strong>
+            <p class="muted">{item.description}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="notice">
+        <p>
+          這一塊是故意做成「人工可編輯」，不是全靠算法。之後你只要改
+          <code>src/data/editorial-notes.json</code>，首頁精選就會跟著換。
+        </p>
+      </div>
+    </div>
   </section>
 
   <section class="shell section-panel content-block">

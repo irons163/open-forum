@@ -1,4 +1,5 @@
 import rawProjects from '../data/projects.generated.json';
+import rawEditorialNotes from '../data/editorial-notes.json';
 
 export type Project = {
   slug: string;
@@ -31,6 +32,19 @@ export type Project = {
 };
 
 const typedProjects = rawProjects as Project[];
+const editorialNotes = rawEditorialNotes as {
+  featured: Array<{
+    repo: string;
+    kicker: string;
+    angle: string;
+    summary: string;
+    whyNow: string;
+  }>;
+  watchlist: Array<{
+    title: string;
+    description: string;
+  }>;
+};
 const dayInMs = 1000 * 60 * 60 * 24;
 
 function daysSince(date: string) {
@@ -69,6 +83,30 @@ export const categorySummaries = categories.map((category) => {
     leadProject: categoryProjects[0] ?? null,
   };
 });
+export const editorialFeaturedProjects = editorialNotes.featured
+  .map((entry) => {
+    const project = projects.find((candidate) => candidate.fullName === entry.repo);
+
+    if (!project) {
+      return null;
+    }
+
+    return {
+      ...entry,
+      project,
+    };
+  })
+  .filter(Boolean) as Array<
+  {
+    repo: string;
+    kicker: string;
+    angle: string;
+    summary: string;
+    whyNow: string;
+    project: Project;
+  }
+>;
+export const editorialWatchlist = editorialNotes.watchlist;
 
 export function formatCompactNumber(value: number) {
   if (value >= 1_000_000) {

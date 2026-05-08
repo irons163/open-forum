@@ -1,0 +1,39 @@
+{
+  "featured": [
+    {
+      "repo": "ollama/ollama",
+      "kicker": "本週編輯推薦",
+      "angle": "本地 AI 工具鏈",
+      "summary": "如果你想做不依賴雲端 API 的 AI 產品，這個 repo 很值得先追。它不是單純模型展示，而是本地部署體驗的入口。",
+      "whyNow": "本地模型工作流、桌面工具與私有部署需求一直在長，這類基礎層專案很適合放到首頁當方向指標。 "
+    },
+    {
+      "repo": "withastro/astro",
+      "kicker": "本週編輯推薦",
+      "angle": "內容型網站框架",
+      "summary": "這個站本身就是用 Astro 做的，所以把 Astro 放進人工精選很合理。它也代表內容站、文件站與 islands 架構這一條路線。",
+      "whyNow": "如果使用者是因為你的站想找相似技術方案，首頁直接給 Astro 會很自然。"
+    },
+    {
+      "repo": "n8n-io/n8n",
+      "kicker": "本週編輯推薦",
+      "angle": "自動化與工作流",
+      "summary": "這類專案很容易帶進更廣的使用族群，不只工程師，也包含產品、營運和 AI workflow 使用者。",
+      "whyNow": "它能替站上的『工具』分類補一個很強的跨界入口，不會只剩開發工具。"
+    }
+  ],
+  "watchlist": [
+    {
+      "title": "同類型對比",
+      "description": "下週可以挑 `Supabase vs Appwrite` 或 `Next.js vs Astro` 做一篇短評，讓站不只有榜單，還有判斷脈絡。"
+    },
+    {
+      "title": "新進榜觀察",
+      "description": "如果某個 repo 連續幾天都在 Top Movers，可以把它拉進人工精選區，開始累積編輯視角。"
+    },
+    {
+      "title": "社群發問",
+      "description": "可以在 Discussions 開一題：『最近你正在追哪個開源工具？』讓推薦內容不只來自 maintainer。"
+    }
+  ]
+}
