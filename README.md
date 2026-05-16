@@ -28,6 +28,15 @@ npm run dev
 npm run dev
 ```
 
+## 測試與覆蓋率
+
+```bash
+npm run test
+npm run coverage
+```
+
+目前 coverage 先鎖定在 `src/lib/**/*.ts` 的核心資料與 URL helper。這些邏輯會影響首頁、榜單、專案詳情與社群入口，所以 CI 會用 `npm run coverage` 守住 100% statements / branches / functions / lines。
+
 ## 上線到 GitHub Pages
 
 1. 建立 GitHub repo，將本專案推上去。

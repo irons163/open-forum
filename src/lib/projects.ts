@@ -61,61 +61,90 @@ function daysSince(date: string) {
   return Math.max(0, Math.floor((Date.now() - new Date(date).getTime()) / dayInMs));
 }
 
-export const projects = [...typedProjects].sort((a, b) => b.trendScore - a.trendScore);
-export const categories = Array.from(new Set(projects.map((project) => project.category)));
-export const featuredProjects = projects.slice(0, 6);
-export const trendingProjects = [...projects]
-  .sort((a, b) => b.delta7d - a.delta7d || b.trendScore - a.trendScore)
-  .slice(0, 6);
-export const breakoutProjects = [...projects]
-  .sort((a, b) => b.growthRate7d - a.growthRate7d || b.delta7d - a.delta7d || b.trendScore - a.trendScore)
-  .slice(0, 6);
-export const scaleLeaderProjects = [...projects]
-  .sort((a, b) => b.stars - a.stars || b.trendScore - a.trendScore)
-  .slice(0, 6);
-export const discoveryProjects = [...projects]
-  .sort((a, b) => discoveryScore(b) - discoveryScore(a) || b.trendScore - a.trendScore)
-  .slice(0, 6);
-export const recentlyUpdatedProjects = [...projects]
-  .sort((a, b) => +new Date(b.lastPushedAt) - +new Date(a.lastPushedAt))
-  .slice(0, 5);
-export const totalStars = projects.reduce((sum, project) => sum + project.stars, 0);
-export const activeProjects = projects.filter((project) => daysSince(project.lastPushedAt) <= 30).length;
-export const lastSyncedAt = projects[0]?.syncedAt ?? new Date().toISOString();
-export const categorySummaries = categories.map((category) => {
-  const categoryProjects = projects.filter((project) => project.category === category);
+export type EditorialEntry = (typeof editorialNotes.featured)[number];
 
-  return {
-    name: category,
-    count: categoryProjects.length,
-    stars: categoryProjects.reduce((sum, project) => sum + project.stars, 0),
-    activeCount: categoryProjects.filter((project) => daysSince(project.lastPushedAt) <= 30).length,
-    leadProject: categoryProjects[0] ?? null,
-  };
-});
-export const editorialFeaturedProjects = editorialNotes.featured
-  .map((entry) => {
-    const project = projects.find((candidate) => candidate.fullName === entry.repo);
+export function sortByTrendScore(projectList: Project[]) {
+  return [...projectList].sort((a, b) => b.trendScore - a.trendScore);
+}
 
-    if (!project) {
-      return null;
-    }
+export function getTrendingProjects(projectList: Project[], limit = 6) {
+  return [...projectList]
+    .sort((a, b) => b.delta7d - a.delta7d || b.trendScore - a.trendScore)
+    .slice(0, limit);
+}
+
+export function getBreakoutProjects(projectList: Project[], limit = 6) {
+  return [...projectList]
+    .sort((a, b) => b.growthRate7d - a.growthRate7d || b.delta7d - a.delta7d || b.trendScore - a.trendScore)
+    .slice(0, limit);
+}
+
+export function getScaleLeaderProjects(projectList: Project[], limit = 6) {
+  return [...projectList]
+    .sort((a, b) => b.stars - a.stars || b.trendScore - a.trendScore)
+    .slice(0, limit);
+}
+
+export function getDiscoveryProjects(projectList: Project[], limit = 6) {
+  return [...projectList]
+    .sort((a, b) => discoveryScore(b) - discoveryScore(a) || b.trendScore - a.trendScore)
+    .slice(0, limit);
+}
+
+export function getRecentlyUpdatedProjects(projectList: Project[], limit = 5) {
+  return [...projectList]
+    .sort((a, b) => +new Date(b.lastPushedAt) - +new Date(a.lastPushedAt))
+    .slice(0, limit);
+}
+
+export function getLastSyncedAt(projectList: Project[], fallback = new Date().toISOString()) {
+  return projectList[0]?.syncedAt ?? fallback;
+}
+
+export function buildCategorySummaries(projectList: Project[], categoryList: string[]) {
+  return categoryList.map((category) => {
+    const categoryProjects = projectList.filter((project) => project.category === category);
 
     return {
-      ...entry,
-      project,
+      name: category,
+      count: categoryProjects.length,
+      stars: categoryProjects.reduce((sum, project) => sum + project.stars, 0),
+      activeCount: categoryProjects.filter((project) => daysSince(project.lastPushedAt) <= 30).length,
+      leadProject: categoryProjects[0] ?? null,
     };
-  })
-  .filter(Boolean) as Array<
-  {
-    repo: string;
-    kicker: string;
-    angle: string;
-    summary: string;
-    whyNow: string;
-    project: Project;
-  }
->;
+  });
+}
+
+export function buildEditorialFeaturedProjects(entries: EditorialEntry[], projectList: Project[]) {
+  return entries
+    .map((entry) => {
+      const project = projectList.find((candidate) => candidate.fullName === entry.repo);
+
+      if (!project) {
+        return null;
+      }
+
+      return {
+        ...entry,
+        project,
+      };
+    })
+    .filter(Boolean) as Array<EditorialEntry & { project: Project }>;
+}
+
+export const projects = sortByTrendScore(typedProjects);
+export const categories = Array.from(new Set(projects.map((project) => project.category)));
+export const featuredProjects = projects.slice(0, 6);
+export const trendingProjects = getTrendingProjects(projects);
+export const breakoutProjects = getBreakoutProjects(projects);
+export const scaleLeaderProjects = getScaleLeaderProjects(projects);
+export const discoveryProjects = getDiscoveryProjects(projects);
+export const recentlyUpdatedProjects = getRecentlyUpdatedProjects(projects);
+export const totalStars = projects.reduce((sum, project) => sum + project.stars, 0);
+export const activeProjects = projects.filter((project) => daysSince(project.lastPushedAt) <= 30).length;
+export const lastSyncedAt = getLastSyncedAt(projects);
+export const categorySummaries = buildCategorySummaries(projects, categories);
+export const editorialFeaturedProjects = buildEditorialFeaturedProjects(editorialNotes.featured, projects);
 export const editorialWatchlist = editorialNotes.watchlist;
 
 export function formatCompactNumber(value: number) {

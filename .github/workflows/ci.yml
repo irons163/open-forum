@@ -25,5 +25,8 @@ jobs:
       - name: Run Astro check
         run: npm run check
 
+      - name: Run tests with coverage
+        run: npm run coverage
+
       - name: Build site
         run: npm run build
