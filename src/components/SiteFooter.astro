@@ -1,0 +1,18 @@
+---
+import { baseUrl, siteRepoUrl } from '../lib/site';
+---
+
+<footer class="site-footer">
+  <div class="shell footer-shell">
+    <div>
+      <strong>Open Forum</strong>
+      <p>用 GitHub Pages、GitHub Actions、GitHub Discussions 組出可維護的開源雷達站。</p>
+    </div>
+    <div class="footer-links">
+      <a href={`${baseUrl}rankings/`}>熱度榜</a>
+      <a href={`${baseUrl}community/`}>社群流程</a>
+      <a href={`${baseUrl}launch/`}>公開前檢查</a>
+      {siteRepoUrl && <a href={siteRepoUrl}>原始碼</a>}
+    </div>
+  </div>
+</footer>

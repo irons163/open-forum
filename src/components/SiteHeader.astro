@@ -1,0 +1,75 @@
+---
+import { categorySummaries } from '../lib/projects';
+import { baseUrl, discussionsUrl, siteRepoUrl } from '../lib/site';
+
+const { current = 'home' } = Astro.props;
+
+const navItems = [
+  { key: 'home', label: '首頁', href: `${baseUrl}` },
+  { key: 'rankings', label: '熱度榜', href: `${baseUrl}rankings/` },
+  { key: 'community', label: '社群', href: `${baseUrl}community/` },
+  { key: 'launch', label: '檢查清單', href: `${baseUrl}launch/` },
+];
+
+const quickLinks = [
+  { label: '項目推薦', href: `${baseUrl}#discover-projects` },
+  { label: '趨勢榜', href: `${baseUrl}rankings/` },
+  ...categorySummaries.slice(0, 4).map((summary) => ({
+    label: summary.name,
+    href: `${baseUrl}?category=${encodeURIComponent(summary.name)}#discover-projects`,
+  })),
+  { label: '公開前檢查', href: `${baseUrl}launch/` },
+  { label: '社群', href: `${baseUrl}community/` },
+];
+---
+
+<header class="site-header">
+  <div class="shell header-shell">
+    <a class="brand-mark" href={baseUrl}>
+      <span class="brand-icon">◎</span>
+      <span>
+        <strong>Open Forum</strong>
+        <small>GitHub Pages Project Radar</small>
+      </span>
+    </a>
+
+    <form class="header-search" action={baseUrl} method="get">
+      <input
+        class="header-search-input"
+        type="search"
+        name="q"
+        placeholder="搜尋感興趣的開源倉庫、主題或分類"
+      />
+      <input type="hidden" name="jump" value="discover-projects" />
+    </form>
+
+    <div class="header-links">
+      {discussionsUrl && (
+        <a class="button ghost compact" href={discussionsUrl} target="_blank" rel="noreferrer">
+          Discussions
+        </a>
+      )}
+      {siteRepoUrl && (
+        <a class="button compact" href={siteRepoUrl} target="_blank" rel="noreferrer">
+          Repo
+        </a>
+      )}
+    </div>
+  </div>
+
+  <div class="shell header-subnav">
+    <nav class="header-nav" aria-label="主導覽">
+      {navItems.map((item) => (
+        <a class:list={['nav-link', current === item.key && 'is-active']} href={item.href}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="quick-links" aria-label="快速入口">
+      {quickLinks.map((item) => (
+        <a class="quick-link" href={item.href}>{item.label}</a>
+      ))}
+    </div>
+  </div>
+</header>
