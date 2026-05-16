@@ -1,0 +1,181 @@
+---
+import ProjectCard from '../ProjectCard.astro';
+import { categorySummaries, formatCompactNumber, projects } from '../../lib/projects';
+import { baseUrl } from '../../lib/site';
+---
+
+<section class="shell section-panel content-block">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Explore By Category</p>
+      <h2>先讓使用者從明確分類進站，再往下挑專案</h2>
+    </div>
+  </div>
+
+  <div class="category-grid">
+    {categorySummaries.map((summary) => (
+      <button
+        class="category-card"
+        type="button"
+        data-category-jump={summary.name}
+      >
+        <span class="pill">{summary.name}</span>
+        <h3>{summary.count} 個追蹤專案</h3>
+        <p class="muted">
+          目前累積 {formatCompactNumber(summary.stars)} stars，
+          其中 {summary.activeCount} 個專案近 30 天內有更新。
+        </p>
+        {summary.leadProject && (
+          <div class="stat-line">
+            <span>代表專案</span>
+            <strong>{summary.leadProject.fullName}</strong>
+          </div>
+        )}
+      </button>
+    ))}
+  </div>
+</section>
+
+<section class="shell section-panel content-block" id="discover-projects" data-discover-section>
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">推薦專案</p>
+      <h2>先用 curated 清單上線，再慢慢打開社群提報</h2>
+    </div>
+    <a class="button ghost" href={`${baseUrl}community/`}>看社群流程</a>
+  </div>
+
+  <div class="search-row">
+    <input
+      class="search-input"
+      type="search"
+      placeholder="搜尋 repo、類別、描述或 topic"
+      data-project-search
+    />
+    <div class="search-caption">
+      <span class="project-count" data-search-count>顯示 {projects.length} / {projects.length}</span>
+      <span class="muted">可以直接搜 repo 名稱、owner、分類、語言或 topic</span>
+    </div>
+    <div class="filter-pills">
+      <button class="pill" type="button" data-category-button data-category="全部" data-active="true">
+        全部
+      </button>
+      {categorySummaries.map((summary) => (
+        <button class="pill" type="button" data-category-button data-category={summary.name} data-active="false">
+          {summary.name}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  {
+    projects.length ? (
+      <>
+        <div class="project-grid">
+          {projects.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </div>
+        <p class="empty-state muted" hidden data-empty-state>
+          沒找到符合條件的專案，換個關鍵字或分類試試看。
+        </p>
+      </>
+    ) : (
+      <div class="empty-state">
+        <p>目前還沒有專案資料。先執行 `npm run sync:data`，或等待 GitHub Actions 同步。</p>
+      </div>
+    )
+  }
+</section>
+
+<script is:inline>
+  const searchInput = document.querySelector('[data-project-search]');
+  const categoryButtons = Array.from(document.querySelectorAll('[data-category-button]'));
+  const categoryJumpButtons = Array.from(document.querySelectorAll('[data-category-jump]'));
+  const projectCards = Array.from(document.querySelectorAll('[data-project-card]'));
+  const emptyState = document.querySelector('[data-empty-state]');
+  const searchCount = document.querySelector('[data-search-count]');
+  const discoverSection = document.querySelector('[data-discover-section]');
+  const params = new URLSearchParams(window.location.search);
+
+  let activeCategory = '全部';
+
+  function setActiveCategory(nextCategory) {
+    activeCategory = nextCategory;
+
+    for (const currentButton of categoryButtons) {
+      currentButton.setAttribute(
+        'data-active',
+        currentButton.getAttribute('data-category') === nextCategory ? 'true' : 'false',
+      );
+    }
+  }
+
+  function applyFilters() {
+    const keyword = (searchInput?.value || '').trim().toLowerCase();
+    let visibleCount = 0;
+
+    for (const card of projectCards) {
+      const category = card.getAttribute('data-category') || '';
+      const searchBlob = card.getAttribute('data-search') || '';
+      const matchesCategory = activeCategory === '全部' || category === activeCategory;
+      const matchesKeyword = !keyword || searchBlob.includes(keyword);
+      const visible = matchesCategory && matchesKeyword;
+
+      card.hidden = !visible;
+      if (visible) visibleCount += 1;
+    }
+
+    if (emptyState) {
+      emptyState.hidden = visibleCount !== 0;
+    }
+
+    if (searchCount) {
+      searchCount.textContent = `顯示 ${visibleCount} / ${projectCards.length}`;
+    }
+  }
+
+  searchInput?.addEventListener('input', applyFilters);
+
+  const initialKeyword = params.get('q') || '';
+  const initialCategory = params.get('category') || '';
+  const shouldJump =
+    params.get('jump') === 'discover-projects' ||
+    Boolean(initialKeyword) ||
+    Boolean(initialCategory);
+
+  if (searchInput && initialKeyword) {
+    searchInput.value = initialKeyword;
+  }
+
+  if (
+    initialCategory &&
+    categoryButtons.some((button) => button.getAttribute('data-category') === initialCategory)
+  ) {
+    setActiveCategory(initialCategory);
+  }
+
+  for (const button of categoryButtons) {
+    button.addEventListener('click', () => {
+      setActiveCategory(button.getAttribute('data-category') || '全部');
+      applyFilters();
+    });
+  }
+
+  for (const button of categoryJumpButtons) {
+    button.addEventListener('click', () => {
+      const nextCategory = button.getAttribute('data-category-jump') || '全部';
+      setActiveCategory(nextCategory);
+      applyFilters();
+      discoverSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  applyFilters();
+
+  if (shouldJump) {
+    requestAnimationFrame(() => {
+      discoverSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+</script>

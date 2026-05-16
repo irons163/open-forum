@@ -1,0 +1,95 @@
+---
+import {
+  activeProjects,
+  breakoutProjects,
+  buildTrendState,
+  formatCompactNumber,
+  formatDate,
+  lastSyncedAt,
+  projects,
+  totalStars,
+  trendingProjects,
+} from '../../lib/projects';
+import { baseUrl, recommendIssueUrl } from '../../lib/site';
+
+const spotlightProject = breakoutProjects[0] ?? trendingProjects[0] ?? projects[0];
+---
+
+<section class="shell">
+  <div class="announcement-strip section-panel">
+    <div class="announcement-copy">
+      <strong>Upcoming event: 每天自動刷新 GitHub 指標，逐步累積真正的熱度曲線。</strong>
+      <p class="muted">
+        這站用 GitHub Actions 定時同步 repo 資料。今天是 {formatDate(lastSyncedAt)} 的資料快照，
+        後續每天都會補齊 1d / 7d 的熱度增量。
+      </p>
+    </div>
+    <div class="announcement-meta">
+      <span class="chip">最近同步 {formatDate(lastSyncedAt)}</span>
+      <a class="button ghost compact" href={`${baseUrl}rankings/`}>查看榜單</a>
+      <a class="button ghost compact" href={`${baseUrl}launch/`}>公開前檢查</a>
+    </div>
+  </div>
+</section>
+
+<section class="shell hero-grid">
+  <div class="hero-card section-panel">
+    <p class="eyebrow">GitHub Pages Friendly</p>
+    <h1>推薦專案、追蹤熱度、順手把討論區一起帶上。</h1>
+    <p class="muted hero-lead">
+      這個版本是照你提供的站型去拆功能，但改成最適合 GitHub Pages 的做法：
+      靜態頁面負責展示、GitHub Actions 負責同步資料、GitHub Discussions / giscus 負責留言。
+    </p>
+    <div class="action-row">
+      <a class="button" href={`${baseUrl}rankings/`}>看熱度榜</a>
+      <a class="button ghost" href={recommendIssueUrl || `${baseUrl}community/`}>推薦專案</a>
+    </div>
+    <div class="chip-row">
+      <span class="chip">靜態部署</span>
+      <span class="chip">每日同步</span>
+      <span class="chip">社群提報</span>
+      <span class="chip">評論區預留</span>
+    </div>
+  </div>
+
+  <aside class="hero-aside section-panel">
+    <p class="eyebrow">站點快照</p>
+    <div class="metric-grid">
+      <div class="metric-card">
+        <span class="metric-label">追蹤 repo</span>
+        <strong>{projects.length}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">近 30 天活躍</span>
+        <strong>{activeProjects}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">總 stars</span>
+        <strong>{formatCompactNumber(totalStars)}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">最近同步</span>
+        <strong>{formatDate(lastSyncedAt)}</strong>
+      </div>
+    </div>
+
+    {
+      spotlightProject && (
+        <div class="notice" style="margin-top: 1rem;">
+          <div class="meta-pair">
+            <span class="pill">{spotlightProject.category}</span>
+            <span>{buildTrendState(spotlightProject).label}</span>
+          </div>
+          <h3 style="margin-bottom: 0.4rem;">焦點專案：{spotlightProject.fullName}</h3>
+          <p class="muted">{buildTrendState(spotlightProject).description}</p>
+          <div class="card-actions">
+            <a class="button compact" href={`${baseUrl}projects/${spotlightProject.slug}/`}>看詳情</a>
+            <a class="button ghost compact" href={spotlightProject.repoUrl} target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+          </div>
+        </div>
+      )
+    }
+  </aside>
+</section>

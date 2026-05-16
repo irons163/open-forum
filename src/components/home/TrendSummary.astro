@@ -1,0 +1,71 @@
+---
+import {
+  buildTrendState,
+  formatCompactNumber,
+  formatDate,
+  formatMomentum,
+  recentlyUpdatedProjects,
+  trendingProjects,
+} from '../../lib/projects';
+import { baseUrl, discussionsUrl } from '../../lib/site';
+---
+
+<section class="shell two-column">
+  <div class="section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Top Movers</p>
+        <h2>這週聲量往上衝的專案</h2>
+      </div>
+      <a class="button ghost" href={`${baseUrl}rankings/`}>完整榜單</a>
+    </div>
+
+    <div class="list-stack">
+      {trendingProjects.map((project, index) => (
+        <a class="list-link" href={`${baseUrl}projects/${project.slug}/`}>
+          <div class="rank-meta">
+            <span class="rank-number">{String(index + 1).padStart(2, '0')}</span>
+            <span class="pill">{project.category}</span>
+          </div>
+          <h3>{project.fullName}</h3>
+          <p class="muted">{project.highlight}</p>
+          <div class="rank-meta">
+            <span>{formatMomentum(project)}</span>
+            <span>{buildTrendState(project).label}</span>
+            <span>{formatCompactNumber(project.stars)} stars</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <div class="section-panel sidebar-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Recently Updated</p>
+        <h2>最近有在動的 repo</h2>
+      </div>
+    </div>
+
+    <div class="mini-feed">
+      {recentlyUpdatedProjects.map((project) => (
+        <a class="mini-feed-item" href={`${baseUrl}projects/${project.slug}/`}>
+          <div class="meta-pair">
+            <span class="pill">{project.category}</span>
+            <span>{formatDate(project.lastPushedAt)}</span>
+          </div>
+          <strong>{project.fullName}</strong>
+          <p class="muted">{project.description}</p>
+        </a>
+      ))}
+    </div>
+
+    <div class="notice">
+      <p>
+        {discussionsUrl
+          ? '如果你已經開啟 Discussions，這個模板會直接接上，首頁就能負責導流與整理。'
+          : '如果你還沒開啟 Discussions，也沒關係，先用 Issue Form 收件就能跑起來，之後再補留言區。'}
+      </p>
+    </div>
+  </div>
+</section>
