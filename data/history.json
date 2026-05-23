@@ -203,6 +203,12 @@
       "stars": 100063,
       "forks": 12254,
       "pushedAt": "2026-04-15T16:32:15Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 100206,
+      "forks": 12274,
+      "pushedAt": "2026-04-15T16:32:15Z"
     }
   ],
   "langchain-ai/langchain": [
@@ -409,6 +415,12 @@
       "stars": 137327,
       "forks": 22716,
       "pushedAt": "2026-05-21T23:00:51Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 137422,
+      "forks": 22731,
+      "pushedAt": "2026-05-23T01:46:30Z"
     }
   ],
   "microsoft/autogen": [
@@ -614,6 +626,12 @@
       "date": "2026-05-22",
       "stars": 58269,
       "forks": 8798,
+      "pushedAt": "2026-04-15T11:59:09Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 58302,
+      "forks": 8804,
       "pushedAt": "2026-04-15T11:59:09Z"
     }
   ],
@@ -821,6 +839,12 @@
       "stars": 139548,
       "forks": 31109,
       "pushedAt": "2026-05-22T01:08:40Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 139563,
+      "forks": 31113,
+      "pushedAt": "2026-05-23T01:56:50Z"
     }
   ],
   "sveltejs/svelte": [
@@ -1027,6 +1051,12 @@
       "stars": 86612,
       "forks": 4921,
       "pushedAt": "2026-05-22T01:57:24Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 86623,
+      "forks": 4923,
+      "pushedAt": "2026-05-22T21:40:30Z"
     }
   ],
   "tailwindlabs/tailwindcss": [
@@ -1233,6 +1263,12 @@
       "stars": 95086,
       "forks": 5259,
       "pushedAt": "2026-05-21T15:59:01Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 95093,
+      "forks": 5260,
+      "pushedAt": "2026-05-22T16:05:18Z"
     }
   ],
   "microsoft/playwright": [
@@ -1439,6 +1475,12 @@
       "stars": 89166,
       "forks": 5743,
       "pushedAt": "2026-05-21T23:04:15Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 89235,
+      "forks": 5744,
+      "pushedAt": "2026-05-22T23:15:57Z"
     }
   ],
   "astral-sh/uv": [
@@ -1645,6 +1687,12 @@
       "stars": 85307,
       "forks": 3153,
       "pushedAt": "2026-05-22T00:58:03Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 85366,
+      "forks": 3153,
+      "pushedAt": "2026-05-23T01:43:19Z"
     }
   ],
   "shadcn-ui/ui": [
@@ -1851,6 +1899,12 @@
       "stars": 114818,
       "forks": 8871,
       "pushedAt": "2026-05-21T18:27:10Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 114880,
+      "forks": 8877,
+      "pushedAt": "2026-05-22T16:13:44Z"
     }
   ],
   "supabase/supabase": [
@@ -2057,6 +2111,12 @@
       "stars": 102814,
       "forks": 12503,
       "pushedAt": "2026-05-22T01:52:36Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 102880,
+      "forks": 12514,
+      "pushedAt": "2026-05-22T23:44:03Z"
     }
   ],
   "nestjs/nest": [
@@ -2263,6 +2323,12 @@
       "stars": 75569,
       "forks": 8306,
       "pushedAt": "2026-05-22T00:53:58Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 75572,
+      "forks": 8307,
+      "pushedAt": "2026-05-22T19:09:39Z"
     }
   ],
   "payloadcms/payload": [
@@ -2469,6 +2535,12 @@
       "stars": 42529,
       "forks": 3725,
       "pushedAt": "2026-05-22T00:55:20Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 42562,
+      "forks": 3734,
+      "pushedAt": "2026-05-23T01:59:25Z"
     }
   ],
   "huggingface/transformers": [
@@ -2675,6 +2747,12 @@
       "stars": 160851,
       "forks": 33294,
       "pushedAt": "2026-05-21T15:47:59Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 160882,
+      "forks": 33298,
+      "pushedAt": "2026-05-22T19:58:10Z"
     }
   ],
   "ollama/ollama": [
@@ -2881,6 +2959,12 @@
       "stars": 171947,
       "forks": 16231,
       "pushedAt": "2026-05-21T20:19:03Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 172053,
+      "forks": 16247,
+      "pushedAt": "2026-05-22T16:47:04Z"
     }
   ],
   "vllm-project/vllm": [
@@ -3087,6 +3171,12 @@
       "stars": 80674,
       "forks": 17080,
       "pushedAt": "2026-05-22T01:18:05Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 80757,
+      "forks": 17122,
+      "pushedAt": "2026-05-23T01:24:33Z"
     }
   ],
   "langchain-ai/langgraph": [
@@ -3293,6 +3383,12 @@
       "stars": 32633,
       "forks": 5526,
       "pushedAt": "2026-05-21T21:30:35Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 32713,
+      "forks": 5535,
+      "pushedAt": "2026-05-22T16:57:50Z"
     }
   ],
   "comfyanonymous/ComfyUI": [
@@ -3499,6 +3595,12 @@
       "stars": 113901,
       "forks": 13341,
       "pushedAt": "2026-05-22T01:22:51Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 114068,
+      "forks": 13352,
+      "pushedAt": "2026-05-23T01:31:51Z"
     }
   ],
   "facebook/react": [
@@ -3705,6 +3807,12 @@
       "stars": 245170,
       "forks": 51088,
       "pushedAt": "2026-05-21T18:02:07Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 245188,
+      "forks": 51092,
+      "pushedAt": "2026-05-22T05:31:57Z"
     }
   ],
   "vuejs/core": [
@@ -3911,6 +4019,12 @@
       "stars": 53702,
       "forks": 9120,
       "pushedAt": "2026-05-22T01:48:48Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 53702,
+      "forks": 9123,
+      "pushedAt": "2026-05-23T01:54:39Z"
     }
   ],
   "nuxt/nuxt": [
@@ -4117,6 +4231,12 @@
       "stars": 60264,
       "forks": 5610,
       "pushedAt": "2026-05-21T21:41:21Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 60272,
+      "forks": 5613,
+      "pushedAt": "2026-05-22T21:58:20Z"
     }
   ],
   "withastro/astro": [
@@ -4323,6 +4443,12 @@
       "stars": 59467,
       "forks": 3470,
       "pushedAt": "2026-05-21T21:30:43Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 59495,
+      "forks": 3475,
+      "pushedAt": "2026-05-23T01:55:19Z"
     }
   ],
   "remix-run/react-router": [
@@ -4529,6 +4655,12 @@
       "stars": 56428,
       "forks": 10859,
       "pushedAt": "2026-05-21T21:32:24Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 56431,
+      "forks": 10859,
+      "pushedAt": "2026-05-22T21:01:52Z"
     }
   ],
   "biomejs/biome": [
@@ -4735,6 +4867,12 @@
       "stars": 24723,
       "forks": 1000,
       "pushedAt": "2026-05-21T23:06:38Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 24737,
+      "forks": 1000,
+      "pushedAt": "2026-05-22T11:01:43Z"
     }
   ],
   "vercel/turborepo": [
@@ -4941,6 +5079,12 @@
       "stars": 30421,
       "forks": 2349,
       "pushedAt": "2026-05-21T22:01:21Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 30425,
+      "forks": 2348,
+      "pushedAt": "2026-05-22T17:21:37Z"
     }
   ],
   "pnpm/pnpm": [
@@ -5147,6 +5291,12 @@
       "stars": 35180,
       "forks": 1453,
       "pushedAt": "2026-05-22T01:17:23Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 35202,
+      "forks": 1456,
+      "pushedAt": "2026-05-23T01:24:57Z"
     }
   ],
   "docker/compose": [
@@ -5353,6 +5503,12 @@
       "stars": 37409,
       "forks": 5834,
       "pushedAt": "2026-05-21T22:01:58Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 37422,
+      "forks": 5840,
+      "pushedAt": "2026-05-22T09:03:34Z"
     }
   ],
   "n8n-io/n8n": [
@@ -5559,6 +5715,12 @@
       "stars": 189112,
       "forks": 57889,
       "pushedAt": "2026-05-22T01:50:11Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 189322,
+      "forks": 57919,
+      "pushedAt": "2026-05-22T23:18:20Z"
     }
   ],
   "fastapi/fastapi": [
@@ -5765,6 +5927,12 @@
       "stars": 98412,
       "forks": 9324,
       "pushedAt": "2026-05-21T21:57:35Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 98446,
+      "forks": 9333,
+      "pushedAt": "2026-05-22T17:16:07Z"
     }
   ],
   "appwrite/appwrite": [
@@ -5971,6 +6139,12 @@
       "stars": 56119,
       "forks": 5373,
       "pushedAt": "2026-05-21T20:58:55Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 56124,
+      "forks": 5378,
+      "pushedAt": "2026-05-22T17:09:49Z"
     }
   ],
   "strapi/strapi": [
@@ -6177,6 +6351,12 @@
       "stars": 72219,
       "forks": 9727,
       "pushedAt": "2026-05-21T20:00:22Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 72227,
+      "forks": 9729,
+      "pushedAt": "2026-05-22T15:09:55Z"
     }
   ],
   "honojs/hono": [
@@ -6383,6 +6563,12 @@
       "stars": 30558,
       "forks": 1082,
       "pushedAt": "2026-05-19T11:38:10Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 30569,
+      "forks": 1083,
+      "pushedAt": "2026-05-22T09:15:57Z"
     }
   ],
   "directus/directus": [
@@ -6589,6 +6775,12 @@
       "stars": 35841,
       "forks": 4772,
       "pushedAt": "2026-05-21T23:21:08Z"
+    },
+    {
+      "date": "2026-05-23",
+      "stars": 35831,
+      "forks": 4771,
+      "pushedAt": "2026-05-22T19:39:27Z"
     }
   ]
 }
