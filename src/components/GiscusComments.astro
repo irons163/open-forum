@@ -71,7 +71,9 @@ const isReady = [repo, repoId, category, categoryId].every(Boolean);
             window.addEventListener('message', (event) => {
               if (event.origin !== 'https://giscus.app') return;
               const error = event.data?.giscus?.error;
-              if (typeof error === 'string' && /not installed|not found|Bad credentials/i.test(error)) {
+              if (typeof error !== 'string') return;
+              // 「Discussion not found」代表尚無討論串，留言後會自動建立，不是故障。
+              if (/not installed on this repository/i.test(error) || /Bad credentials/i.test(error)) {
                 showFallback();
               }
             });
