@@ -1,10 +1,10 @@
 # Open Forum
 
-一個適合部署在 GitHub Pages 的開源專案雷達站骨架，包含三件事：
+一個部署在 GitHub Pages 的開源專案雷達站，包含三件事：
 
 - 推薦專案：首頁與專案詳情頁可展示 curated repository 清單
 - 追蹤熱度：GitHub Actions 定時抓取 repo 指標，產出熱度榜
-- 可以討論：預留 GitHub Discussions + giscus 留言區
+- 可以討論：GitHub Discussions + giscus 留言區
 
 ## 新用戶快速開始
 
@@ -27,7 +27,7 @@
 
 建議路徑：**首頁 → 熱度榜 → 專案詳情 →（可選）社群提報**
 
-頂部導覽還有 **Discussions**、**Repo**；**檢查清單**（[launch](https://irons163.github.io/open-forum/launch/)）主要給站長公開前自查，一般訪客可略過。
+頂部導覽還有 **Discussions**、**Repo**。站長用的巡檢清單在頁尾 [站長工具](https://irons163.github.io/open-forum/launch/)。
 
 ### 想自己架一個同款站？（開發者）
 

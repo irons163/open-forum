@@ -8,18 +8,16 @@ const navItems = [
   { key: 'home', label: '首頁', href: `${baseUrl}` },
   { key: 'rankings', label: '熱度榜', href: `${baseUrl}rankings/` },
   { key: 'community', label: '社群', href: `${baseUrl}community/` },
-  { key: 'launch', label: '檢查清單', href: `${baseUrl}launch/` },
 ];
 
 const quickLinks = [
-  { label: '項目推薦', href: `${baseUrl}#discover-projects` },
-  { label: '趨勢榜', href: `${baseUrl}rankings/` },
+  { label: '探索專案', href: `${baseUrl}#discover-projects` },
+  { label: '熱度榜', href: `${baseUrl}rankings/` },
   ...categorySummaries.slice(0, 4).map((summary) => ({
     label: summary.name,
     href: `${baseUrl}?category=${encodeURIComponent(summary.name)}#discover-projects`,
   })),
-  { label: '公開前檢查', href: `${baseUrl}launch/` },
-  { label: '社群', href: `${baseUrl}community/` },
+  { label: '推薦收錄', href: `${baseUrl}community/` },
 ];
 ---
 

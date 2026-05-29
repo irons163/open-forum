@@ -25,15 +25,15 @@
   "watchlist": [
     {
       "title": "同類型對比",
-      "description": "下週可以挑 `Supabase vs Appwrite` 或 `Next.js vs Astro` 做一篇短評，讓站不只有榜單，還有判斷脈絡。"
+      "description": "Supabase vs Appwrite、Next.js vs Astro——你會怎麼選？歡迎到 Discussions 分享實際經驗。"
     },
     {
-      "title": "新進榜觀察",
-      "description": "如果某個 repo 連續幾天都在 Top Movers，可以把它拉進人工精選區，開始累積編輯視角。"
+      "title": "本週快速上升",
+      "description": "熱度榜 Top Movers 裡的專案，哪一個最讓你意外？點進詳情看 7 天增量再開聊。"
     },
     {
-      "title": "社群發問",
-      "description": "可以在 Discussions 開一題：『最近你正在追哪個開源工具？』讓推薦內容不只來自 maintainer。"
+      "title": "你在用什麼",
+      "description": "最近工作流或 side project 倚賴哪個開源工具？一句心得就很有幫助。"
     }
   ]
 }

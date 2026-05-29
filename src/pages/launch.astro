@@ -4,62 +4,61 @@ import { baseUrl, discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/
 
 const checklist = [
   {
-    title: '首頁內容看起來像真的產品',
+    title: '首頁與導覽正常',
     items: [
-      '首頁 Hero、榜單、社群頁都能正常開啟。',
-      '本週編輯推薦沒有過時內容或空卡片。',
-      '分類入口、搜尋與篩選都能正常互動。',
+      '首頁、熱度榜、社群、專案詳情都能開啟。',
+      '編輯精選與週報沒有過時或空白內容。',
+      '搜尋與分類篩選可正常操作。',
     ],
   },
   {
-    title: '資料同步與榜單正常',
+    title: '資料與榜單',
     items: [
-      '首頁與熱度榜都有最新同步日期。',
-      '至少有一批 repo 已成功同步，榜單不是空的。',
-      '如果剛上線不久，接受 7d / 30d 還在累積中，但文案要說清楚。',
+      '首頁與熱度榜顯示最新同步日期。',
+      '榜單有資料，stars 與 7d 增量合理。',
+      '若歷史樣本仍短，頁面文案有說明「累積中」。',
     ],
   },
   {
-    title: '社群提報路徑可用',
+    title: '社群流程',
     items: [
-      'Issue Form 可以正常打開並填寫。',
-      'Discussions 已開啟，至少有一個可用分類。',
-      '社群頁有清楚寫出提報規則與不上榜條件。',
+      'Issue 提報表單可開啟、可送出。',
+      'Discussions 已啟用，giscus 留言正常顯示。',
+      '社群頁收錄標準清楚易懂。',
     ],
   },
   {
-    title: '公開前最後確認',
+    title: '對外分享前',
     items: [
-      '手機版首頁沒有爆版，卡片內容可閱讀。',
-      'GitHub Pages 已部署最新 commit。',
-      '如果要貼社群，先自己走一次首頁到詳情頁的完整路徑。',
+      '手機版版面正常、卡片可讀。',
+      'GitHub Pages 已部署最新版本。',
+      '親自走一遍：首頁 → 榜單 → 詳情 → 提報。',
     ],
   },
 ];
 
 const afterLaunch = [
-  '上線後 24 小時內回頭看一次首頁、榜單、社群頁是否都還正常。',
-  '每週至少整理一次提報，把值得收錄與不收錄的標準維持一致。',
-  '等歷史資料累積一週後，再回頭看哪些 repo 的熱度描述需要調整。',
+  '上線後 24 小時內再檢查首頁、榜單、社群是否正常。',
+  '每週整理提報，維持收錄標準一致。',
+  '更新 weekly-brief 與 editorial-notes，讓首頁保持新鮮感。',
 ];
 ---
 
 <Layout
-  title="公開檢查清單 | Open Forum"
-  description="把 Open Forum 對外公開前，快速確認首頁、榜單、社群與資料同步是否都正常。"
+  title="站長工具 | Open Forum"
+  description="站長用的巡檢清單：確認資料同步、社群流程與對外分享前的最後檢查。"
   current="launch"
 >
   <section class="shell two-column">
     <div class="section-panel content-block">
-      <p class="eyebrow">Launch Checklist</p>
-      <h1 class="detail-title">公開前最後巡一遍，會省掉很多小尷尬。</h1>
+      <p class="eyebrow">站長工具</p>
+      <h1 class="detail-title">發布更新或對外宣傳前，快速巡檢一遍。</h1>
       <p class="muted">
-        這頁不是給開發用的技術文件，而是給你每次要公開貼站、更新大功能、或準備讓更多人進來看時，
-        快速確認站點狀態的營運清單。
+        這頁給站長使用，一般訪客請從首頁或熱度榜開始。每次大更新、換週報或要貼社群前，可以用這份清單確認狀態。
       </p>
 
       <div class="action-row">
-        <a class="button" href={baseUrl}>回首頁看實站</a>
+        <a class="button" href={baseUrl}>回首頁</a>
         <a class="button ghost" href={`${baseUrl}rankings/`}>看熱度榜</a>
       </div>
     </div>
@@ -67,8 +66,8 @@ const afterLaunch = [
     <div class="section-panel sidebar-block">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">管理入口</p>
-          <h2>你最常會打開的地方</h2>
+          <p class="eyebrow">快速入口</p>
+          <h2>管理時常用</h2>
         </div>
       </div>
 
@@ -76,19 +75,19 @@ const afterLaunch = [
         {siteRepoUrl && (
           <a class="list-link" href={siteRepoUrl} target="_blank" rel="noreferrer">
             <h3>GitHub Repo</h3>
-            <p class="muted">看 commits、Actions、Pages 部署與 repo 設定。</p>
+            <p class="muted">Actions、Pages 部署與設定。</p>
           </a>
         )}
         {recommendIssueUrl && (
           <a class="list-link" href={recommendIssueUrl} target="_blank" rel="noreferrer">
-            <h3>Issue Form</h3>
-            <p class="muted">測試社群提報流程是不是順的。</p>
+            <h3>Issue 提報</h3>
+            <p class="muted">測試推薦表單是否正常。</p>
           </a>
         )}
         {discussionsUrl && (
           <a class="list-link" href={discussionsUrl} target="_blank" rel="noreferrer">
             <h3>Discussions</h3>
-            <p class="muted">確認是否有導流、回覆、以及可討論的主題。</p>
+            <p class="muted">社群討論與公告。</p>
           </a>
         )}
       </div>
@@ -99,8 +98,8 @@ const afterLaunch = [
     <div class="section-panel content-block">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">Before Public</p>
-          <h2>公開前檢查</h2>
+          <p class="eyebrow">巡檢項目</p>
+          <h2>發布前檢查</h2>
         </div>
       </div>
 
@@ -121,8 +120,8 @@ const afterLaunch = [
     <div class="section-panel sidebar-block">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">After Launch</p>
-          <h2>公開後要盯的事</h2>
+          <p class="eyebrow">上線後</p>
+          <h2>建議節奏</h2>
         </div>
       </div>
 
@@ -136,7 +135,7 @@ const afterLaunch = [
       </div>
 
       <div class="notice">
-        <p>如果你之後要分享給朋友、貼社群、或當作品集，這頁就可以當你的固定 release checklist。</p>
+        <p>資料檔：<code>weekly-brief.json</code>、<code>editorial-notes.json</code>、<code>project-seeds.json</code></p>
       </div>
     </div>
   </section>

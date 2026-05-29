@@ -1,12 +1,13 @@
 ---
 import { weeklyBrief } from '../../lib/projects';
+import { baseUrl, discussionsUrl } from '../../lib/site';
 ---
 
 <section class="shell two-column">
   <div class="section-panel content-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">Weekly Notes</p>
+        <p class="eyebrow">本週觀察</p>
         <h2>{weeklyBrief.headline}</h2>
       </div>
       <span class="pill subtle">{weeklyBrief.weekLabel}</span>
@@ -29,30 +30,37 @@ import { weeklyBrief } from '../../lib/projects';
   <div class="section-panel sidebar-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">Use This Well</p>
-        <h2>這塊該怎麼經營</h2>
+        <p class="eyebrow">怎麼用這站</p>
+        <h2>三分鐘逛完</h2>
       </div>
     </div>
 
     <div class="list-stack">
       <div class="flow-step">
-        <strong>每週更新一次就夠</strong>
-        <p class="muted">它不是新聞快訊，而是用來給這站一點判斷力與節奏感。</p>
+        <strong>01. 看榜單</strong>
+        <p class="muted">到熱度榜找 7 天增量、相對增幅與完整排序，點進感興趣的 repo。</p>
       </div>
       <div class="flow-step">
-        <strong>用短評，不用長文</strong>
-        <p class="muted">一句到兩句最剛好，重點是讓使用者知道你為什麼現在看這些 repo。</p>
+        <strong>02. 讀精選</strong>
+        <p class="muted">首頁編輯區會補一句「為什麼現在值得看」，不只給 star 數字。</p>
       </div>
       <div class="flow-step">
-        <strong>搭配 Discussions 開題</strong>
-        <p class="muted">首頁寫完觀察後，最自然的下一步就是把題目丟到社群裡討論。</p>
+        <strong>03. 參與社群</strong>
+        <p class="muted">想收錄新專案就提交推薦；有想法就到 Discussions 或頁面留言區討論。</p>
       </div>
     </div>
 
     <div class="notice">
       <p>
-        之後你只要改 <code>src/data/weekly-brief.json</code>，
-        這塊首頁內容就會跟著換，不需要再動 Astro 模板。
+        <a href={`${baseUrl}rankings/`}>熱度榜</a>
+        {' · '}
+        <a href={`${baseUrl}community/`}>社群提報</a>
+        {discussionsUrl && (
+          <>
+            {' · '}
+            <a href={discussionsUrl} target="_blank" rel="noreferrer">Discussions</a>
+          </>
+        )}
       </p>
     </div>
   </div>

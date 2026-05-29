@@ -10,7 +10,7 @@ import {
   totalStars,
   trendingProjects,
 } from '../../lib/projects';
-import { baseUrl, recommendIssueUrl } from '../../lib/site';
+import { baseUrl, discussionsUrl, recommendIssueUrl } from '../../lib/site';
 
 const spotlightProject = breakoutProjects[0] ?? trendingProjects[0] ?? projects[0];
 ---
@@ -18,37 +18,40 @@ const spotlightProject = breakoutProjects[0] ?? trendingProjects[0] ?? projects[
 <section class="shell">
   <div class="announcement-strip section-panel">
     <div class="announcement-copy">
-      <strong>Upcoming event: 每天自動刷新 GitHub 指標，逐步累積真正的熱度曲線。</strong>
+      <strong>每日更新 GitHub 指標，熱度榜反映最新 stars 與近 7 天增量。</strong>
       <p class="muted">
-        這站用 GitHub Actions 定時同步 repo 資料。今天是 {formatDate(lastSyncedAt)} 的資料快照，
-        後續每天都會補齊 1d / 7d 的熱度增量。
+        目前追蹤 {projects.length} 個開源 repo。以下為 {formatDate(lastSyncedAt)} 的資料快照。
       </p>
     </div>
     <div class="announcement-meta">
       <span class="chip">最近同步 {formatDate(lastSyncedAt)}</span>
       <a class="button ghost compact" href={`${baseUrl}rankings/`}>查看榜單</a>
-      <a class="button ghost compact" href={`${baseUrl}launch/`}>公開前檢查</a>
+      {discussionsUrl && (
+        <a class="button ghost compact" href={discussionsUrl} target="_blank" rel="noreferrer">
+          加入討論
+        </a>
+      )}
     </div>
   </div>
 </section>
 
 <section class="shell hero-grid">
   <div class="hero-card section-panel">
-    <p class="eyebrow">GitHub Pages Friendly</p>
-    <h1>推薦專案、追蹤熱度、順手把討論區一起帶上。</h1>
+    <p class="eyebrow">開源專案雷達</p>
+    <h1>推薦專案、追蹤熱度、順手參與討論。</h1>
     <p class="muted hero-lead">
-      這個版本是照你提供的站型去拆功能，但改成最適合 GitHub Pages 的做法：
-      靜態頁面負責展示、GitHub Actions 負責同步資料、GitHub Discussions / giscus 負責留言。
+      精選值得追的 GitHub repo，用每日同步的 stars 與增長數據排出熱度榜。
+      看到好專案可以推薦收錄，想深聊就到 Discussions。
     </p>
     <div class="action-row">
       <a class="button" href={`${baseUrl}rankings/`}>看熱度榜</a>
       <a class="button ghost" href={recommendIssueUrl || `${baseUrl}community/`}>推薦專案</a>
     </div>
     <div class="chip-row">
-      <span class="chip">靜態部署</span>
       <span class="chip">每日同步</span>
+      <span class="chip">編輯精選</span>
       <span class="chip">社群提報</span>
-      <span class="chip">評論區預留</span>
+      {discussionsUrl && <span class="chip">Discussions</span>}
     </div>
   </div>
 
@@ -80,7 +83,7 @@ const spotlightProject = breakoutProjects[0] ?? trendingProjects[0] ?? projects[
             <span class="pill">{spotlightProject.category}</span>
             <span>{buildTrendState(spotlightProject).label}</span>
           </div>
-          <h3 style="margin-bottom: 0.4rem;">焦點專案：{spotlightProject.fullName}</h3>
+          <h3 style="margin-bottom: 0.4rem;">本週焦點：{spotlightProject.fullName}</h3>
           <p class="muted">{buildTrendState(spotlightProject).description}</p>
           <div class="card-actions">
             <a class="button compact" href={`${baseUrl}projects/${spotlightProject.slug}/`}>看詳情</a>

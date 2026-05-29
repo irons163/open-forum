@@ -14,7 +14,7 @@ import { baseUrl, discussionsUrl } from '../../lib/site';
   <div class="section-panel content-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">Top Movers</p>
+        <p class="eyebrow">熱度上升</p>
         <h2>這週聲量往上衝的專案</h2>
       </div>
       <a class="button ghost" href={`${baseUrl}rankings/`}>完整榜單</a>
@@ -42,7 +42,7 @@ import { baseUrl, discussionsUrl } from '../../lib/site';
   <div class="section-panel sidebar-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">Recently Updated</p>
+        <p class="eyebrow">最近更新</p>
         <h2>最近有在動的 repo</h2>
       </div>
     </div>
@@ -60,12 +60,12 @@ import { baseUrl, discussionsUrl } from '../../lib/site';
       ))}
     </div>
 
-    <div class="notice">
-      <p>
-        {discussionsUrl
-          ? '如果你已經開啟 Discussions，這個模板會直接接上，首頁就能負責導流與整理。'
-          : '如果你還沒開啟 Discussions，也沒關係，先用 Issue Form 收件就能跑起來，之後再補留言區。'}
-      </p>
-    </div>
+    {discussionsUrl && (
+      <div class="notice">
+        <p>
+          對某個 repo 有使用心得？到 <a href={discussionsUrl} target="_blank" rel="noreferrer">Discussions</a> 分享，或從專案詳情頁留言。
+        </p>
+      </div>
+    )}
   </div>
 </section>

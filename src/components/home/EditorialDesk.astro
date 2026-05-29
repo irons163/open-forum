@@ -6,17 +6,17 @@ import {
   formatCompactNumber,
   formatMomentum,
 } from '../../lib/projects';
-import { baseUrl } from '../../lib/site';
+import { baseUrl, discussionsUrl } from '../../lib/site';
 ---
 
 <section class="shell two-column">
   <div class="section-panel content-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">Editorial Desk</p>
-        <h2>不只看數字，也給使用者一點編輯判斷</h2>
+        <p class="eyebrow">編輯精選</p>
+        <h2>不只看數字，也給一點判斷方向</h2>
       </div>
-      <a class="button ghost" href={`${baseUrl}community/`}>看提報規則</a>
+      <a class="button ghost" href={`${baseUrl}community/`}>推薦收錄</a>
     </div>
 
     <div class="list-stack">
@@ -49,8 +49,8 @@ import { baseUrl } from '../../lib/site';
   <div class="section-panel sidebar-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">Next To Watch</p>
-        <h2>接下來可以持續經營的題目</h2>
+        <p class="eyebrow">延伸話題</p>
+        <h2>適合拿去討論的題目</h2>
       </div>
     </div>
 
@@ -63,11 +63,12 @@ import { baseUrl } from '../../lib/site';
       ))}
     </div>
 
-    <div class="notice">
-      <p>
-        這一塊是故意做成「人工可編輯」，不是全靠算法。之後你只要改
-        <code>src/data/editorial-notes.json</code>，首頁精選就會跟著換。
-      </p>
-    </div>
+    {discussionsUrl && (
+      <div class="notice">
+        <p>
+          有想法？到 <a href={discussionsUrl} target="_blank" rel="noreferrer">Discussions</a> 開串討論，或從下方專案頁留言。
+        </p>
+      </div>
+    )}
   </div>
 </section>

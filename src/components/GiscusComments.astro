@@ -13,7 +13,7 @@ const isReady = [repo, repoId, category, categoryId].every(Boolean);
   <div class="section-heading">
     <div>
       <p class="eyebrow">討論區</p>
-      <h2>可以直接掛 GitHub Discussions</h2>
+      <h2>留言與討論</h2>
     </div>
   </div>
 
@@ -40,10 +40,7 @@ const isReady = [repo, repoId, category, categoryId].every(Boolean);
       ></script>
     ) : (
       <div class="notice">
-        <p>
-          這個區塊已預留給 giscus。你只要在 repo 開啟 GitHub Discussions、安裝 giscus App，再把
-          `PUBLIC_GISCUS_*` 變數填進 `.env` 或 GitHub Actions variables，就能直接留言。
-        </p>
+        <p>留言區尚未啟用。請到 GitHub Discussions 參與討論。</p>
         <div class="action-row">
           {discussionsUrl && (
             <a class="button" href={discussionsUrl} target="_blank" rel="noreferrer">
