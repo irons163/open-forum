@@ -6,6 +6,33 @@
 - 追蹤熱度：GitHub Actions 定時抓取 repo 指標，產出熱度榜
 - 可以討論：預留 GitHub Discussions + giscus 留言區
 
+## 新用戶快速開始
+
+### 網站在哪裡？
+
+用瀏覽器打開（不需安裝、不需登入）：
+
+**https://irons163.github.io/open-forum/**
+
+### 第一次怎麼用？（訪客）
+
+把這站當成「開源專案雷達」：看榜、點進專案、想推薦再去 GitHub 提報。
+
+1. **首頁** — 本週編輯推薦、週報、專案探索（可依分類篩選、搜尋）
+2. **熱度榜** — [rankings](https://irons163.github.io/open-forum/rankings/)：7 天增量、相對增幅、完整排序
+3. **專案詳情** — 從榜單或首頁點進任一 repo，看 stars、成長曲線與 GitHub 連結
+4. **社群** — [community](https://irons163.github.io/open-forum/community/)：
+   - 推薦專案：填 [Issue Form](https://github.com/irons163/open-forum/issues/new?template=recommend-project.yml)（需 GitHub 帳號）
+   - 討論：[Discussions](https://github.com/irons163/open-forum/discussions) 或頁面底部的 giscus 留言
+
+建議路徑：**首頁 → 熱度榜 → 專案詳情 →（可選）社群提報**
+
+頂部導覽還有 **Discussions**、**Repo**；**檢查清單**（[launch](https://irons163.github.io/open-forum/launch/)）主要給站長公開前自查，一般訪客可略過。
+
+### 想自己架一個同款站？（開發者）
+
+往下看 [本機開發](#本機開發) 與 [上線到 GitHub Pages](#上線到-github-pages)。fork 本 repo 後，你的網址會是 `https://<帳號>.github.io/<repo名>/`。
+
 ## 架構
 
 - `Astro`：純靜態頁面，最適合 GitHub Pages
