@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   sync:
@@ -30,8 +31,10 @@ jobs:
         run: npm run sync:data
 
       - name: Commit refreshed data
+        id: commit
         run: |
           if git diff --quiet -- src/data/projects.generated.json data/history.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No changes to commit."
             exit 0
           fi
@@ -41,3 +44,10 @@ jobs:
           git add src/data/projects.generated.json data/history.json
           git commit -m "chore(data): refresh project metrics"
           git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger Pages deploy
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy.yml --repo "${{ github.repository }}" --ref main
