@@ -4,6 +4,7 @@ const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID;
 const category = import.meta.env.PUBLIC_GISCUS_CATEGORY;
 const categoryId = import.meta.env.PUBLIC_GISCUS_CATEGORY_ID;
 const discussionsUrl = import.meta.env.PUBLIC_DISCUSSIONS_URL;
+const giscusInstallUrl = 'https://github.com/apps/giscus/installations/new';
 const mapping = Astro.props.mapping ?? 'pathname';
 const term = Astro.props.term ?? '';
 const isReady = [repo, repoId, category, categoryId].every(Boolean);
@@ -19,25 +20,64 @@ const isReady = [repo, repoId, category, categoryId].every(Boolean);
 
   {
     isReady ? (
-      <script
-        is:inline
-        src="https://giscus.app/client.js"
-        data-repo={repo}
-        data-repo-id={repoId}
-        data-category={category}
-        data-category-id={categoryId}
-        data-mapping={mapping}
-        data-term={term}
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="light_protanopia"
-        data-lang="zh-TW"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async
-      ></script>
+      <>
+        <div class="giscus-host" data-giscus-host>
+          <script
+            is:inline
+            src="https://giscus.app/client.js"
+            data-repo={repo}
+            data-repo-id={repoId}
+            data-category={category}
+            data-category-id={categoryId}
+            data-mapping={mapping}
+            data-term={term}
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="top"
+            data-theme="light_protanopia"
+            data-lang="zh-TW"
+            data-loading="lazy"
+            crossorigin="anonymous"
+            async
+          ></script>
+        </div>
+
+        <div class="notice giscus-fallback" data-giscus-fallback hidden>
+          <p>頁面留言暫時無法載入。請先到 GitHub Discussions 討論，或請站長完成 giscus 安裝。</p>
+          <div class="action-row">
+            {discussionsUrl && (
+              <a class="button" href={discussionsUrl} target="_blank" rel="noreferrer">
+                打開 GitHub Discussions
+              </a>
+            )}
+            <a class="button ghost" href={giscusInstallUrl} target="_blank" rel="noreferrer">
+              安裝 giscus App
+            </a>
+          </div>
+        </div>
+
+        <script is:inline>
+          (() => {
+            const host = document.querySelector('[data-giscus-host]');
+            const fallback = document.querySelector('[data-giscus-fallback]');
+            if (!host || !fallback) return;
+
+            const showFallback = () => {
+              host.setAttribute('hidden', '');
+              fallback.removeAttribute('hidden');
+            };
+
+            window.addEventListener('message', (event) => {
+              if (event.origin !== 'https://giscus.app') return;
+              const error = event.data?.giscus?.error;
+              if (typeof error === 'string' && /not installed|not found|Bad credentials/i.test(error)) {
+                showFallback();
+              }
+            });
+          })();
+        </script>
+      </>
     ) : (
       <div class="notice">
         <p>留言區尚未啟用。請到 GitHub Discussions 參與討論。</p>
@@ -47,7 +87,7 @@ const isReady = [repo, repoId, category, categoryId].every(Boolean);
               打開 GitHub Discussions
             </a>
           )}
-          <a class="button ghost" href="https://github.com/apps/giscus" target="_blank" rel="noreferrer">
+          <a class="button ghost" href={giscusInstallUrl} target="_blank" rel="noreferrer">
             安裝 giscus App
           </a>
         </div>

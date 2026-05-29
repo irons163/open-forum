@@ -89,7 +89,9 @@ gh repo create <repo> --public --source=. --remote=origin --push
 
 ## 啟用討論
 
-在 repo 開啟 GitHub Discussions，接著安裝 giscus App，然後設定下列變數：
+在 repo 開啟 GitHub Discussions，接著**安裝 [giscus App](https://github.com/apps/giscus)**（選 `irons163/open-forum` 並授權），然後設定下列變數：
+
+若頁面出現 `giscus is not installed on this repository`，代表變數已設但 **App 尚未安裝到這個 repo**，到上方連結安裝後重新整理即可。
 
 ```bash
 PUBLIC_SITE_REPO=https://github.com/<you>/<repo>
