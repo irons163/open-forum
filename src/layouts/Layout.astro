@@ -2,6 +2,7 @@
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import { baseUrl } from '../lib/site';
+import { themeColors, themeStorageKey } from '../lib/theme';
 import '../styles/global.css';
 
 const {
@@ -13,7 +14,7 @@ const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).toStri
 ---
 
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -28,7 +29,31 @@ const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).toStri
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <meta name="robots" content="index,follow" />
-    <meta name="theme-color" content="#f57f17" />
+    <meta name="theme-color" content={themeColors.light} />
+    <script is:inline define:vars={{ themeStorageKey, themeColors }}>
+      (() => {
+        const root = document.documentElement;
+        const systemTheme = () =>
+          window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const storedTheme = (() => {
+          try {
+            const value = window.localStorage?.getItem(themeStorageKey);
+            return value === 'light' || value === 'dark' ? value : '';
+          } catch {
+            return '';
+          }
+        })();
+        const theme = storedTheme || systemTheme();
+
+        root.dataset.theme = theme;
+        root.style.colorScheme = theme;
+
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          meta.setAttribute('content', themeColors[theme]);
+        }
+      })();
+    </script>
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
     <meta property="og:type" content="website" />
