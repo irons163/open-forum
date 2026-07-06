@@ -1,4 +1,6 @@
 ---
+import { giscusThemes } from '../lib/theme';
+
 const repo = import.meta.env.PUBLIC_GISCUS_REPO;
 const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID;
 const category = import.meta.env.PUBLIC_GISCUS_CATEGORY;
@@ -21,27 +23,16 @@ const isReady = [repo, repoId, category, categoryId].every(Boolean);
   {
     isReady ? (
       <>
-        <div class="giscus-host" data-giscus-host>
-          <script
-            is:inline
-            src="https://giscus.app/client.js"
-            data-repo={repo}
-            data-repo-id={repoId}
-            data-category={category}
-            data-category-id={categoryId}
-            data-mapping={mapping}
-            data-term={term}
-            data-strict="0"
-            data-reactions-enabled="1"
-            data-emit-metadata="0"
-            data-input-position="top"
-            data-theme="light_protanopia"
-            data-lang="zh-TW"
-            data-loading="lazy"
-            crossorigin="anonymous"
-            async
-          ></script>
-        </div>
+        <div
+          class="giscus-host"
+          data-giscus-host
+          data-repo={repo}
+          data-repo-id={repoId}
+          data-category={category}
+          data-category-id={categoryId}
+          data-mapping={mapping}
+          data-term={term}
+        ></div>
 
         <div class="notice giscus-fallback" data-giscus-fallback hidden>
           <p>頁面留言暫時無法載入。請先到 GitHub Discussions 討論，或請站長完成 giscus 安裝。</p>
@@ -57,26 +48,76 @@ const isReady = [repo, repoId, category, categoryId].every(Boolean);
           </div>
         </div>
 
-        <script is:inline>
+        <script is:inline define:vars={{ giscusThemes }}>
           (() => {
             const host = document.querySelector('[data-giscus-host]');
             const fallback = document.querySelector('[data-giscus-fallback]');
             if (!host || !fallback) return;
+
+            const getTheme = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+            const resolveGiscusTheme = () => giscusThemes[getTheme()];
 
             const showFallback = () => {
               host.setAttribute('hidden', '');
               fallback.removeAttribute('hidden');
             };
 
+            const syncGiscusTheme = () => {
+              const frame = document.querySelector('iframe.giscus-frame');
+              if (!frame?.contentWindow) return;
+
+              frame.contentWindow.postMessage(
+                {
+                  giscus: {
+                    setConfig: {
+                      theme: resolveGiscusTheme(),
+                    },
+                  },
+                },
+                'https://giscus.app',
+              );
+            };
+
+            const loadGiscus = () => {
+              const script = document.createElement('script');
+              script.src = 'https://giscus.app/client.js';
+              script.async = true;
+              script.crossOrigin = 'anonymous';
+              script.setAttribute('data-repo', host.getAttribute('data-repo') || '');
+              script.setAttribute('data-repo-id', host.getAttribute('data-repo-id') || '');
+              script.setAttribute('data-category', host.getAttribute('data-category') || '');
+              script.setAttribute('data-category-id', host.getAttribute('data-category-id') || '');
+              script.setAttribute('data-mapping', host.getAttribute('data-mapping') || 'pathname');
+              script.setAttribute('data-term', host.getAttribute('data-term') || '');
+              script.setAttribute('data-strict', '0');
+              script.setAttribute('data-reactions-enabled', '1');
+              script.setAttribute('data-emit-metadata', '0');
+              script.setAttribute('data-input-position', 'top');
+              script.setAttribute('data-theme', resolveGiscusTheme());
+              script.setAttribute('data-lang', 'zh-TW');
+              script.setAttribute('data-loading', 'lazy');
+              host.appendChild(script);
+            };
+
+            const observer = new MutationObserver(syncGiscusTheme);
+            observer.observe(host, { childList: true, subtree: true });
+
+            window.addEventListener('open-forum-theme-change', syncGiscusTheme);
             window.addEventListener('message', (event) => {
               if (event.origin !== 'https://giscus.app') return;
               const error = event.data?.giscus?.error;
-              if (typeof error !== 'string') return;
-              // 「Discussion not found」代表尚無討論串，留言後會自動建立，不是故障。
-              if (/not installed on this repository/i.test(error) || /Bad credentials/i.test(error)) {
-                showFallback();
+
+              if (typeof error === 'string') {
+                if (/not installed on this repository/i.test(error) || /Bad credentials/i.test(error)) {
+                  showFallback();
+                }
+                return;
               }
+
+              syncGiscusTheme();
             });
+
+            loadGiscus();
           })();
         </script>
       </>
