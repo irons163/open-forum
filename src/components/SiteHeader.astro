@@ -1,6 +1,7 @@
 ---
 import { categorySummaries } from '../lib/projects';
 import { baseUrl, discussionsUrl, siteRepoUrl } from '../lib/site';
+import { themeColors, themeStorageKey } from '../lib/theme';
 
 const { current = 'home' } = Astro.props;
 
@@ -52,6 +53,17 @@ const quickLinks = [
           Repo
         </a>
       )}
+      <button
+        class="theme-toggle"
+        type="button"
+        data-theme-toggle
+        aria-label="切換到深色模式"
+        aria-pressed="false"
+        title="切換到深色模式"
+      >
+        <span class="theme-toggle-icon" data-theme-toggle-icon aria-hidden="true">☀</span>
+        <span class="visually-hidden" data-theme-toggle-label>切換到深色模式</span>
+      </button>
     </div>
   </div>
 
@@ -71,3 +83,59 @@ const quickLinks = [
     </div>
   </div>
 </header>
+
+<script is:inline define:vars={{ themeStorageKey, themeColors }}>
+  (() => {
+    const button = document.querySelector('[data-theme-toggle]');
+    if (!button) return;
+
+    const root = document.documentElement;
+    const icon = button.querySelector('[data-theme-toggle-icon]');
+    const label = button.querySelector('[data-theme-toggle-label]');
+    const meta = document.querySelector('meta[name="theme-color"]');
+
+    const getTheme = () => (root.dataset.theme === 'dark' ? 'dark' : 'light');
+
+    const updateButton = (theme) => {
+      const nextLabel = theme === 'dark' ? '切換到淺色模式' : '切換到深色模式';
+
+      button.setAttribute('aria-label', nextLabel);
+      button.setAttribute('aria-pressed', String(theme === 'dark'));
+      button.setAttribute('title', nextLabel);
+
+      if (icon) {
+        icon.textContent = theme === 'dark' ? '☾' : '☀';
+      }
+
+      if (label) {
+        label.textContent = nextLabel;
+      }
+    };
+
+    const setTheme = (theme, persist) => {
+      root.dataset.theme = theme;
+      root.style.colorScheme = theme;
+
+      if (meta) {
+        meta.setAttribute('content', themeColors[theme]);
+      }
+
+      if (persist) {
+        try {
+          window.localStorage?.setItem(themeStorageKey, theme);
+        } catch {
+          // Storage can be unavailable in strict browser contexts.
+        }
+      }
+
+      updateButton(theme);
+      window.dispatchEvent(new CustomEvent('open-forum-theme-change', { detail: { theme } }));
+    };
+
+    updateButton(getTheme());
+
+    button.addEventListener('click', () => {
+      setTheme(getTheme() === 'dark' ? 'light' : 'dark', true);
+    });
+  })();
+</script>
