@@ -1,0 +1,98 @@
+name: Publish Recommendation
+
+on:
+  issues:
+    types:
+      - labeled
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: publish-recommendation-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Prepare approved recommendation
+    if: github.event.label.name == 'approved'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Add recommendation seed
+        id: recommendation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          APPROVAL_LABEL: approved
+        run: npm run publish:recommendation
+
+      - name: Refresh repository metrics
+        if: steps.recommendation.outputs.changed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run sync:data
+
+      - name: Validate generated site
+        if: steps.recommendation.outputs.changed == 'true'
+        run: |
+          npm run test
+          npm run check
+          npm run build
+
+      - name: Open publication PR
+        id: pull-request
+        if: steps.recommendation.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          RECOMMENDED_REPO: ${{ steps.recommendation.outputs.repo }}
+          RECOMMENDED_SLUG: ${{ steps.recommendation.outputs.repo_slug }}
+        run: |
+          branch="recommend/${RECOMMENDED_SLUG}-${GITHUB_RUN_ID}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add src/data/project-seeds.json src/data/projects.generated.json data/history.json
+          git commit -m "feat(data): add ${RECOMMENDED_REPO}"
+          git push -u origin "$branch"
+
+          body="$(mktemp)"
+          {
+            echo "## Summary"
+            echo "- Adds \`${RECOMMENDED_REPO}\` from #${ISSUE_NUMBER}."
+            echo "- Refreshes generated GitHub metrics and history."
+            echo ""
+            echo "## Review"
+            echo "- Confirm the category and highlight copy before merge."
+            echo "- Merge this PR to publish on GitHub Pages."
+            echo ""
+            echo "Closes #${ISSUE_NUMBER}"
+          } > "$body"
+
+          pr_url="$(gh pr create --title "feat(data): add ${RECOMMENDED_REPO}" --body-file "$body" --base main --head "$branch")"
+          echo "pr_url=${pr_url}" >> "$GITHUB_OUTPUT"
+          gh issue comment "$ISSUE_NUMBER" --body "已建立收錄 PR：${pr_url}"
+
+      - name: Comment when already tracked
+        if: steps.recommendation.outputs.already_exists == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          RECOMMENDED_REPO: ${{ steps.recommendation.outputs.repo }}
+        run: gh issue comment "$ISSUE_NUMBER" --body "這個 repo 已經在站上的追蹤清單裡了：\`${RECOMMENDED_REPO}\`。"

@@ -12,6 +12,7 @@
     "check": "astro check",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
+    "publish:recommendation": "node ./scripts/publish-recommendation.mjs",
     "sync:data": "node ./scripts/sync-github.mjs",
     "setup:giscus": "node ./scripts/setup-giscus.mjs",
     "astro": "astro"
