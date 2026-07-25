@@ -18,6 +18,7 @@ import {
   formatMomentum,
   formatPercentage,
   getBriefFreshness,
+  getDataHealth,
   getBreakoutProjects,
   getDiscoveryProjects,
   getLastSyncedAt,
@@ -249,6 +250,50 @@ describe('formatters', () => {
   });
 });
 
+describe('getDataHealth', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-05-16T00:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('reports a freshly synced repo as healthy', () => {
+    const health = getDataHealth({ fetchedAt: '2026-05-16T00:00:00Z' });
+
+    expect(health.status).toBe('ok');
+    expect(health.staleDays).toBe(0);
+    expect(health.label).toBeNull();
+    expect(health.description).toBeNull();
+  });
+
+  it('tolerates a one day gap so a delayed deploy is not flagged', () => {
+    expect(getDataHealth({ fetchedAt: '2026-05-15T00:00:00Z' }).status).toBe('ok');
+  });
+
+  it('flags a repo that has not refreshed for the threshold', () => {
+    const health = getDataHealth({ fetchedAt: '2026-05-11T00:00:00Z' });
+
+    expect(health.status).toBe('stale');
+    expect(health.staleDays).toBe(5);
+    expect(health.label).toBe('5 天未更新');
+    expect(health.description).toContain('5 天');
+  });
+
+  it('reports archived repos regardless of how fresh the snapshot is', () => {
+    const health = getDataHealth({ archived: true, fetchedAt: '2026-05-16T00:00:00Z' });
+
+    expect(health.status).toBe('archived');
+    expect(health.label).toBe('已封存');
+  });
+
+  it('treats data predating fetchedAt tracking as healthy', () => {
+    expect(getDataHealth({}).status).toBe('ok');
+  });
+});
+
 describe('trend state', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -260,6 +305,7 @@ describe('trend state', () => {
   });
 
   it('marks projects with too little history as tracking', () => {
+    expect(buildTrendState(makeProject({ archived: true, delta7d: 500 })).tone).toBe('archived');
     expect(buildTrendState(makeProject({ historyDays: 1 })).tone).toBe('tracking');
   });
 

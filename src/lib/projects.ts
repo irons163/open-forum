@@ -28,6 +28,9 @@ export type Project = {
   trendScore: number;
   lastPushedAt: string;
   updatedAt: string;
+  archived?: boolean;
+  /** Last time GitHub actually answered for this repo, unlike the site-wide syncedAt. */
+  fetchedAt?: string;
   syncedAt: string;
   avatarUrl: string;
 };
@@ -233,8 +236,16 @@ export function formatDelta(value: number) {
   return '0';
 }
 
-export function buildTrendState(project: Pick<Project, 'historyDays' | 'delta1d' | 'delta7d' | 'delta30d' | 'growthRate7d' | 'lastPushedAt'>) {
+export function buildTrendState(project: Pick<Project, 'historyDays' | 'delta1d' | 'delta7d' | 'delta30d' | 'growthRate7d' | 'lastPushedAt' | 'archived'>) {
   const inactiveDays = daysSince(project.lastPushedAt);
+
+  if (project.archived) {
+    return {
+      label: '已封存',
+      tone: 'archived',
+      description: '作者已在 GitHub 封存這個 repo，不會再有新提交。',
+    };
+  }
 
   if (project.historyDays < 7) {
     return {
@@ -282,6 +293,48 @@ export function buildTrendState(project: Pick<Project, 'historyDays' | 'delta1d'
     description: '目前沒有明顯波峰，但仍保持活躍。',
   };
 }
+
+export const staleThresholdDays = 2;
+
+export type DataHealth = {
+  status: 'ok' | 'stale' | 'archived';
+  staleDays: number;
+  label: string | null;
+  description: string | null;
+};
+
+/**
+ * A repo that was deleted, went private or got archived keeps rendering its last
+ * known numbers, which silently looks like live data. Derive that state from
+ * fetchedAt so the page can say so instead of quietly lying.
+ */
+export function getDataHealth(project: Pick<Project, 'archived' | 'fetchedAt'>): DataHealth {
+  const staleDays = project.fetchedAt ? daysSince(project.fetchedAt) : 0;
+
+  if (project.archived) {
+    return {
+      status: 'archived',
+      staleDays,
+      label: '已封存',
+      description: '這個 repo 已在 GitHub 封存，不會再有新的提交，數據僅供參考。',
+    };
+  }
+
+  if (staleDays >= staleThresholdDays) {
+    return {
+      status: 'stale',
+      staleDays,
+      label: `${staleDays} 天未更新`,
+      description: `已連續 ${staleDays} 天無法從 GitHub 取得這個 repo 的資料，畫面上是最後一次成功抓取的數字。`,
+    };
+  }
+
+  return { status: 'ok', staleDays, label: null, description: null };
+}
+
+export const unhealthyProjects = projects.filter(
+  (project) => getDataHealth(project).status !== 'ok',
+);
 
 export function discoveryScore(project: Pick<Project, 'stars' | 'trendScore' | 'lastPushedAt'>) {
   const freshnessBoost = Math.max(1, 31 - daysSince(project.lastPushedAt));

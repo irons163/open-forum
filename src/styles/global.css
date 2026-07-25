@@ -65,6 +65,12 @@
   --trend-steady-text: #1d4ed8;
   --trend-cooling-bg: rgba(120, 113, 108, 0.11);
   --trend-cooling-text: #57534e;
+  --trend-archived-bg: rgba(120, 113, 108, 0.14);
+  --trend-archived-text: #44403c;
+
+  --warn-bg: rgba(180, 83, 9, 0.1);
+  --warn-line: rgba(180, 83, 9, 0.28);
+  --warn-text: #92400e;
 
   --spark-up: #0f766e;
   --spark-down: #b45309;
@@ -139,6 +145,12 @@
   --trend-steady-text: #bfdbfe;
   --trend-cooling-bg: rgba(168, 162, 158, 0.13);
   --trend-cooling-text: #d6d3d1;
+  --trend-archived-bg: rgba(168, 162, 158, 0.16);
+  --trend-archived-text: #e7e5e4;
+
+  --warn-bg: rgba(251, 146, 60, 0.14);
+  --warn-line: rgba(251, 146, 60, 0.32);
+  --warn-text: #fdba74;
 
   --spark-up: #2dd4bf;
   --spark-down: #fb923c;
@@ -941,6 +953,39 @@ input:focus-visible {
   font-size: 0.74rem;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.trend-archived {
+  background: var(--trend-archived-bg);
+  color: var(--trend-archived-text);
+}
+
+.health-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 999px;
+  border: 1px solid var(--warn-line);
+  background: var(--warn-bg);
+  padding: 0.18rem 0.58rem;
+  color: var(--warn-text);
+  font-size: 0.74rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.health-notice {
+  margin-top: 1rem;
+  border: 1px solid var(--warn-line);
+  border-radius: var(--radius-md);
+  background: var(--warn-bg);
+  padding: 0.85rem 1rem;
+  color: var(--warn-text);
+  font-size: 0.88rem;
+}
+
+.health-notice p {
+  margin: 0;
 }
 
 .trend-tracking {

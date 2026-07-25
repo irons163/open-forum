@@ -1,5 +1,10 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { takePreviousEntries } from './history-series.mjs';
+import {
+  buildHealthSummary,
+  collectStaleProjects,
+  findPreviousProject,
+} from './sync-health.mjs';
 
 const seedFile = new URL('../src/data/project-seeds.json', import.meta.url);
 const outputFile = new URL('../src/data/projects.generated.json', import.meta.url);
@@ -56,6 +61,32 @@ async function fetchRepo(fullName) {
   return response.json();
 }
 
+/**
+ * A failed fetch used to scroll past in the log while the site kept serving the
+ * last known numbers. Surface it as an Actions annotation and job summary so a
+ * repo that has gone private, been deleted or archived is impossible to miss.
+ */
+async function reportHealth({ failures, archived, stale }) {
+  for (const failure of failures) {
+    const detail = failure.keptStaleData ? 'serving stale data' : 'dropped from the site';
+    console.log(
+      `::warning title=Repository sync failed::${failure.repo} (${detail}) — ${failure.reason.slice(0, 300)}`,
+    );
+  }
+
+  for (const project of archived) {
+    console.log(
+      `::warning title=Repository archived::${project.fullName} is archived on GitHub and should probably leave the seed list.`,
+    );
+  }
+
+  if (!process.env.GITHUB_STEP_SUMMARY) {
+    return;
+  }
+
+  await appendFile(process.env.GITHUB_STEP_SUMMARY, buildHealthSummary({ failures, archived, stale }));
+}
+
 const seeds = await readJson(seedFile, []);
 const previousProjects = await readJson(outputFile, []);
 const history = await readJson(historyFile, {});
@@ -63,6 +94,7 @@ const history = await readJson(historyFile, {});
 const syncedAt = new Date().toISOString();
 const snapshotDate = syncedAt.slice(0, 10);
 const nextProjects = [];
+const failures = [];
 
 for (const seed of seeds) {
   try {
@@ -128,24 +160,30 @@ for (const seed of seeds) {
       }),
       lastPushedAt: repo.pushed_at,
       updatedAt: repo.updated_at,
+      archived: repo.archived === true,
+      // Distinct from syncedAt: this only advances when GitHub actually answered,
+      // so the site can tell how long a repo has been failing to refresh.
+      fetchedAt: syncedAt,
       syncedAt,
       avatarUrl: repo.owner.avatar_url,
     });
   } catch (error) {
-    const staleProject = previousProjects.find((project) => project.fullName === seed.repo);
+    const staleProject = findPreviousProject(previousProjects, seed.repo);
 
     if (staleProject) {
       nextProjects.push({
         ...staleProject,
         category: seed.category,
         highlight: seed.highlight,
+        archived: staleProject.archived === true,
+        fetchedAt: staleProject.fetchedAt ?? staleProject.syncedAt,
         syncedAt,
       });
-      console.warn(`Using stale data for ${seed.repo}: ${error.message}`);
+      failures.push({ repo: seed.repo, reason: error.message, keptStaleData: true });
       continue;
     }
 
-    console.warn(`Skipping ${seed.repo}: ${error.message}`);
+    failures.push({ repo: seed.repo, reason: error.message, keptStaleData: false });
   }
 }
 
@@ -155,4 +193,13 @@ await mkdir(new URL('../data/', import.meta.url), { recursive: true });
 await writeFile(outputFile, `${JSON.stringify(nextProjects, null, 2)}\n`);
 await writeFile(historyFile, `${JSON.stringify(history, null, 2)}\n`);
 
+const archived = nextProjects.filter((project) => project.archived);
+const stale = collectStaleProjects(nextProjects, syncedAt);
+
+await reportHealth({ failures, archived, stale });
+
 console.log(`Synced ${nextProjects.length} repositories at ${syncedAt}`);
+
+if (failures.length) {
+  console.log(`${failures.length} repository/repositories could not be refreshed.`);
+}

@@ -1,5 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import {
+  formatDate,
+  getDataHealth,
+  lastSyncedAt,
+  projects,
+  unhealthyProjects,
+} from '../lib/projects';
 import { baseUrl, discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
 
 const checklist = [
@@ -16,6 +23,7 @@ const checklist = [
     items: [
       '首頁與熱度榜顯示最新同步日期。',
       '榜單有資料，stars 與 7d 增量合理。',
+      '本頁「資料健康度」沒有列抓取失敗或已封存的項目。',
       '若歷史樣本仍短，頁面文案有說明「累積中」。',
     ],
   },
@@ -39,6 +47,7 @@ const checklist = [
 
 const afterLaunch = [
   '上線後 24 小時內再檢查首頁、榜單、社群是否正常。',
+  '每天看一眼 Sync GitHub Data 的 job summary，有抓取失敗就處理。',
   '每週整理提報，維持收錄標準一致。',
   '更新 weekly-brief 與 editorial-notes，讓首頁保持新鮮感。',
 ];
@@ -62,6 +71,42 @@ const afterLaunch = [
         <a class="button" href={baseUrl}>回首頁</a>
         <a class="button ghost" href={`${baseUrl}rankings/`}>看熱度榜</a>
       </div>
+
+      <div class="section-heading" style="margin-top: 1.6rem;">
+        <div>
+          <p class="eyebrow">資料健康度</p>
+          <h2>需要處理的追蹤項目</h2>
+        </div>
+        <span class="pill subtle">最後同步 {formatDate(lastSyncedAt)}</span>
+      </div>
+
+      {
+        unhealthyProjects.length ? (
+          <div class="list-stack">
+            {unhealthyProjects.map((project) => (
+              <a class="list-link" href={`${baseUrl}projects/${project.slug}/`}>
+                <div class="rank-meta">
+                  <span class="health-badge">{getDataHealth(project).label}</span>
+                  <span class="muted">
+                    最後成功抓取 {project.fetchedAt ? formatDate(project.fetchedAt) : '未知'}
+                  </span>
+                </div>
+                <h3>{project.fullName}</h3>
+                <p class="muted">{getDataHealth(project).description}</p>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="notice">
+            <p>
+              {projects.length} 個追蹤中的 repo 都在正常更新，沒有封存或抓取失敗的項目。
+            </p>
+            <p class="muted">
+              同步失敗時這裡會列出來，Actions 的 Sync GitHub Data 也會在 job summary 標示原因。
+            </p>
+          </div>
+        )
+      }
     </div>
 
     <div class="section-panel sidebar-block">

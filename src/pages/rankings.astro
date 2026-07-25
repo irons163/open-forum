@@ -12,6 +12,7 @@ import {
   formatDelta,
   formatMomentum,
   formatPercentage,
+  getDataHealth,
   lastSyncedAt,
   projects,
   relativeDays,
@@ -213,6 +214,9 @@ const sortOptions = [
                   <span class:list={['trend-badge', `trend-${buildTrendState(project).tone}`]}>
                     {buildTrendState(project).label}
                   </span>
+                  {getDataHealth(project).status === 'stale' && (
+                    <span class="health-badge">{getDataHealth(project).label}</span>
+                  )}
                 </div>
                 <h3>{project.fullName}</h3>
                 <p class="muted">{project.description}</p>

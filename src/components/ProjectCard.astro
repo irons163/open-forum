@@ -1,13 +1,14 @@
 ---
 import Sparkline from './Sparkline.astro';
 import type { Project } from '../lib/projects';
-import { formatCompactNumber, formatMomentum, relativeDays } from '../lib/projects';
+import { formatCompactNumber, formatMomentum, getDataHealth, relativeDays } from '../lib/projects';
 import { getStarSparkline } from '../lib/history';
 
 const { project } = Astro.props as { project: Project };
 const baseUrl = import.meta.env.BASE_URL;
 const detailUrl = `${baseUrl}projects/${project.slug}/`;
 const spark = getStarSparkline(project.fullName, 30);
+const health = getDataHealth(project);
 ---
 
 <article
@@ -19,6 +20,7 @@ const spark = getStarSparkline(project.fullName, 30);
   <div class="card-top">
     <span class="pill">{project.category}</span>
     {project.language && <span class="pill subtle">{project.language}</span>}
+    {health.label && <span class="health-badge">{health.label}</span>}
   </div>
 
   <div class="owner-meta">

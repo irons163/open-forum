@@ -11,6 +11,7 @@ import {
   formatDelta,
   formatMomentum,
   formatPercentage,
+  getDataHealth,
   projects,
   relativeDays,
 } from '../../lib/projects';
@@ -29,6 +30,7 @@ const peers = projects
   .filter((candidate) => candidate.category === project.category && candidate.slug !== project.slug)
   .slice(0, 3);
 const starTrend = getStarSparkline(project.fullName, 45);
+const health = getDataHealth(project);
 const categoryUrl = `${baseUrl}?category=${encodeURIComponent(project.category)}`;
 const absolute = (pathname: string) =>
   Astro.site ? new URL(pathname, Astro.site).toString() : pathname;
@@ -72,6 +74,7 @@ const schema = Astro.site
           <div class="meta-line">
             <span class="pill">{project.category}</span>
             {project.language && <span class="pill subtle">{project.language}</span>}
+            {health.label && <span class="health-badge">{health.label}</span>}
           </div>
           <h1 class="detail-title">{project.fullName}</h1>
         </div>
@@ -79,6 +82,14 @@ const schema = Astro.site
 
       <p class="muted">{project.description}</p>
       <p class="highlight-note">{project.highlight}</p>
+
+      {
+        health.description && (
+          <div class="health-notice" role="status">
+            <p>{health.description}</p>
+          </div>
+        )
+      }
 
       {
         starTrend && (
