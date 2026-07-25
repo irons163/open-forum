@@ -3,7 +3,7 @@
   "asOf": "2026-07-25",
   "trackedCount": 32,
   "queryCount": 6,
-  "candidateCount": 15,
+  "candidateCount": 14,
   "note": "GitHub Search 沒有真正的 7 天增星欄位；日均增星是用目前 stars ÷ 建立天數估算，只作候選排序，不會自動收錄。",
   "queries": [
     {
@@ -51,43 +51,6 @@
   ],
   "errors": [],
   "candidates": [
-    {
-      "fullName": "DietrichGebert/ponytail",
-      "name": "ponytail",
-      "owner": "DietrichGebert",
-      "repoUrl": "https://github.com/DietrichGebert/ponytail",
-      "description": "Makes your AI agent think like the laziest senior dev in the room. The best code is the code you never wrote.",
-      "language": "JavaScript",
-      "license": "MIT",
-      "topics": [
-        "agent-skills",
-        "ai-agents",
-        "claude",
-        "claude-code",
-        "claude-code-plugin",
-        "cursor-rules",
-        "developer-tools",
-        "llm",
-        "prompt-engineering",
-        "yagni"
-      ],
-      "stars": 89099,
-      "forks": 4887,
-      "openIssues": 101,
-      "createdAt": "2026-06-12T00:52:37Z",
-      "pushedAt": "2026-07-15T21:32:15Z",
-      "ageDays": 43,
-      "starsPerDay": 2072.07,
-      "category": "AI",
-      "source": "topic-ai",
-      "archived": false,
-      "fork": false,
-      "sources": [
-        "topic-ai",
-        "topic-agents"
-      ],
-      "recommendIssueUrl": "https://github.com/irons163/open-forum/issues/new?template=recommend-project.yml&title=%5BRecommend%5D%20DietrichGebert%2Fponytail"
-    },
     {
       "fullName": "xai-org/grok-build",
       "name": "grok-build",

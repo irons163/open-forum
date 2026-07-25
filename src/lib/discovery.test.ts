@@ -3,7 +3,9 @@ import {
   buildRecommendIssueUrl,
   discovery,
   getDiscoveryCandidates,
+  getUntrackedDiscoveryCandidates,
   hasDiscoveryRun,
+  type DiscoveryCandidate,
   type DiscoveryDocument,
 } from './discovery';
 
@@ -30,6 +32,21 @@ describe('discovery helpers', () => {
   it('detects whether a discovery run has produced a snapshot', () => {
     expect(hasDiscoveryRun({ generatedAt: null } as DiscoveryDocument)).toBe(false);
     expect(hasDiscoveryRun({ generatedAt: '2026-07-25T00:00:00Z' } as DiscoveryDocument)).toBe(true);
+  });
+
+  it('hides candidates that were approved after the snapshot was taken', () => {
+    const document = {
+      candidates: [
+        { fullName: 'DietrichGebert/ponytail' },
+        { fullName: 'acme/rocket' },
+      ],
+    } as DiscoveryDocument;
+
+    expect(
+      getUntrackedDiscoveryCandidates(['dietrichgebert/ponytail'], document).map(
+        (candidate: DiscoveryCandidate) => candidate.fullName,
+      ),
+    ).toEqual(['acme/rocket']);
   });
 
   it('prefills issue form fields by id, not only the title', () => {

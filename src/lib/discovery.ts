@@ -48,6 +48,24 @@ export function getDiscoveryCandidates(document: DiscoveryDocument = discovery) 
   return Array.isArray(document.candidates) ? document.candidates : [];
 }
 
+/**
+ * The weekly discovery snapshot can outlive a mid-week approval. Drop anything
+ * already in the seed list so the maintainer page never offers "收錄" for a
+ * repo that is already tracked.
+ */
+export function getUntrackedDiscoveryCandidates(
+  trackedRepos: Iterable<string>,
+  document: DiscoveryDocument = discovery,
+) {
+  const tracked = new Set(
+    [...trackedRepos].map((repo) => repo.toLowerCase()).filter(Boolean),
+  );
+
+  return getDiscoveryCandidates(document).filter(
+    (candidate) => !tracked.has(candidate.fullName.toLowerCase()),
+  );
+}
+
 export function hasDiscoveryRun(document: DiscoveryDocument = discovery) {
   return Boolean(document.generatedAt);
 }

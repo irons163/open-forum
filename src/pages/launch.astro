@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import {
   buildRecommendIssueUrl,
   discovery,
-  getDiscoveryCandidates,
+  getUntrackedDiscoveryCandidates,
   hasDiscoveryRun,
 } from '../lib/discovery';
 import {
@@ -16,7 +16,9 @@ import {
 } from '../lib/projects';
 import { baseUrl, discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
 
-const discoveryCandidates = getDiscoveryCandidates().map((candidate) => ({
+const discoveryCandidates = getUntrackedDiscoveryCandidates(
+  projects.map((project) => project.fullName),
+).map((candidate) => ({
   ...candidate,
   // Always rebuild so form field ids stay in sync even if the JSON snapshot is old.
   recommendIssueUrl: buildRecommendIssueUrl(siteRepoUrl, candidate),
