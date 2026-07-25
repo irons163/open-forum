@@ -31,10 +31,10 @@ describe('theme helpers', () => {
 
   it('exposes stable browser chrome colors', () => {
     expect(themeStorageKey).toBe('open-forum-theme');
-    expect(themeColors.light).toBe('#f8f6f2');
-    expect(themeColors.dark).toBe('#0e1117');
-    expect(getThemeColor('light')).toBe('#f8f6f2');
-    expect(getThemeColor('dark')).toBe('#0e1117');
+    expect(themeColors.light).toBe('#f6f4f0');
+    expect(themeColors.dark).toBe('#0b0e13');
+    expect(getThemeColor('light')).toBe('#f6f4f0');
+    expect(getThemeColor('dark')).toBe('#0b0e13');
   });
 
   it('maps site themes to giscus themes', () => {

@@ -1,4 +1,5 @@
 ---
+import Sparkline from '../Sparkline.astro';
 import {
   activeProjects,
   breakoutProjects,
@@ -10,21 +11,24 @@ import {
   totalStars,
   trendingProjects,
 } from '../../lib/projects';
+import { getStarSparkline } from '../../lib/history';
 import { baseUrl, discussionsUrl, recommendIssueUrl } from '../../lib/site';
 
 const spotlightProject = breakoutProjects[0] ?? trendingProjects[0] ?? projects[0];
+const movers = trendingProjects.slice(0, 4).map((project) => ({
+  project,
+  spark: getStarSparkline(project.fullName, 30),
+}));
+const spotlightSpark = spotlightProject ? getStarSparkline(spotlightProject.fullName, 30) : null;
 ---
 
 <section class="shell">
-  <div class="announcement-strip section-panel">
+  <div class="announcement-strip">
     <div class="announcement-copy">
-      <strong>每日更新 GitHub 指標，熱度榜反映最新 stars 與近 7 天增量。</strong>
-      <p class="muted">
-        目前追蹤 {projects.length} 個開源 repo。以下為 {formatDate(lastSyncedAt)} 的資料快照。
-      </p>
+      <strong>每日同步 GitHub 指標，熱度榜反映最新 stars 與近 7 天增量</strong>
+      <p>目前追蹤 {projects.length} 個開源 repo，資料快照更新於 {formatDate(lastSyncedAt)}。</p>
     </div>
     <div class="announcement-meta">
-      <span class="chip">最近同步 {formatDate(lastSyncedAt)}</span>
       <a class="button ghost compact" href={`${baseUrl}rankings/`}>查看榜單</a>
       {discussionsUrl && (
         <a class="button ghost compact" href={discussionsUrl} target="_blank" rel="noreferrer">
@@ -37,33 +41,43 @@ const spotlightProject = breakoutProjects[0] ?? trendingProjects[0] ?? projects[
 
 <section class="shell hero-grid">
   <div class="hero-card section-panel">
-    <p class="eyebrow">開源專案雷達</p>
+    <p class="eyebrow">Open Source Radar</p>
     <h1>推薦專案、追蹤熱度、順手參與討論。</h1>
     <p class="muted hero-lead">
       精選值得追的 GitHub repo，用每日同步的 stars 與增長數據排出熱度榜。
       看到好專案可以推薦收錄，想深聊就到 Discussions。
     </p>
-    <div class="action-row">
+
+    <div class="action-row" style="margin-top: 1.1rem;">
       <a class="button" href={`${baseUrl}rankings/`}>看熱度榜</a>
       <a class="button ghost" href={recommendIssueUrl || `${baseUrl}community/`}>推薦專案</a>
     </div>
-    <div class="chip-row">
-      <span class="chip">每日同步</span>
-      <span class="chip">編輯精選</span>
-      <span class="chip">社群提報</span>
-      {discussionsUrl && <span class="chip">Discussions</span>}
+
+    <div class="mover-rail">
+      <div class="spark-caption" style="margin: 0 0 0.35rem;">
+        <span>本週增星最多</span>
+        <span>近 30 天走勢</span>
+      </div>
+      {movers.map((mover, index) => (
+        <a class="mover-row" href={`${baseUrl}projects/${mover.project.slug}/`}>
+          <span class="mover-rank">{String(index + 1).padStart(2, '0')}</span>
+          <span class="mover-name">{mover.project.fullName}</span>
+          <span class="mover-delta">+{formatCompactNumber(mover.project.delta7d)}</span>
+          <Sparkline shape={mover.spark} label={`${mover.project.fullName} 近 30 天 star 走勢`} />
+        </a>
+      ))}
     </div>
   </div>
 
   <aside class="hero-aside section-panel">
     <p class="eyebrow">站點快照</p>
-    <div class="metric-grid">
+    <div class="metric-grid" style="margin-top: 0.9rem;">
       <div class="metric-card">
         <span class="metric-label">追蹤 repo</span>
         <strong>{projects.length}</strong>
       </div>
       <div class="metric-card">
-        <span class="metric-label">近 30 天活躍</span>
+        <span class="metric-label">30 天活躍</span>
         <strong>{activeProjects}</strong>
       </div>
       <div class="metric-card">
@@ -72,22 +86,44 @@ const spotlightProject = breakoutProjects[0] ?? trendingProjects[0] ?? projects[
       </div>
       <div class="metric-card">
         <span class="metric-label">最近同步</span>
-        <strong>{formatDate(lastSyncedAt)}</strong>
+        <strong style="font-size: 0.95rem;">{formatDate(lastSyncedAt)}</strong>
       </div>
     </div>
 
     {
       spotlightProject && (
-        <div class="notice" style="margin-top: 1rem;">
+        <div class="stack-item" style="margin-top: 0.85rem;">
           <div class="meta-pair">
             <span class="pill">{spotlightProject.category}</span>
-            <span>{buildTrendState(spotlightProject).label}</span>
+            <span class={`trend-badge trend-${buildTrendState(spotlightProject).tone}`}>
+              {buildTrendState(spotlightProject).label}
+            </span>
           </div>
-          <h3 style="margin-bottom: 0.4rem;">本週焦點：{spotlightProject.fullName}</h3>
+          <h3 style="margin: 0.6rem 0 0.3rem; font-family: var(--font-mono); font-size: 1rem;">
+            {spotlightProject.fullName}
+          </h3>
           <p class="muted">{buildTrendState(spotlightProject).description}</p>
+
+          <Sparkline
+            shape={spotlightSpark}
+            class="spark-wide"
+            label={`${spotlightProject.fullName} 近 30 天 star 走勢`}
+          />
+          <div class="spark-caption">
+            <span>{formatCompactNumber(spotlightProject.stars)} stars</span>
+            <span>7d +{formatCompactNumber(spotlightProject.delta7d)}</span>
+          </div>
+
           <div class="card-actions">
-            <a class="button compact" href={`${baseUrl}projects/${spotlightProject.slug}/`}>看詳情</a>
-            <a class="button ghost compact" href={spotlightProject.repoUrl} target="_blank" rel="noreferrer">
+            <a class="button compact" href={`${baseUrl}projects/${spotlightProject.slug}/`}>
+              看詳情
+            </a>
+            <a
+              class="button ghost compact"
+              href={spotlightProject.repoUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
               GitHub
             </a>
           </div>

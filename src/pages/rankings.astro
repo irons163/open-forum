@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Sparkline from '../components/Sparkline.astro';
+import { getStarSparkline } from '../lib/history';
 import {
   activeProjects,
   breakoutProjects,
@@ -192,9 +194,13 @@ import { baseUrl } from '../lib/site';
                   <span>同步於 {formatDate(project.syncedAt)}</span>
                 </div>
               </div>
-              <div class="card-actions">
-                <a class="button" href={`${baseUrl}projects/${project.slug}/`}>詳情</a>
-                <a class="button ghost" href={project.repoUrl} target="_blank" rel="noreferrer">GitHub</a>
+              <div class="rank-side">
+                <Sparkline
+                  shape={getStarSparkline(project.fullName, 30)}
+                  class="spark-wide"
+                  label={`${project.fullName} 近 30 天 star 走勢`}
+                />
+                <a class="button compact" href={`${baseUrl}projects/${project.slug}/`}>詳情</a>
               </div>
             </article>
           ))}

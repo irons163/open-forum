@@ -1,0 +1,28 @@
+---
+import type { SparklineShape } from '../lib/sparkline';
+
+type Props = {
+  shape: SparklineShape | null;
+  label?: string;
+  class?: string;
+};
+
+const { shape, label = '近期 star 走勢', class: className = 'spark-slot' } = Astro.props as Props;
+---
+
+{
+  shape && (
+    <div class={className}>
+      <svg
+        class={`sparkline sparkline--${shape.direction}`}
+        viewBox={`0 0 ${shape.width} ${shape.height}`}
+        preserveAspectRatio="none"
+        role="img"
+        aria-label={label}
+      >
+        <path class="sparkline-area" d={shape.area} />
+        <polyline class="sparkline-line" points={shape.line} />
+      </svg>
+    </div>
+  )
+}

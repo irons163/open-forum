@@ -1,6 +1,8 @@
 ---
 import GiscusComments from '../../components/GiscusComments.astro';
+import Sparkline from '../../components/Sparkline.astro';
 import Layout from '../../layouts/Layout.astro';
+import { getStarSparkline } from '../../lib/history';
 import type { Project } from '../../lib/projects';
 import {
   buildTrendState,
@@ -24,6 +26,7 @@ const { project } = Astro.props as { project: Project };
 const peers = projects
   .filter((candidate) => candidate.category === project.category && candidate.slug !== project.slug)
   .slice(0, 3);
+const starTrend = getStarSparkline(project.fullName, 45);
 ---
 
 <Layout
@@ -47,7 +50,28 @@ const peers = projects
       <p class="muted">{project.description}</p>
       <p class="highlight-note">{project.highlight}</p>
 
-      <div class="tag-row">
+      {
+        starTrend && (
+          <div class="detail-chart">
+            <div class="spark-caption" style="margin: 0;">
+              <span>近 {project.historyDays} 天 star 走勢</span>
+              <span>{formatCompactNumber(project.stars)} stars</span>
+            </div>
+            <Sparkline
+              shape={starTrend}
+              class="spark-wide"
+              label={`${project.fullName} star 走勢`}
+            />
+            <div class="spark-caption">
+              <span>1d +{formatCompactNumber(project.delta1d)}</span>
+              <span>7d +{formatCompactNumber(project.delta7d)}</span>
+              <span>30d +{formatCompactNumber(project.delta30d)}</span>
+            </div>
+          </div>
+        )
+      }
+
+      <div class="tag-row" style="margin-top: 1.1rem;">
         {project.topics.map((topic) => (
           <span class="tag">#{topic}</span>
         ))}

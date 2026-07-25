@@ -3,8 +3,8 @@ export type ThemeName = 'light' | 'dark';
 export const themeStorageKey = 'open-forum-theme';
 
 export const themeColors = {
-  light: '#f8f6f2',
-  dark: '#0e1117',
+  light: '#f6f4f0',
+  dark: '#0b0e13',
 } as const satisfies Record<ThemeName, string>;
 
 export const giscusThemes = {

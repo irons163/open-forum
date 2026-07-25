@@ -1,10 +1,13 @@
 ---
+import Sparkline from './Sparkline.astro';
 import type { Project } from '../lib/projects';
 import { formatCompactNumber, formatMomentum, relativeDays } from '../lib/projects';
+import { getStarSparkline } from '../lib/history';
 
 const { project } = Astro.props as { project: Project };
 const baseUrl = import.meta.env.BASE_URL;
 const detailUrl = `${baseUrl}projects/${project.slug}/`;
+const spark = getStarSparkline(project.fullName, 30);
 ---
 
 <article
@@ -13,7 +16,6 @@ const detailUrl = `${baseUrl}projects/${project.slug}/`;
   data-category={project.category}
   data-search={`${project.name} ${project.fullName} ${project.owner} ${project.category} ${project.language || ''} ${project.description} ${project.highlight} ${project.topics.join(' ')}`.toLowerCase()}
 >
-  <div class="card-band"></div>
   <div class="card-top">
     <span class="pill">{project.category}</span>
     {project.language && <span class="pill subtle">{project.language}</span>}
@@ -31,11 +33,7 @@ const detailUrl = `${baseUrl}projects/${project.slug}/`;
   <p class="muted">{project.description}</p>
   <p class="highlight-note">{project.highlight}</p>
 
-  <div class="tag-row">
-    {project.topics.slice(0, 4).map((topic) => (
-      <span class="tag">#{topic}</span>
-    ))}
-  </div>
+  <Sparkline shape={spark} class="spark-wide" label={`${project.fullName} 近 30 天 star 走勢`} />
 
   <div class="metric-strip">
     <div>
@@ -43,12 +41,12 @@ const detailUrl = `${baseUrl}projects/${project.slug}/`;
       <strong>{formatCompactNumber(project.stars)}</strong>
     </div>
     <div>
-      <span class="metric-label">熱度動能</span>
+      <span class="metric-label">動能</span>
       <strong>{formatMomentum(project)}</strong>
     </div>
     <div>
-      <span class="metric-label">活躍度</span>
-      <strong>{relativeDays(project.lastPushedAt)}</strong>
+      <span class="metric-label">活躍</span>
+      <strong style="font-size: 0.8rem;">{relativeDays(project.lastPushedAt)}</strong>
     </div>
   </div>
 
@@ -59,7 +57,9 @@ const detailUrl = `${baseUrl}projects/${project.slug}/`;
   </div>
 
   <div class="card-actions">
-    <a class="button" href={detailUrl}>看詳情</a>
-    <a class="button ghost" href={project.repoUrl} target="_blank" rel="noreferrer">GitHub</a>
+    <a class="button compact" href={detailUrl}>看詳情</a>
+    <a class="button ghost compact" href={project.repoUrl} target="_blank" rel="noreferrer">
+      GitHub
+    </a>
   </div>
 </article>
