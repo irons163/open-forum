@@ -31,14 +31,14 @@ describe('theme helpers', () => {
 
   it('exposes stable browser chrome colors', () => {
     expect(themeStorageKey).toBe('open-forum-theme');
-    expect(themeColors.light).toBe('#f57f17');
-    expect(themeColors.dark).toBe('#15110d');
-    expect(getThemeColor('light')).toBe('#f57f17');
-    expect(getThemeColor('dark')).toBe('#15110d');
+    expect(themeColors.light).toBe('#f8f6f2');
+    expect(themeColors.dark).toBe('#0e1117');
+    expect(getThemeColor('light')).toBe('#f8f6f2');
+    expect(getThemeColor('dark')).toBe('#0e1117');
   });
 
   it('maps site themes to giscus themes', () => {
-    expect(getGiscusTheme('light')).toBe('light_protanopia');
-    expect(getGiscusTheme('dark')).toBe('dark_protanopia');
+    expect(getGiscusTheme('light')).toBe('light');
+    expect(getGiscusTheme('dark')).toBe('dark_dimmed');
   });
 });

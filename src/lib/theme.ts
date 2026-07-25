@@ -3,13 +3,13 @@ export type ThemeName = 'light' | 'dark';
 export const themeStorageKey = 'open-forum-theme';
 
 export const themeColors = {
-  light: '#f57f17',
-  dark: '#15110d',
+  light: '#f8f6f2',
+  dark: '#0e1117',
 } as const satisfies Record<ThemeName, string>;
 
 export const giscusThemes = {
-  light: 'light_protanopia',
-  dark: 'dark_protanopia',
+  light: 'light',
+  dark: 'dark_dimmed',
 } as const satisfies Record<ThemeName, string>;
 
 export function isThemeName(value: unknown): value is ThemeName {

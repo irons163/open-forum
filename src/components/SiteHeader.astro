@@ -28,7 +28,7 @@ const quickLinks = [
       <span class="brand-icon">◎</span>
       <span>
         <strong>Open Forum</strong>
-        <small>GitHub Pages Project Radar</small>
+        <small>開源專案雷達</small>
       </span>
     </a>
 
@@ -113,6 +113,9 @@ const quickLinks = [
     };
 
     const setTheme = (theme, persist) => {
+      root.classList.add('theme-transition');
+      window.setTimeout(() => root.classList.remove('theme-transition'), 400);
+
       root.dataset.theme = theme;
       root.style.colorScheme = theme;
 
