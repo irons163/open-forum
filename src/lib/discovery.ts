@@ -72,7 +72,8 @@ export function hasDiscoveryRun(document: DiscoveryDocument = discovery) {
 
 /**
  * Prefill GitHub Issue Form fields by their YAML `id`. Title alone is not
- * enough — without `repo=`, the "GitHub repo" input stays empty.
+ * enough. The field id must not be `repo` — GitHub treats that query key as
+ * reserved and will not fill a custom input with it.
  */
 export function buildRecommendIssueUrl(
   siteRepoUrl: string,
@@ -85,7 +86,7 @@ export function buildRecommendIssueUrl(
   const params = new URLSearchParams({
     template: 'recommend-project.yml',
     title: `[Recommend] ${candidate.fullName}`,
-    repo: candidate.repoUrl || `https://github.com/${candidate.fullName}`,
+    repository: candidate.repoUrl || `https://github.com/${candidate.fullName}`,
   });
 
   if (candidate.category) {

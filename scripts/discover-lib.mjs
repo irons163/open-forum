@@ -276,8 +276,8 @@ export function mergeCandidates(batches, tracked, { limit = discoveryLimit, asOf
 
 /**
  * GitHub Issue Forms prefill by field `id`, not by label. Passing only `title`
- * fills the issue title bar and leaves "GitHub repo" empty — callers must also
- * send `repo=`, and optionally `category=` / `reason_type=` matching option text.
+ * fills the issue title bar and leaves custom inputs empty. The field id must
+ * not be `repo` — that query key is reserved/ignored by GitHub.
  */
 export function buildRecommendIssueUrl(siteRepoUrl, candidate) {
   if (!siteRepoUrl || !candidate?.fullName) {
@@ -287,7 +287,7 @@ export function buildRecommendIssueUrl(siteRepoUrl, candidate) {
   const params = new URLSearchParams({
     template: 'recommend-project.yml',
     title: `[Recommend] ${candidate.fullName}`,
-    repo: candidate.repoUrl || `https://github.com/${candidate.fullName}`,
+    repository: candidate.repoUrl || `https://github.com/${candidate.fullName}`,
   });
 
   if (candidate.category) {

@@ -5,7 +5,8 @@ labels:
   - recommend
 body:
   - type: input
-    id: repo
+    # Not `repo` — that query key is reserved/ignored by GitHub's issue URL prefills.
+    id: repository
     attributes:
       label: GitHub repo
       description: 請填完整 repo URL

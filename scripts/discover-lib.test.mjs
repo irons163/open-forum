@@ -215,7 +215,8 @@ describe('issue helpers and summary', () => {
     const params = new URL(url).searchParams;
     expect(params.get('template')).toBe('recommend-project.yml');
     expect(params.get('title')).toBe('[Recommend] acme/rocket');
-    expect(params.get('repo')).toBe('https://github.com/acme/rocket');
+    expect(params.get('repository')).toBe('https://github.com/acme/rocket');
+    expect(params.get('repo')).toBeNull();
     expect(params.get('category')).toBe('工具');
     expect(params.get('reason_type')).toBe('近期熱度上升');
     expect(params.get('reason')).toBe('A fast CLI');

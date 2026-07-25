@@ -58,7 +58,8 @@ describe('discovery helpers', () => {
     });
     const params = new URL(url).searchParams;
 
-    expect(params.get('repo')).toBe('https://github.com/acme/rocket');
+    expect(params.get('repository')).toBe('https://github.com/acme/rocket');
+    expect(params.get('repo')).toBeNull();
     expect(params.get('category')).toBe('AI');
     expect(params.get('reason_type')).toBe('近期熱度上升');
     expect(buildRecommendIssueUrl('', { fullName: 'acme/rocket', repoUrl: '', category: '', description: '' })).toBe(
