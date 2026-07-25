@@ -1,5 +1,5 @@
 name: Recommend a project
-description: 提交想放進 Open Forum 的 GitHub 專案
+description: 提交想放進 Open Forum 的 GitHub 專案，每個帳號最多 3 則
 title: "[Recommend] "
 labels:
   - recommend
@@ -68,4 +68,6 @@ body:
         - label: 我已附上具體推薦理由，不只是貼連結
           required: true
         - label: 我確認這個 repo 目前仍有維護或具備持續討論價值
+          required: true
+        - label: 我了解每個 GitHub 帳號最多提報 3 則推薦
           required: true

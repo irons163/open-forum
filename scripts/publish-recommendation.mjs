@@ -1,5 +1,13 @@
 import { appendFile, readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import {
+  fetchIssue,
+  getIssueLabelNames,
+  getRecommendationLimit,
+  getRecommendationUsage,
+  githubJson,
+  isOverRecommendationLimit,
+} from './recommendation-limit.mjs';
 
 const CATEGORY_OPTIONS = new Set(['AI', '前端', '工具', '後端']);
 const FORM_FIELDS = {
@@ -15,15 +23,13 @@ export async function main() {
   const sourceRepository = process.env.GITHUB_REPOSITORY;
   const issueNumber = process.env.ISSUE_NUMBER;
   const approvalLabel = process.env.APPROVAL_LABEL || 'approved';
+  const recommendationLimit = getRecommendationLimit();
 
   if (!token) throw new Error('GITHUB_TOKEN or GH_TOKEN is required.');
   if (!sourceRepository) throw new Error('GITHUB_REPOSITORY is required.');
   if (!issueNumber) throw new Error('ISSUE_NUMBER is required.');
 
-  const issue = await githubJson(
-    token,
-    `https://api.github.com/repos/${sourceRepository}/issues/${issueNumber}`,
-  );
+  const issue = await fetchIssue({ token, sourceRepository, issueNumber });
 
   if (issue.pull_request) {
     await writeOutputs({ skipped: 'true', changed: 'false', skip_reason: 'pull_request' });
@@ -31,9 +37,7 @@ export async function main() {
     return;
   }
 
-  const labels = (issue.labels || []).map((label) =>
-    typeof label === 'string' ? label : label.name,
-  );
+  const labels = getIssueLabelNames(issue);
 
   if (!labels.includes('recommend')) {
     await writeOutputs({ skipped: 'true', changed: 'false', skip_reason: 'missing_recommend_label' });
@@ -44,6 +48,27 @@ export async function main() {
   if (!labels.includes(approvalLabel)) {
     await writeOutputs({ skipped: 'true', changed: 'false', skip_reason: 'missing_approval_label' });
     console.log(`Skipping because the issue is not labeled ${approvalLabel}.`);
+    return;
+  }
+
+  const recommendationUsage = await getRecommendationUsage({
+    token,
+    sourceRepository,
+    author: issue.user?.login,
+  });
+
+  if (isOverRecommendationLimit(recommendationUsage.count, recommendationLimit)) {
+    await writeOutputs({
+      skipped: 'true',
+      changed: 'false',
+      over_limit: 'true',
+      recommendation_count: String(recommendationUsage.count),
+      recommendation_limit: String(recommendationLimit),
+      skip_reason: 'recommendation_limit',
+    });
+    console.log(
+      `Skipping because ${issue.user?.login} has ${recommendationUsage.count}/${recommendationLimit} recommendation issues.`,
+    );
     return;
   }
 
@@ -107,24 +132,6 @@ export async function main() {
   });
 
   console.log(`Prepared ${nextSeed.repo} for publication.`);
-}
-
-async function githubJson(token, url) {
-  const response = await fetch(url, {
-    headers: {
-      Accept: 'application/vnd.github+json',
-      Authorization: `Bearer ${token}`,
-      'User-Agent': 'open-forum-publish-recommendation',
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
-  });
-
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`GitHub request failed (${response.status}) for ${url}: ${body.slice(0, 400)}`);
-  }
-
-  return response.json();
 }
 
 export function parseIssueForm(body) {

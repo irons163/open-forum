@@ -39,6 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           APPROVAL_LABEL: approved
+          RECOMMENDATION_LIMIT: 3
         run: npm run publish:recommendation
 
       - name: Refresh repository metrics
