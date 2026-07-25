@@ -158,5 +158,10 @@
     "repo": "directus/directus",
     "category": "後端",
     "highlight": "資料驅動內容平台代表，能補足 API-first 後台型產品觀察。"
+  },
+  {
+    "repo": "DietrichGebert/ponytail",
+    "category": "AI",
+    "highlight": "近期熱度上升：Makes your AI agent think like the laziest senior dev in the room. The best code is …"
   }
 ]
