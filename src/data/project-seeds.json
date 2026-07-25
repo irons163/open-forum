@@ -163,5 +163,10 @@
     "repo": "DietrichGebert/ponytail",
     "category": "AI",
     "highlight": "近期熱度上升：Makes your AI agent think like the laziest senior dev in the room. The best code is …"
+  },
+  {
+    "repo": "arcships/light-ocr",
+    "category": "AI",
+    "highlight": "實用度高：light-ocr 是面向 Node.js 與 C++ 的快速離線 OCR 工具，使用 PP-OCRv6 模型並提供 macOS、Linux、Windows 的預編譯執行環…"
   }
 ]
