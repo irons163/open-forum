@@ -1,6 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import {
+  discovery,
+  getDiscoveryCandidates,
+  hasDiscoveryRun,
+} from '../lib/discovery';
+import {
+  formatCompactNumber,
   formatDate,
   getDataHealth,
   lastSyncedAt,
@@ -8,6 +14,9 @@ import {
   unhealthyProjects,
 } from '../lib/projects';
 import { baseUrl, discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
+
+const discoveryCandidates = getDiscoveryCandidates();
+const discoveryReady = hasDiscoveryRun();
 
 const checklist = [
   {
@@ -24,6 +33,7 @@ const checklist = [
       '首頁與熱度榜顯示最新同步日期。',
       '榜單有資料，stars 與 7d 增量合理。',
       '本頁「資料健康度」沒有列抓取失敗或已封存的項目。',
+      '本頁「自動發現」有本週候選，或已確認這輪沒有新貨。',
       '若歷史樣本仍短，頁面文案有說明「累積中」。',
     ],
   },
@@ -48,6 +58,7 @@ const checklist = [
 const afterLaunch = [
   '上線後 24 小時內再檢查首頁、榜單、社群是否正常。',
   '每天看一眼 Sync GitHub Data 的 job summary，有抓取失敗就處理。',
+  '每週看 Discover Candidates 的候選清單，值得追的再貼 approved 走收錄流程。',
   '每週整理提報，維持收錄標準一致。',
   '更新 weekly-brief 與 editorial-notes，讓首頁保持新鮮感。',
 ];
@@ -104,6 +115,70 @@ const afterLaunch = [
             <p class="muted">
               同步失敗時這裡會列出來，Actions 的 Sync GitHub Data 也會在 job summary 標示原因。
             </p>
+          </div>
+        )
+      }
+
+      <div class="section-heading" style="margin-top: 1.8rem;">
+        <div>
+          <p class="eyebrow">自動發現</p>
+          <h2>近期增速高、尚未收錄</h2>
+        </div>
+        <span class="pill subtle">
+          {discoveryReady && discovery.generatedAt
+            ? `更新於 ${formatDate(discovery.generatedAt)}`
+            : '尚未跑過'}
+        </span>
+      </div>
+
+      <p class="muted" style="margin-top: 0;">
+        每週用 GitHub Search API 掃一輪「年輕 + 高星」的公開 repo，排除已在
+        <code>project-seeds.json</code> 的項目。日均增星是估算值（目前 stars ÷ 建立天數），不會自動收錄。
+      </p>
+
+      {
+        discoveryCandidates.length ? (
+          <div class="list-stack" style="margin-top: 1rem;">
+            {discoveryCandidates.map((candidate) => (
+              <article class="list-link" style="cursor: default;">
+                <div class="rank-meta">
+                  <span class="pill">{candidate.category}</span>
+                  {candidate.language && <span class="pill subtle">{candidate.language}</span>}
+                  <span class="muted">{formatCompactNumber(candidate.stars)} stars</span>
+                  <span class="muted">≈{candidate.starsPerDay}/天</span>
+                  <span class="muted">{candidate.ageDays} 天</span>
+                </div>
+                <h3>
+                  <a href={candidate.repoUrl} target="_blank" rel="noreferrer">
+                    {candidate.fullName}
+                  </a>
+                </h3>
+                <p class="muted">{candidate.description || '（沒有 description）'}</p>
+                <div class="card-actions" style="margin-top: 0.75rem;">
+                  {candidate.recommendIssueUrl ? (
+                    <a class="button compact" href={candidate.recommendIssueUrl} target="_blank" rel="noreferrer">
+                      開收錄 Issue
+                    </a>
+                  ) : recommendIssueUrl ? (
+                    <a class="button compact" href={recommendIssueUrl} target="_blank" rel="noreferrer">
+                      開收錄 Issue
+                    </a>
+                  ) : null}
+                  <a class="button ghost compact" href={candidate.repoUrl} target="_blank" rel="noreferrer">
+                    看 GitHub
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="notice" style="margin-top: 1rem;">
+            <p>
+              {discoveryReady
+                ? '這輪沒有符合條件、且尚未收錄的候選。'
+                : '還沒產生候選清單。本機可跑 npm run discover:candidates，或在 Actions 手動觸發 Discover Candidates。'}
+            </p>
+            <p class="muted">{discovery.note}</p>
           </div>
         )
       }

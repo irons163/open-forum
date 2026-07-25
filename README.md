@@ -37,7 +37,9 @@
 
 - `Astro`：純靜態頁面，最適合 GitHub Pages
 - `scripts/sync-github.mjs`：從 GitHub API 取回 repo 指標，輸出 `src/data/projects.generated.json`
+- `scripts/discover-candidates.mjs`：用 GitHub Search API 找「近期增速高、尚未收錄」的候選，輸出 `src/data/discovery-candidates.json`
 - `.github/workflows/sync-data.yml`：每天同步資料並提交快照
+- `.github/workflows/discover-candidates.yml`：每週掃描候選專案（不會自動收錄）
 - `.github/workflows/deploy.yml`：將靜態站部署到 GitHub Pages
 - `.github/ISSUE_TEMPLATE/recommend-project.yml`：收集使用者推薦專案
 
@@ -46,8 +48,15 @@
 ```bash
 npm install
 npm run sync:data
+npm run discover:candidates   # 可選：掃一輪尚未收錄的高增速候選
 npm run dev
 ```
+
+### 候選專案怎麼來？
+
+追蹤清單本身仍是手寫的 `project-seeds.json`（加上訪客 Issue 推薦）。另外每週會跑一次 GitHub Search，找「年輕 + 高星、且不在清單裡」的公開 repo，寫進 `discovery-candidates.json`，顯示在[站長工具](https://irons163.github.io/open-forum/launch/)供你審。
+
+GitHub Search **沒有真正的 7 天增星欄位**，所以用「目前 stars ÷ 建立天數」估算日均增速來排序。候選**不會自動加入追蹤**；看中了再從站長工具開收錄 Issue，貼 `approved` 走既有流程。
 
 如果你只是先看版型，`projects.generated.json` 也已經有初始資料，可以直接：
 

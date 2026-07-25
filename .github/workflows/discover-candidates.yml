@@ -1,0 +1,55 @@
+name: Discover Candidates
+
+on:
+  schedule:
+    # Weekly on Mondays at 02:17 UTC (10:17 Asia/Taipei)
+    - cron: '17 2 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Search for rising untracked repositories
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLIC_SITE_REPO: ${{ format('https://github.com/{0}', github.repository) }}
+        run: npm run discover:candidates
+
+      - name: Commit discovery snapshot
+        id: commit
+        run: |
+          if git diff --quiet -- src/data/discovery-candidates.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No discovery changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/discovery-candidates.json
+          git commit -m "chore(data): refresh discovery candidates"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger Pages deploy
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy.yml --repo "${{ github.repository }}" --ref main

@@ -14,6 +14,7 @@
     "coverage": "vitest run --coverage",
     "publish:recommendation": "node ./scripts/publish-recommendation.mjs",
     "sync:data": "node ./scripts/sync-github.mjs",
+    "discover:candidates": "node ./scripts/discover-candidates.mjs",
     "setup:giscus": "node ./scripts/setup-giscus.mjs",
     "astro": "astro",
     "build:og": "node ./scripts/build-og-image.mjs"
