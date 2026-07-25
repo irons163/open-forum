@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import {
+  buildRecommendIssueUrl,
   discovery,
   getDiscoveryCandidates,
   hasDiscoveryRun,
@@ -15,7 +16,11 @@ import {
 } from '../lib/projects';
 import { baseUrl, discussionsUrl, recommendIssueUrl, siteRepoUrl } from '../lib/site';
 
-const discoveryCandidates = getDiscoveryCandidates();
+const discoveryCandidates = getDiscoveryCandidates().map((candidate) => ({
+  ...candidate,
+  // Always rebuild so form field ids stay in sync even if the JSON snapshot is old.
+  recommendIssueUrl: buildRecommendIssueUrl(siteRepoUrl, candidate),
+}));
 const discoveryReady = hasDiscoveryRun();
 
 const checklist = [

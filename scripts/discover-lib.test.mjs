@@ -203,10 +203,22 @@ describe('candidate normalization and ranking', () => {
 });
 
 describe('issue helpers and summary', () => {
-  it('builds a prefilled recommend issue URL', () => {
-    expect(buildRecommendIssueUrl('https://github.com/irons163/open-forum', { fullName: 'acme/rocket' })).toBe(
-      'https://github.com/irons163/open-forum/issues/new?template=recommend-project.yml&title=%5BRecommend%5D%20acme%2Frocket',
-    );
+  it('builds a prefilled recommend issue URL including form field ids', () => {
+    const url = buildRecommendIssueUrl('https://github.com/irons163/open-forum', {
+      fullName: 'acme/rocket',
+      repoUrl: 'https://github.com/acme/rocket',
+      category: '工具',
+      description: 'A fast CLI',
+    });
+
+    expect(url.startsWith('https://github.com/irons163/open-forum/issues/new?')).toBe(true);
+    const params = new URL(url).searchParams;
+    expect(params.get('template')).toBe('recommend-project.yml');
+    expect(params.get('title')).toBe('[Recommend] acme/rocket');
+    expect(params.get('repo')).toBe('https://github.com/acme/rocket');
+    expect(params.get('category')).toBe('工具');
+    expect(params.get('reason_type')).toBe('近期熱度上升');
+    expect(params.get('reason')).toBe('A fast CLI');
     expect(buildRecommendIssueUrl('', { fullName: 'acme/rocket' })).toBe('');
   });
 

@@ -51,3 +51,35 @@ export function getDiscoveryCandidates(document: DiscoveryDocument = discovery) 
 export function hasDiscoveryRun(document: DiscoveryDocument = discovery) {
   return Boolean(document.generatedAt);
 }
+
+/**
+ * Prefill GitHub Issue Form fields by their YAML `id`. Title alone is not
+ * enough — without `repo=`, the "GitHub repo" input stays empty.
+ */
+export function buildRecommendIssueUrl(
+  siteRepoUrl: string,
+  candidate: Pick<DiscoveryCandidate, 'fullName' | 'repoUrl' | 'category' | 'description'>,
+) {
+  if (!siteRepoUrl || !candidate.fullName) {
+    return '';
+  }
+
+  const params = new URLSearchParams({
+    template: 'recommend-project.yml',
+    title: `[Recommend] ${candidate.fullName}`,
+    repo: candidate.repoUrl || `https://github.com/${candidate.fullName}`,
+  });
+
+  if (candidate.category) {
+    params.set('category', candidate.category);
+  }
+
+  params.set('reason_type', '近期熱度上升');
+
+  if (candidate.description) {
+    params.set('reason', candidate.description);
+    params.set('use_case', candidate.description);
+  }
+
+  return `${siteRepoUrl}/issues/new?${params.toString()}`;
+}

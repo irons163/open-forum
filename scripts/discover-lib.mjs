@@ -274,13 +274,35 @@ export function mergeCandidates(batches, tracked, { limit = discoveryLimit, asOf
   return rankCandidates([...byName.values()], limit);
 }
 
+/**
+ * GitHub Issue Forms prefill by field `id`, not by label. Passing only `title`
+ * fills the issue title bar and leaves "GitHub repo" empty — callers must also
+ * send `repo=`, and optionally `category=` / `reason_type=` matching option text.
+ */
 export function buildRecommendIssueUrl(siteRepoUrl, candidate) {
   if (!siteRepoUrl || !candidate?.fullName) {
     return '';
   }
 
-  const title = encodeURIComponent(`[Recommend] ${candidate.fullName}`);
-  return `${siteRepoUrl}/issues/new?template=recommend-project.yml&title=${title}`;
+  const params = new URLSearchParams({
+    template: 'recommend-project.yml',
+    title: `[Recommend] ${candidate.fullName}`,
+    repo: candidate.repoUrl || `https://github.com/${candidate.fullName}`,
+  });
+
+  if (candidate.category) {
+    params.set('category', candidate.category);
+  }
+
+  // Discovery candidates are selected for recent star velocity.
+  params.set('reason_type', '近期熱度上升');
+
+  if (candidate.description) {
+    params.set('reason', candidate.description);
+    params.set('use_case', candidate.description);
+  }
+
+  return `${siteRepoUrl}/issues/new?${params.toString()}`;
 }
 
 export function buildDiscoverySummary({ candidates, queries, trackedCount }) {
