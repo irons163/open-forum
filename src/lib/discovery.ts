@@ -71,9 +71,43 @@ export function hasDiscoveryRun(document: DiscoveryDocument = discovery) {
 }
 
 /**
- * Prefill GitHub Issue Form fields by their YAML `id`. Title alone is not
- * enough. The field id must not be `repo` — GitHub treats that query key as
- * reserved and will not fill a custom input with it.
+ * Build a markdown issue body the publish script can parse. Used instead of
+ * Issue Form field query params, because forms re-apply URL values on every
+ * re-render ("delete it and it grows back"). A plain `body=` prefill is pasted
+ * once into the editor and stays editable.
+ */
+export function buildRecommendIssueBody(
+  candidate: Pick<DiscoveryCandidate, 'fullName' | 'repoUrl' | 'category' | 'description'>,
+) {
+  const repoUrl = candidate.repoUrl || `https://github.com/${candidate.fullName}`;
+  const category = candidate.category || '工具';
+  const reason = candidate.description?.trim() || '（請說明為什麼值得收錄）';
+
+  return `### GitHub repo
+
+${repoUrl}
+
+### 類別
+
+${category}
+
+### 推薦角度
+
+近期熱度上升
+
+### 為什麼推薦
+
+${reason}
+
+### 適合什麼人或什麼情境
+
+（請改成實際適用對象或情境）
+`;
+}
+
+/**
+ * Discovery "開收錄 Issue" links intentionally skip the Issue Form template.
+ * Form query prefills cannot be "apply once"; markdown body prefills can.
  */
 export function buildRecommendIssueUrl(
   siteRepoUrl: string,
@@ -84,19 +118,10 @@ export function buildRecommendIssueUrl(
   }
 
   const params = new URLSearchParams({
-    template: 'recommend-project.yml',
     title: `[Recommend] ${candidate.fullName}`,
-    repository: candidate.repoUrl || `https://github.com/${candidate.fullName}`,
+    labels: 'recommend',
+    body: buildRecommendIssueBody(candidate),
   });
-
-  if (candidate.category) {
-    params.set('category', candidate.category);
-  }
-
-  params.set('reason_type', '近期熱度上升');
-
-  // Do not prefill reason / use_case via the URL. GitHub issue forms re-apply
-  // query values on re-render, so deleted textarea content "grows back".
 
   return `${siteRepoUrl}/issues/new?${params.toString()}`;
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildRecommendIssueBody,
   buildRecommendIssueUrl,
   discovery,
   getDiscoveryCandidates,
@@ -49,21 +50,23 @@ describe('discovery helpers', () => {
     ).toEqual(['acme/rocket']);
   });
 
-  it('prefills issue form fields by id, not only the title', () => {
-    const url = buildRecommendIssueUrl('https://github.com/irons163/open-forum', {
+  it('prefills a plain markdown body once instead of sticky form fields', () => {
+    const candidate = {
       fullName: 'acme/rocket',
       repoUrl: 'https://github.com/acme/rocket',
       category: 'AI',
       description: 'Agent harness',
-    });
+    };
+    const body = buildRecommendIssueBody(candidate);
+    const url = buildRecommendIssueUrl('https://github.com/irons163/open-forum', candidate);
     const params = new URL(url).searchParams;
 
-    expect(params.get('repository')).toBe('https://github.com/acme/rocket');
-    expect(params.get('repo')).toBeNull();
-    expect(params.get('category')).toBe('AI');
-    expect(params.get('reason_type')).toBe('近期熱度上升');
-    expect(params.get('reason')).toBeNull();
-    expect(params.get('use_case')).toBeNull();
+    expect(body).toContain('https://github.com/acme/rocket');
+    expect(body).toContain('Agent harness');
+    expect(body).toContain('（請改成實際適用對象或情境）');
+    expect(params.get('template')).toBeNull();
+    expect(params.get('labels')).toBe('recommend');
+    expect(params.get('body')).toBe(body);
     expect(buildRecommendIssueUrl('', { fullName: 'acme/rocket', repoUrl: '', category: '', description: '' })).toBe(
       '',
     );

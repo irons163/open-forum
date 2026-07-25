@@ -275,30 +275,47 @@ export function mergeCandidates(batches, tracked, { limit = discoveryLimit, asOf
 }
 
 /**
- * GitHub Issue Forms prefill by field `id`, not by label. Passing only `title`
- * fills the issue title bar and leaves custom inputs empty. The field id must
- * not be `repo` — that query key is reserved/ignored by GitHub.
+ * Markdown body matching publish-recommendation's section parser. Prefer this
+ * over Issue Form query prefills: forms re-apply URL values on re-render, so
+ * deleted text "grows back". A plain body= paste is editable once.
  */
+export function buildRecommendIssueBody(candidate) {
+  const repoUrl = candidate.repoUrl || `https://github.com/${candidate.fullName}`;
+  const category = candidate.category || '工具';
+  const reason = String(candidate.description || '').trim() || '（請說明為什麼值得收錄）';
+
+  return `### GitHub repo
+
+${repoUrl}
+
+### 類別
+
+${category}
+
+### 推薦角度
+
+近期熱度上升
+
+### 為什麼推薦
+
+${reason}
+
+### 適合什麼人或什麼情境
+
+（請改成實際適用對象或情境）
+`;
+}
+
 export function buildRecommendIssueUrl(siteRepoUrl, candidate) {
   if (!siteRepoUrl || !candidate?.fullName) {
     return '';
   }
 
   const params = new URLSearchParams({
-    template: 'recommend-project.yml',
     title: `[Recommend] ${candidate.fullName}`,
-    repository: candidate.repoUrl || `https://github.com/${candidate.fullName}`,
+    labels: 'recommend',
+    body: buildRecommendIssueBody(candidate),
   });
-
-  if (candidate.category) {
-    params.set('category', candidate.category);
-  }
-
-  // Discovery candidates are selected for recent star velocity.
-  params.set('reason_type', '近期熱度上升');
-
-  // Never prefill textareas via query params: GitHub re-applies them on
-  // re-render, so users cannot delete or rewrite the content.
 
   return `${siteRepoUrl}/issues/new?${params.toString()}`;
 }
