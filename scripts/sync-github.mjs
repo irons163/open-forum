@@ -1,4 +1,5 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { takePreviousEntries } from './history-series.mjs';
 
 const seedFile = new URL('../src/data/project-seeds.json', import.meta.url);
 const outputFile = new URL('../src/data/projects.generated.json', import.meta.url);
@@ -66,7 +67,8 @@ const nextProjects = [];
 for (const seed of seeds) {
   try {
     const repo = await fetchRepo(seed.repo);
-    const previousEntries = Array.isArray(history[seed.repo]) ? history[seed.repo] : [];
+    const canonicalName = repo.full_name;
+    const previousEntries = takePreviousEntries(history, seed.repo, canonicalName);
     const withoutToday = previousEntries.filter((entry) => entry.date !== snapshotDate);
     const entries = [
       ...withoutToday,
@@ -78,7 +80,7 @@ for (const seed of seeds) {
       },
     ].slice(-45);
 
-    history[seed.repo] = entries;
+    history[canonicalName] = entries;
 
     const previousDay = entries.at(-2);
     const weeklyBase = entries.length > 7 ? entries.at(-8) : entries[0];

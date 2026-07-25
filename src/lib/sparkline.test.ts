@@ -37,13 +37,33 @@ describe('sparkline geometry', () => {
     ]);
   });
 
-  it('centers a flat series instead of dividing by zero', () => {
-    const points = buildSparkPoints([7, 7, 7], 100, 20);
+  it('insets the plot so the stroke stays inside the drawing box', () => {
+    const points = buildSparkPoints([0, 5, 10], 100, 20, 2);
 
     expect(points).toEqual([
-      { x: 0, y: 20 },
-      { x: 50, y: 20 },
-      { x: 100, y: 20 },
+      { x: 0, y: 18 },
+      { x: 50, y: 10 },
+      { x: 100, y: 2 },
+    ]);
+  });
+
+  it('collapses the plot area rather than inverting it when the inset is too large', () => {
+    expect(buildSparkPoints([0, 10], 100, 20, 40)).toEqual([
+      { x: 0, y: 40 },
+      { x: 100, y: 40 },
+    ]);
+  });
+
+  it('centers a flat series instead of dividing by zero', () => {
+    expect(buildSparkPoints([7, 7, 7], 100, 20)).toEqual([
+      { x: 0, y: 10 },
+      { x: 50, y: 10 },
+      { x: 100, y: 10 },
+    ]);
+
+    expect(buildSparkPoints([7, 7], 100, 20, 2)).toEqual([
+      { x: 0, y: 10 },
+      { x: 100, y: 10 },
     ]);
   });
 
@@ -83,8 +103,8 @@ describe('buildSparkline', () => {
     expect(shape?.area.startsWith('M0 36')).toBe(true);
   });
 
-  it('honours explicit limit and dimensions', () => {
-    const shape = buildSparkline([9, 8, 7, 6], 2, 40, 10);
+  it('honours explicit limit, dimensions and inset', () => {
+    const shape = buildSparkline([9, 8, 7, 6], 2, 40, 10, 0);
 
     expect(shape?.width).toBe(40);
     expect(shape?.height).toBe(10);
@@ -92,6 +112,15 @@ describe('buildSparkline', () => {
     expect(shape?.points).toEqual([
       { x: 0, y: 0 },
       { x: 40, y: 10 },
+    ]);
+  });
+
+  it('applies the default inset so peaks do not touch the edges', () => {
+    const shape = buildSparkline([1, 5], 30, 100, 20);
+
+    expect(shape?.points).toEqual([
+      { x: 0, y: 18 },
+      { x: 100, y: 2 },
     ]);
   });
 });

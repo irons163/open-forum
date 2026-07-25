@@ -9,6 +9,7 @@ import {
   discoveryProjects,
   formatCompactNumber,
   formatDate,
+  formatDelta,
   formatMomentum,
   formatPercentage,
   lastSyncedAt,
@@ -19,28 +20,39 @@ import {
   trendingProjects,
 } from '../lib/projects';
 import { baseUrl } from '../lib/site';
+import { buildRankingSchema } from '../lib/structured-data';
+
+const rankingSchema = Astro.site
+  ? buildRankingSchema(projects, (project) =>
+      new URL(`${baseUrl}projects/${project.slug}/`, Astro.site).toString(),
+    )
+  : undefined;
+
+const sortOptions = [
+  { key: 'trend', label: '趨勢分數' },
+  { key: 'stars', label: 'Stars' },
+  { key: 'delta7d', label: '7d 增量' },
+  { key: 'growth', label: '相對增幅' },
+];
 ---
 
 <Layout
   title="熱度榜 | Open Forum"
   description="用 stars、近期增量與更新活躍度組成的 GitHub 專案熱度榜。"
   current="rankings"
+  schema={rankingSchema}
 >
   <section class="shell section-panel content-block">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">熱度榜</p>
-        <h2>熱度榜</h2>
-      </div>
-    </div>
+    <p class="eyebrow">熱度榜</p>
+    <h1 class="detail-title">哪些開源專案正在變熱</h1>
+    <p class="hero-lead muted">
+      趨勢分數綜合 stars、forks、最近 1 天與 7 天的增星，以及最近一次 push 的新鮮度，
+      所以老牌超大 repo 不會永遠霸榜，近期竄升的專案也抓得到。
+    </p>
 
     <div class="notice">
-      <p>
-        趨勢分數會綜合 `stars`、`forks`、最近 1 天與 7 天的增星、以及最近一次 push 的新鮮度。
-        這樣做的好處是，不會只讓老牌超大 repo 永遠霸榜，也能把近期變熱的專案抓出來。
-      </p>
       <p class="muted">
-        如果某個 repo 顯示「剛開始追蹤」，代表這是剛納入站內觀察名單，等歷史快照累積幾天後就會看到明確增量。
+        如果某個 repo 顯示「剛開始追蹤」，代表它剛納入觀察名單，等歷史快照累積幾天後就會看到明確增量。
       </p>
     </div>
 
@@ -166,12 +178,34 @@ import { baseUrl } from '../lib/site';
       </div>
     </div>
 
+    <div class="filter-pills" role="group" aria-label="排序方式">
+      {sortOptions.map((option, index) => (
+        <button
+          class="pill"
+          type="button"
+          data-sort-button
+          data-sort={option.key}
+          data-active={index === 0 ? 'true' : 'false'}
+          aria-pressed={index === 0 ? 'true' : 'false'}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+
     {
       projects.length ? (
-        <div class="rank-list" style="margin-top: 1.2rem;">
+        <div class="rank-list" style="margin-top: 1.2rem;" data-rank-list>
           {projects.map((project, index) => (
-            <article class="rank-card section-panel">
-              <div class="rank-number">{String(index + 1).padStart(2, '0')}</div>
+            <article
+              class="rank-card section-panel"
+              data-rank-card
+              data-sort-trend={project.trendScore}
+              data-sort-stars={project.stars}
+              data-sort-delta7d={project.delta7d}
+              data-sort-growth={project.historyDays < 7 ? -1 : project.growthRate7d}
+            >
+              <div class="rank-number" data-rank-number>{String(index + 1).padStart(2, '0')}</div>
               <div>
                 <div class="rank-meta">
                   <span class="pill">{project.category}</span>
@@ -186,7 +220,7 @@ import { baseUrl } from '../lib/site';
                 <div class="rank-meta">
                   <span>{formatCompactNumber(project.stars)} stars</span>
                   <span>{formatMomentum(project)}</span>
-                  <span>30d +{formatCompactNumber(project.delta30d)}</span>
+                  <span>30d {formatDelta(project.delta30d)}</span>
                   <span>{project.historyDays} 天樣本</span>
                   <span>{project.historyDays < 7 ? '相對增幅累積中' : `7d 成長 ${formatPercentage(project.growthRate7d)}`}</span>
                   <span>趨勢分數 {formatCompactNumber(project.trendScore)}</span>
@@ -207,9 +241,77 @@ import { baseUrl } from '../lib/site';
         </div>
       ) : (
         <div class="empty-state">
-          <p>目前還沒有榜單資料。先執行 `npm run sync:data`。</p>
+          <p>榜單資料同步中，稍後再回來看看。</p>
         </div>
       )
     }
   </section>
+
+  <script is:inline>
+    const rankList = document.querySelector('[data-rank-list]');
+    const sortButtons = Array.from(document.querySelectorAll('[data-sort-button]'));
+
+    if (rankList && sortButtons.length) {
+      const cards = Array.from(rankList.querySelectorAll('[data-rank-card]'));
+      const attributeFor = {
+        trend: 'data-sort-trend',
+        stars: 'data-sort-stars',
+        delta7d: 'data-sort-delta7d',
+        growth: 'data-sort-growth',
+      };
+
+      function applySort(key) {
+        const attribute = attributeFor[key] || attributeFor.trend;
+        const ordered = [...cards].sort(
+          (left, right) =>
+            Number(right.getAttribute(attribute)) - Number(left.getAttribute(attribute)),
+        );
+
+        for (const [index, card] of ordered.entries()) {
+          card.querySelector('[data-rank-number]').textContent = String(index + 1).padStart(2, '0');
+          rankList.append(card);
+        }
+
+        for (const button of sortButtons) {
+          const isActive = button.getAttribute('data-sort') === key;
+
+          button.setAttribute('data-active', isActive ? 'true' : 'false');
+          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        }
+      }
+
+      function syncUrl(key) {
+        const params = new URLSearchParams(window.location.search);
+
+        if (key === 'trend') {
+          params.delete('sort');
+        } else {
+          params.set('sort', key);
+        }
+
+        const query = params.toString();
+
+        window.history.replaceState(
+          null,
+          '',
+          `${window.location.pathname}${query ? `?${query}` : ''}`,
+        );
+      }
+
+      for (const button of sortButtons) {
+        button.addEventListener('click', () => {
+          const key = button.getAttribute('data-sort') || 'trend';
+
+          applySort(key);
+          syncUrl(key);
+        });
+      }
+
+      const initialSort = new URLSearchParams(window.location.search).get('sort');
+
+      if (initialSort && attributeFor[initialSort]) {
+        applySort(initialSort);
+      }
+    }
+  </script>
 </Layout>

@@ -22,7 +22,13 @@ const spark = getStarSparkline(project.fullName, 30);
   </div>
 
   <div class="owner-meta">
-    <img src={project.avatarUrl} alt={`${project.owner} avatar`} loading="lazy" />
+    <img
+      src={project.avatarUrl}
+      alt={`${project.owner} avatar`}
+      width="34"
+      height="34"
+      loading="lazy"
+    />
     <div>
       <strong>{project.name}</strong>
       <span class="muted">@{project.owner}</span>

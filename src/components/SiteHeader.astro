@@ -32,9 +32,11 @@ const quickLinks = [
       </span>
     </a>
 
-    <form class="header-search" action={baseUrl} method="get">
+    <form class="header-search" action={baseUrl} method="get" role="search">
+      <label class="visually-hidden" for="header-search-input">搜尋開源專案</label>
       <input
         class="header-search-input"
+        id="header-search-input"
         type="search"
         name="q"
         placeholder="搜尋感興趣的開源倉庫、主題或分類"
@@ -76,11 +78,11 @@ const quickLinks = [
       ))}
     </nav>
 
-    <div class="quick-links" aria-label="快速入口">
+    <nav class="quick-links" aria-label="快速入口">
       {quickLinks.map((item) => (
         <a class="quick-link" href={item.href}>{item.label}</a>
       ))}
-    </div>
+    </nav>
   </div>
 </header>
 

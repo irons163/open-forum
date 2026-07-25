@@ -205,6 +205,34 @@ export function formatPercentage(value: number) {
   return `${value.toFixed(1)}%`;
 }
 
+/**
+ * The weekly brief is hand-written, so it goes stale while the metrics keep
+ * updating. Expose its age so the UI can stop calling old notes "this week".
+ */
+export function getBriefFreshness(weekLabel: string) {
+  const parsed = new Date(weekLabel.replace(/\s*\/\s*/g, '-'));
+
+  if (Number.isNaN(parsed.getTime())) {
+    return { ageDays: null, isCurrent: false };
+  }
+
+  const ageDays = Math.max(0, Math.floor((Date.now() - parsed.getTime()) / dayInMs));
+
+  return { ageDays, isCurrent: ageDays <= 14 };
+}
+
+export function formatDelta(value: number) {
+  if (value > 0) {
+    return `+${formatCompactNumber(value)}`;
+  }
+
+  if (value < 0) {
+    return `-${formatCompactNumber(Math.abs(value))}`;
+  }
+
+  return '0';
+}
+
 export function buildTrendState(project: Pick<Project, 'historyDays' | 'delta1d' | 'delta7d' | 'delta30d' | 'growthRate7d' | 'lastPushedAt'>) {
   const inactiveDays = daysSince(project.lastPushedAt);
 

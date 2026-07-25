@@ -14,8 +14,10 @@ import {
   featuredProjects,
   formatCompactNumber,
   formatDate,
+  formatDelta,
   formatMomentum,
   formatPercentage,
+  getBriefFreshness,
   getBreakoutProjects,
   getDiscoveryProjects,
   getLastSyncedAt,
@@ -221,6 +223,29 @@ describe('formatters', () => {
   it('formats percentages with one decimal place', () => {
     expect(formatPercentage(12)).toBe('12.0%');
     expect(formatPercentage(12.345)).toBe('12.3%');
+  });
+
+  it('formats deltas with an explicit sign', () => {
+    expect(formatDelta(1234)).toBe('+1.2k');
+    expect(formatDelta(0)).toBe('0');
+    expect(formatDelta(-42)).toBe('-42');
+    expect(formatDelta(-2500)).toBe('-2.5k');
+  });
+
+  it('treats a recent weekly brief as current', () => {
+    expect(getBriefFreshness('2026 / 05 / 10')).toEqual({ ageDays: 6, isCurrent: true });
+  });
+
+  it('reports the age of a stale weekly brief', () => {
+    expect(getBriefFreshness('2026 / 03 / 01')).toEqual({ ageDays: 76, isCurrent: false });
+  });
+
+  it('never reports a negative age for a future weekly brief', () => {
+    expect(getBriefFreshness('2026 / 06 / 01')).toEqual({ ageDays: 0, isCurrent: true });
+  });
+
+  it('degrades gracefully when the weekly brief label is unparseable', () => {
+    expect(getBriefFreshness('not a date')).toEqual({ ageDays: null, isCurrent: false });
   });
 });
 

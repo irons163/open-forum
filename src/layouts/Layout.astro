@@ -2,6 +2,7 @@
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import { baseUrl } from '../lib/site';
+import { serializeJsonLd } from '../lib/structured-data';
 import { themeColors, themeStorageKey } from '../lib/theme';
 import '../styles/global.css';
 
@@ -9,8 +10,13 @@ const {
   title = 'Open Forum',
   description = '開源專案雷達：精選 repo、每日熱度榜、社群推薦與討論。',
   current = 'home',
+  noindex = false,
+  schema,
 } = Astro.props;
 const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined;
+const socialImageUrl = Astro.site
+  ? new URL(`${baseUrl}og.png`, Astro.site).toString()
+  : undefined;
 ---
 
 <!doctype html>
@@ -23,12 +29,12 @@ const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).toStri
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Sora:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Sora:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="robots" content="index,follow" />
+    <meta name="robots" content={noindex ? 'noindex,follow' : 'index,follow'} />
     <meta name="theme-color" content={themeColors.light} />
     <script is:inline define:vars={{ themeStorageKey, themeColors }}>
       (() => {
@@ -59,9 +65,23 @@ const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).toStri
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="Open Forum" />
+    <meta property="og:locale" content="zh_Hant_TW" />
+    {socialImageUrl && (
+      <>
+        <meta property="og:image" content={socialImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Open Forum 開源專案雷達：追蹤開源專案熱度" />
+      </>
+    )}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    {socialImageUrl && <meta name="twitter:image" content={socialImageUrl} />}
+    {schema && (
+      <script is:inline type="application/ld+json" set:html={serializeJsonLd(schema)} />
+    )}
     <title>{title}</title>
   </head>
   <body>
@@ -69,8 +89,9 @@ const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).toStri
       <div class="ambient-orb ambient-orb--warm"></div>
       <div class="ambient-orb ambient-orb--cool"></div>
     </div>
+    <a class="skip-link" href="#main-content">跳到主要內容</a>
     <SiteHeader current={current} />
-    <main>
+    <main id="main-content">
       <slot />
     </main>
     <SiteFooter />

@@ -17,6 +17,8 @@ export type SparklineShape = {
 export const sparklineSize = {
   width: 120,
   height: 36,
+  // Keeps the stroke off the drawing box edges, where the outer container clips it.
+  inset: 2,
 } as const;
 
 export function roundCoordinate(value: number) {
@@ -31,7 +33,12 @@ export function normalizeSeries(values: number[], limit: number) {
   return values.slice(-limit).filter((value) => Number.isFinite(value));
 }
 
-export function buildSparkPoints(values: number[], width: number, height: number): SparkPoint[] {
+export function buildSparkPoints(
+  values: number[],
+  width: number,
+  height: number,
+  inset = 0,
+): SparkPoint[] {
   if (values.length < 2) {
     return [];
   }
@@ -39,12 +46,16 @@ export function buildSparkPoints(values: number[], width: number, height: number
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = max - min;
-  const span = range === 0 ? 1 : range;
   const step = width / (values.length - 1);
+  const plotHeight = Math.max(0, height - inset * 2);
 
   return values.map((value, index) => ({
     x: roundCoordinate(index * step),
-    y: roundCoordinate(height - ((value - min) / span) * height),
+    y: roundCoordinate(
+      range === 0
+        ? inset + plotHeight / 2
+        : inset + plotHeight - ((value - min) / range) * plotHeight,
+    ),
   }));
 }
 
@@ -85,9 +96,10 @@ export function buildSparkline(
   limit = 30,
   width: number = sparklineSize.width,
   height: number = sparklineSize.height,
+  inset: number = sparklineSize.inset,
 ): SparklineShape | null {
   const series = normalizeSeries(values, limit);
-  const points = buildSparkPoints(series, width, height);
+  const points = buildSparkPoints(series, width, height, inset);
 
   if (points.length === 0) {
     return null;

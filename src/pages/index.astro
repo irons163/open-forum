@@ -5,13 +5,17 @@ import ProjectExplorer from '../components/home/ProjectExplorer.astro';
 import TrendSummary from '../components/home/TrendSummary.astro';
 import WeeklyNotes from '../components/home/WeeklyNotes.astro';
 import Layout from '../layouts/Layout.astro';
+import { baseUrl } from '../lib/site';
+import { buildWebSiteSchema } from '../lib/structured-data';
+
+const title = 'Open Forum | 開源專案雷達';
+const description =
+  '每日追蹤開源 repo 的 star 走勢與 7 天增量，配上人工精選與推薦理由，幫你找到現在值得看的專案。';
+const homeUrl = Astro.site ? new URL(baseUrl, Astro.site).toString() : undefined;
+const schema = homeUrl ? buildWebSiteSchema(homeUrl, 'Open Forum', description) : undefined;
 ---
 
-<Layout
-  title="Open Forum | GitHub Pages 專案雷達"
-  description="用 GitHub Pages 做可推薦專案、追蹤熱度、附帶討論區的開源雷達站。"
-  current="home"
->
+<Layout title={title} description={description} current="home" schema={schema}>
   <HomeHero />
   <EditorialDesk />
   <WeeklyNotes />

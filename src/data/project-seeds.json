@@ -35,7 +35,7 @@
     "highlight": "Agent workflow 類別的關鍵專案，適合追蹤 AI 編排框架走勢。"
   },
   {
-    "repo": "comfyanonymous/ComfyUI",
+    "repo": "Comfy-Org/ComfyUI",
     "category": "AI",
     "highlight": "影像生成工作流代表，能讓 AI 類別不只集中在文字工具。"
   },
@@ -55,7 +55,7 @@
     "highlight": "設計系統與前端工作流常用工具，社群聲量穩定。"
   },
   {
-    "repo": "facebook/react",
+    "repo": "react/react",
     "category": "前端",
     "highlight": "前端核心底座之一，適合當大盤基準。"
   },

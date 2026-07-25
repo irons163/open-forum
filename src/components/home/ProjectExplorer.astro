@@ -46,22 +46,40 @@ import { baseUrl } from '../../lib/site';
   </div>
 
   <div class="search-row">
+    <label class="visually-hidden" for="project-search-input">搜尋追蹤中的專案</label>
     <input
       class="search-input"
+      id="project-search-input"
       type="search"
       placeholder="搜尋 repo、類別、描述或 topic"
       data-project-search
     />
     <div class="search-caption">
-      <span class="project-count" data-search-count>顯示 {projects.length} / {projects.length}</span>
+      <span class="project-count" data-search-count aria-live="polite">
+        顯示 {projects.length} / {projects.length}
+      </span>
       <span class="muted">可以直接搜 repo 名稱、owner、分類、語言或 topic</span>
     </div>
-    <div class="filter-pills">
-      <button class="pill" type="button" data-category-button data-category="全部" data-active="true">
+    <div class="filter-pills" role="group" aria-label="依分類篩選">
+      <button
+        class="pill"
+        type="button"
+        data-category-button
+        data-category="全部"
+        data-active="true"
+        aria-pressed="true"
+      >
         全部
       </button>
       {categorySummaries.map((summary) => (
-        <button class="pill" type="button" data-category-button data-category={summary.name} data-active="false">
+        <button
+          class="pill"
+          type="button"
+          data-category-button
+          data-category={summary.name}
+          data-active="false"
+          aria-pressed="false"
+        >
           {summary.name}
         </button>
       ))}
@@ -82,7 +100,7 @@ import { baseUrl } from '../../lib/site';
       </>
     ) : (
       <div class="empty-state">
-        <p>目前還沒有專案資料。先執行 `npm run sync:data`，或等待 GitHub Actions 同步。</p>
+        <p>專案資料同步中，稍後再回來看看。</p>
       </div>
     )
   }
@@ -100,15 +118,52 @@ import { baseUrl } from '../../lib/site';
 
   let activeCategory = '全部';
 
+  const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+
+  function scrollToResults() {
+    discoverSection?.scrollIntoView({
+      behavior: prefersReducedMotion?.matches ? 'auto' : 'smooth',
+      block: 'start',
+    });
+  }
+
   function setActiveCategory(nextCategory) {
     activeCategory = nextCategory;
 
     for (const currentButton of categoryButtons) {
-      currentButton.setAttribute(
-        'data-active',
-        currentButton.getAttribute('data-category') === nextCategory ? 'true' : 'false',
-      );
+      const isActive = currentButton.getAttribute('data-category') === nextCategory;
+
+      currentButton.setAttribute('data-active', isActive ? 'true' : 'false');
+      currentButton.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     }
+  }
+
+  // Keep the URL in sync so a filtered view can be shared or reloaded.
+  function syncUrl() {
+    const keyword = (searchInput?.value || '').trim();
+    const nextParams = new URLSearchParams(window.location.search);
+
+    nextParams.delete('jump');
+
+    if (keyword) {
+      nextParams.set('q', keyword);
+    } else {
+      nextParams.delete('q');
+    }
+
+    if (activeCategory && activeCategory !== '全部') {
+      nextParams.set('category', activeCategory);
+    } else {
+      nextParams.delete('category');
+    }
+
+    const query = nextParams.toString();
+
+    window.history.replaceState(
+      null,
+      '',
+      `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`,
+    );
   }
 
   function applyFilters() {
@@ -135,7 +190,10 @@ import { baseUrl } from '../../lib/site';
     }
   }
 
-  searchInput?.addEventListener('input', applyFilters);
+  searchInput?.addEventListener('input', () => {
+    applyFilters();
+    syncUrl();
+  });
 
   const initialKeyword = params.get('q') || '';
   const initialCategory = params.get('category') || '';
@@ -159,6 +217,7 @@ import { baseUrl } from '../../lib/site';
     button.addEventListener('click', () => {
       setActiveCategory(button.getAttribute('data-category') || '全部');
       applyFilters();
+      syncUrl();
     });
   }
 
@@ -167,7 +226,8 @@ import { baseUrl } from '../../lib/site';
       const nextCategory = button.getAttribute('data-category-jump') || '全部';
       setActiveCategory(nextCategory);
       applyFilters();
-      discoverSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      syncUrl();
+      scrollToResults();
     });
   }
 
@@ -175,7 +235,7 @@ import { baseUrl } from '../../lib/site';
 
   if (shouldJump) {
     requestAnimationFrame(() => {
-      discoverSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToResults();
     });
   }
 </script>

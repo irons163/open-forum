@@ -6,6 +6,7 @@ import {
   buildTrendState,
   formatCompactNumber,
   formatDate,
+  formatDelta,
   lastSyncedAt,
   projects,
   totalStars,
@@ -62,7 +63,7 @@ const spotlightSpark = spotlightProject ? getStarSparkline(spotlightProject.full
         <a class="mover-row" href={`${baseUrl}projects/${mover.project.slug}/`}>
           <span class="mover-rank">{String(index + 1).padStart(2, '0')}</span>
           <span class="mover-name">{mover.project.fullName}</span>
-          <span class="mover-delta">+{formatCompactNumber(mover.project.delta7d)}</span>
+          <span class="mover-delta">{formatDelta(mover.project.delta7d)}</span>
           <Sparkline shape={mover.spark} label={`${mover.project.fullName} 近 30 天 star 走勢`} />
         </a>
       ))}
@@ -99,9 +100,7 @@ const spotlightSpark = spotlightProject ? getStarSparkline(spotlightProject.full
               {buildTrendState(spotlightProject).label}
             </span>
           </div>
-          <h3 style="margin: 0.6rem 0 0.3rem; font-family: var(--font-mono); font-size: 1rem;">
-            {spotlightProject.fullName}
-          </h3>
+          <strong class="spotlight-title">{spotlightProject.fullName}</strong>
           <p class="muted">{buildTrendState(spotlightProject).description}</p>
 
           <Sparkline
@@ -111,7 +110,7 @@ const spotlightSpark = spotlightProject ? getStarSparkline(spotlightProject.full
           />
           <div class="spark-caption">
             <span>{formatCompactNumber(spotlightProject.stars)} stars</span>
-            <span>7d +{formatCompactNumber(spotlightProject.delta7d)}</span>
+            <span>7d {formatDelta(spotlightProject.delta7d)}</span>
           </div>
 
           <div class="card-actions">

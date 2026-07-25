@@ -8,12 +8,14 @@ import {
   buildTrendState,
   formatCompactNumber,
   formatDate,
+  formatDelta,
   formatMomentum,
   formatPercentage,
   projects,
   relativeDays,
 } from '../../lib/projects';
 import { baseUrl, recommendIssueUrl } from '../../lib/site';
+import { buildBreadcrumbSchema, buildProjectSchema } from '../../lib/structured-data';
 
 export function getStaticPaths() {
   return projects.map((project) => ({
@@ -27,17 +29,45 @@ const peers = projects
   .filter((candidate) => candidate.category === project.category && candidate.slug !== project.slug)
   .slice(0, 3);
 const starTrend = getStarSparkline(project.fullName, 45);
+const categoryUrl = `${baseUrl}?category=${encodeURIComponent(project.category)}`;
+const absolute = (pathname: string) =>
+  Astro.site ? new URL(pathname, Astro.site).toString() : pathname;
+const schema = Astro.site
+  ? [
+      buildProjectSchema(project, absolute(Astro.url.pathname)),
+      buildBreadcrumbSchema([
+        { name: '首頁', url: absolute(baseUrl) },
+        { name: project.category, url: absolute(categoryUrl) },
+        { name: project.fullName, url: absolute(Astro.url.pathname) },
+      ]),
+    ]
+  : undefined;
 ---
 
 <Layout
   title={`${project.fullName} | Open Forum`}
   description={project.description}
   current=""
+  schema={schema}
 >
   <section class="shell detail-hero">
     <div class="section-panel content-block">
+      <nav class="breadcrumb" aria-label="階層導覽">
+        <a href={baseUrl}>首頁</a>
+        <span aria-hidden="true">/</span>
+        <a href={categoryUrl}>{project.category}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{project.name}</span>
+      </nav>
+
       <div class="owner-row">
-        <img src={project.avatarUrl} alt={`${project.owner} avatar`} loading="lazy" />
+        <img
+          src={project.avatarUrl}
+          alt={`${project.owner} avatar`}
+          width="48"
+          height="48"
+          loading="lazy"
+        />
         <div>
           <div class="meta-line">
             <span class="pill">{project.category}</span>
@@ -54,7 +84,7 @@ const starTrend = getStarSparkline(project.fullName, 45);
         starTrend && (
           <div class="detail-chart">
             <div class="spark-caption" style="margin: 0;">
-              <span>近 {project.historyDays} 天 star 走勢</span>
+              <span>近 {starTrend.points.length} 天 star 走勢</span>
               <span>{formatCompactNumber(project.stars)} stars</span>
             </div>
             <Sparkline
@@ -63,9 +93,9 @@ const starTrend = getStarSparkline(project.fullName, 45);
               label={`${project.fullName} star 走勢`}
             />
             <div class="spark-caption">
-              <span>1d +{formatCompactNumber(project.delta1d)}</span>
-              <span>7d +{formatCompactNumber(project.delta7d)}</span>
-              <span>30d +{formatCompactNumber(project.delta30d)}</span>
+              <span>1d {formatDelta(project.delta1d)}</span>
+              <span>7d {formatDelta(project.delta7d)}</span>
+              <span>30d {formatDelta(project.delta30d)}</span>
             </div>
           </div>
         )
@@ -107,7 +137,7 @@ const starTrend = getStarSparkline(project.fullName, 45);
         </div>
         <div class="metric-card">
           <span class="metric-label">1d 增星</span>
-          <strong>+{formatCompactNumber(project.delta1d)}</strong>
+          <strong>{formatDelta(project.delta1d)}</strong>
         </div>
         <div class="metric-card">
           <span class="metric-label">7d 增星</span>
@@ -115,7 +145,7 @@ const starTrend = getStarSparkline(project.fullName, 45);
         </div>
         <div class="metric-card">
           <span class="metric-label">30d 增星</span>
-          <strong>+{formatCompactNumber(project.delta30d)}</strong>
+          <strong>{formatDelta(project.delta30d)}</strong>
         </div>
         <div class="metric-card">
           <span class="metric-label">7d 成長率</span>

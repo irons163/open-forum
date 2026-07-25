@@ -1,16 +1,22 @@
 ---
-import { weeklyBrief } from '../../lib/projects';
+import { getBriefFreshness, weeklyBrief } from '../../lib/projects';
 import { baseUrl, discussionsUrl } from '../../lib/site';
+
+const brief = getBriefFreshness(weeklyBrief.weekLabel);
+const briefStamp =
+  brief.isCurrent || brief.ageDays === null
+    ? weeklyBrief.weekLabel
+    : `${weeklyBrief.weekLabel}・${brief.ageDays} 天前`;
 ---
 
 <section class="shell two-column">
   <div class="section-panel content-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">本週觀察</p>
+        <p class="eyebrow">{brief.isCurrent ? '本週觀察' : '編輯手記'}</p>
         <h2>{weeklyBrief.headline}</h2>
       </div>
-      <span class="pill subtle">{weeklyBrief.weekLabel}</span>
+      <span class="pill subtle">{briefStamp}</span>
     </div>
 
     <p class="muted">{weeklyBrief.summary}</p>

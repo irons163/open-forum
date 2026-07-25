@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { baseUrl } from '../lib/site';
+import { categorySummaries, featuredProjects } from '../lib/projects';
+---
+
+<Layout title="找不到頁面 | Open Forum" description="這個網址沒有對應的頁面。" noindex>
+  <section class="shell section-panel content-block">
+    <p class="eyebrow">404</p>
+    <h1 class="detail-title">這個網址沒有對應的頁面</h1>
+    <p class="hero-lead muted">
+      可能是連結過期，或專案已經改名。從下面幾個入口重新開始逛應該最快。
+    </p>
+
+    <div class="card-actions">
+      <a class="button" href={baseUrl}>回首頁</a>
+      <a class="button ghost" href={`${baseUrl}rankings/`}>看熱度榜</a>
+      <a class="button ghost" href={`${baseUrl}community/`}>推薦收錄</a>
+    </div>
+
+    <div class="filter-pills" style="margin-top: 1.4rem;">
+      {categorySummaries.map((summary) => (
+        <a class="pill" href={`${baseUrl}?category=${encodeURIComponent(summary.name)}`}>
+          {summary.name}
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">熱門專案</p>
+        <h2>不然先看這幾個</h2>
+      </div>
+    </div>
+
+    <div class="list-stack">
+      {featuredProjects.slice(0, 4).map((project) => (
+        <a class="list-link" href={`${baseUrl}projects/${project.slug}/`}>
+          <h3>{project.fullName}</h3>
+          <p class="muted">{project.highlight}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>
