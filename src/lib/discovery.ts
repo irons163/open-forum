@@ -95,11 +95,8 @@ export function buildRecommendIssueUrl(
 
   params.set('reason_type', '近期熱度上升');
 
-  // Only prefill "為什麼推薦". Duplicating the same blurb into use_case makes
-  // the second required field look stuck and is usually the wrong answer anyway.
-  if (candidate.description) {
-    params.set('reason', candidate.description);
-  }
+  // Do not prefill reason / use_case via the URL. GitHub issue forms re-apply
+  // query values on re-render, so deleted textarea content "grows back".
 
   return `${siteRepoUrl}/issues/new?${params.toString()}`;
 }

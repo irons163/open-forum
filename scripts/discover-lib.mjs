@@ -297,11 +297,8 @@ export function buildRecommendIssueUrl(siteRepoUrl, candidate) {
   // Discovery candidates are selected for recent star velocity.
   params.set('reason_type', '近期熱度上升');
 
-  // Prefill only the recommendation reason. use_case is a different question
-  // and should stay empty for the submitter to answer.
-  if (candidate.description) {
-    params.set('reason', candidate.description);
-  }
+  // Never prefill textareas via query params: GitHub re-applies them on
+  // re-render, so users cannot delete or rewrite the content.
 
   return `${siteRepoUrl}/issues/new?${params.toString()}`;
 }

@@ -62,7 +62,7 @@ describe('discovery helpers', () => {
     expect(params.get('repo')).toBeNull();
     expect(params.get('category')).toBe('AI');
     expect(params.get('reason_type')).toBe('近期熱度上升');
-    expect(params.get('reason')).toBe('Agent harness');
+    expect(params.get('reason')).toBeNull();
     expect(params.get('use_case')).toBeNull();
     expect(buildRecommendIssueUrl('', { fullName: 'acme/rocket', repoUrl: '', category: '', description: '' })).toBe(
       '',

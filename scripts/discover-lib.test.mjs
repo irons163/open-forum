@@ -219,7 +219,7 @@ describe('issue helpers and summary', () => {
     expect(params.get('repo')).toBeNull();
     expect(params.get('category')).toBe('工具');
     expect(params.get('reason_type')).toBe('近期熱度上升');
-    expect(params.get('reason')).toBe('A fast CLI');
+    expect(params.get('reason')).toBeNull();
     expect(params.get('use_case')).toBeNull();
     expect(buildRecommendIssueUrl('', { fullName: 'acme/rocket' })).toBe('');
   });
