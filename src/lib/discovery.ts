@@ -95,9 +95,10 @@ export function buildRecommendIssueUrl(
 
   params.set('reason_type', '近期熱度上升');
 
+  // Only prefill "為什麼推薦". Duplicating the same blurb into use_case makes
+  // the second required field look stuck and is usually the wrong answer anyway.
   if (candidate.description) {
     params.set('reason', candidate.description);
-    params.set('use_case', candidate.description);
   }
 
   return `${siteRepoUrl}/issues/new?${params.toString()}`;

@@ -297,9 +297,10 @@ export function buildRecommendIssueUrl(siteRepoUrl, candidate) {
   // Discovery candidates are selected for recent star velocity.
   params.set('reason_type', '近期熱度上升');
 
+  // Prefill only the recommendation reason. use_case is a different question
+  // and should stay empty for the submitter to answer.
   if (candidate.description) {
     params.set('reason', candidate.description);
-    params.set('use_case', candidate.description);
   }
 
   return `${siteRepoUrl}/issues/new?${params.toString()}`;
