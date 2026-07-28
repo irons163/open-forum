@@ -173,5 +173,10 @@
     "repo": "xai-org/grok-build",
     "category": "AI",
     "highlight": "實用度高：SpaceXAI's coding agent harness and TUI. Fullscreen, mouse interactive, extensible."
+  },
+  {
+    "repo": "nexu-io/open-design",
+    "category": "AI",
+    "highlight": "近期熱度上升：🎨 The open-source Claude Design alternative. 🖥️ Local-first desktop app. 🖼️ Your cod…"
   }
 ]
