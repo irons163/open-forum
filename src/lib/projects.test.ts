@@ -21,11 +21,15 @@ import {
   getDataHealth,
   getBreakoutProjects,
   getDiscoveryProjects,
+  getEditorialFeaturedProjects,
+  getEditorialWatchlist,
   getLastSyncedAt,
   getRecentlyUpdatedProjects,
   getScaleLeaderProjects,
   getTrendingProjects,
+  getWeeklyBrief,
   lastSyncedAt,
+  projectBlurb,
   projects,
   recentlyUpdatedProjects,
   relativeDays,
@@ -211,6 +215,8 @@ describe('formatters', () => {
     expect(relativeDays('2026-05-16T00:00:00Z')).toBe('今天有更新');
     expect(relativeDays('2026-05-15T00:00:00Z')).toBe('1 天前更新');
     expect(relativeDays('2026-05-13T00:00:00Z')).toBe('3 天前更新');
+    expect(relativeDays('2026-05-16T00:00:00Z', 'en')).toBe('Updated today');
+    expect(relativeDays('2026-05-13T00:00:00Z', 'en')).toBe('Updated 3 days ago');
   });
 
   it('formats momentum with the strongest available signal', () => {
@@ -219,6 +225,17 @@ describe('formatters', () => {
     expect(formatMomentum(makeProject({ delta1d: 12 }))).toBe('1d +12');
     expect(formatMomentum(makeProject({ delta30d: 1234 }))).toBe('30d +1.2k');
     expect(formatMomentum(makeProject())).toBe('暫時持平');
+    expect(formatMomentum(makeProject({ historyDays: 2 }), 'en')).toBe('Just started tracking');
+  });
+
+  it('loads locale-specific editorial copy and project blurbs', () => {
+    expect(getWeeklyBrief('en').headline).not.toBe(weeklyBrief.headline);
+    expect(getEditorialFeaturedProjects('en').length).toBeGreaterThan(0);
+    expect(getEditorialWatchlist('en')[0]?.title).toBeTruthy();
+    expect(projectBlurb(makeProject(), 'zh-Hant')).toBe('Useful project');
+    expect(projectBlurb(makeProject(), 'en')).toBe('Project description');
+    expect(projectBlurb(makeProject({ description: '' }), 'en')).toBe('Useful project');
+    expect(projectBlurb(makeProject({ highlight: '' }), 'zh-Hant')).toBe('Project description');
   });
 
   it('formats percentages with one decimal place', () => {
@@ -287,6 +304,7 @@ describe('getDataHealth', () => {
 
     expect(health.status).toBe('archived');
     expect(health.label).toBe('已封存');
+    expect(getDataHealth({ archived: true }, 'en').label).toBe('Archived');
   });
 
   it('treats data predating fetchedAt tracking as healthy', () => {

@@ -1,7 +1,7 @@
+import { localePath } from '../i18n';
 import { projects } from '../lib/projects';
 
 const site = import.meta.env.SITE;
-const baseUrl = import.meta.env.BASE_URL;
 
 function absoluteUrl(pathname: string) {
   if (!site) {
@@ -15,15 +15,24 @@ export const prerender = true;
 
 export function GET() {
   const staticPages = [
-    { pathname: baseUrl, lastmod: new Date().toISOString() },
-    { pathname: `${baseUrl}rankings/`, lastmod: new Date().toISOString() },
-    { pathname: `${baseUrl}community/`, lastmod: new Date().toISOString() },
+    { pathname: localePath('zh-Hant'), lastmod: new Date().toISOString() },
+    { pathname: localePath('zh-Hant', 'rankings'), lastmod: new Date().toISOString() },
+    { pathname: localePath('zh-Hant', 'community'), lastmod: new Date().toISOString() },
+    { pathname: localePath('en'), lastmod: new Date().toISOString() },
+    { pathname: localePath('en', 'rankings'), lastmod: new Date().toISOString() },
+    { pathname: localePath('en', 'community'), lastmod: new Date().toISOString() },
   ];
 
-  const projectPages = projects.map((project) => ({
-    pathname: `${baseUrl}projects/${project.slug}/`,
-    lastmod: project.syncedAt,
-  }));
+  const projectPages = projects.flatMap((project) => [
+    {
+      pathname: localePath('zh-Hant', `projects/${project.slug}`),
+      lastmod: project.syncedAt,
+    },
+    {
+      pathname: localePath('en', `projects/${project.slug}`),
+      lastmod: project.syncedAt,
+    },
+  ]);
 
   const urls = [...staticPages, ...projectPages]
     .map(

@@ -1,19 +1,22 @@
 ---
-import { getBriefFreshness, weeklyBrief } from '../../lib/projects';
-import { baseUrl, discussionsUrl } from '../../lib/site';
+import { defaultLocale, localePath, t, type Locale } from '../../i18n';
+import { getBriefFreshness, getWeeklyBrief } from '../../lib/projects';
+import { discussionsUrl } from '../../lib/site';
 
+const { locale = defaultLocale } = Astro.props as { locale?: Locale };
+const weeklyBrief = getWeeklyBrief(locale);
 const brief = getBriefFreshness(weeklyBrief.weekLabel);
 const briefStamp =
   brief.isCurrent || brief.ageDays === null
     ? weeklyBrief.weekLabel
-    : `${weeklyBrief.weekLabel}・${brief.ageDays} 天前`;
+    : t(locale, 'brief.ageStamp', { label: weeklyBrief.weekLabel, days: brief.ageDays });
 ---
 
 <section class="shell two-column">
   <div class="section-panel content-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">{brief.isCurrent ? '本週觀察' : '編輯手記'}</p>
+        <p class="eyebrow">{brief.isCurrent ? t(locale, 'brief.current') : t(locale, 'brief.stale')}</p>
         <h2>{weeklyBrief.headline}</h2>
       </div>
       <span class="pill subtle">{briefStamp}</span>
@@ -36,31 +39,31 @@ const briefStamp =
   <div class="section-panel sidebar-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">怎麼用這站</p>
-        <h2>三分鐘逛完</h2>
+        <p class="eyebrow">{t(locale, 'brief.howto.eyebrow')}</p>
+        <h2>{t(locale, 'brief.howto.title')}</h2>
       </div>
     </div>
 
     <div class="list-stack">
       <div class="flow-step">
-        <strong>01. 看榜單</strong>
-        <p class="muted">到熱度榜找 7 天增量、相對增幅與完整排序，點進感興趣的 repo。</p>
+        <strong>{t(locale, 'brief.howto.1.title')}</strong>
+        <p class="muted">{t(locale, 'brief.howto.1.body')}</p>
       </div>
       <div class="flow-step">
-        <strong>02. 讀精選</strong>
-        <p class="muted">首頁編輯區會補一句「為什麼現在值得看」，不只給 star 數字。</p>
+        <strong>{t(locale, 'brief.howto.2.title')}</strong>
+        <p class="muted">{t(locale, 'brief.howto.2.body')}</p>
       </div>
       <div class="flow-step">
-        <strong>03. 參與社群</strong>
-        <p class="muted">想收錄新專案就提交推薦；有想法就到 Discussions 或頁面留言區討論。</p>
+        <strong>{t(locale, 'brief.howto.3.title')}</strong>
+        <p class="muted">{t(locale, 'brief.howto.3.body')}</p>
       </div>
     </div>
 
     <div class="notice">
       <p>
-        <a href={`${baseUrl}rankings/`}>熱度榜</a>
+        <a href={localePath(locale, 'rankings')}>{t(locale, 'brief.link.rankings')}</a>
         {' · '}
-        <a href={`${baseUrl}community/`}>社群提報</a>
+        <a href={localePath(locale, 'community')}>{t(locale, 'brief.link.community')}</a>
         {discussionsUrl && (
           <>
             {' · '}

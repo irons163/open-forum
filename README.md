@@ -6,6 +6,8 @@
 - 追蹤熱度：GitHub Actions 定時抓取 repo 指標，產出熱度榜
 - 可以討論：GitHub Discussions + giscus 留言區
 
+介面支援**繁體中文**（預設）與 **English**（`/en/`）。頂部可切換語言；編輯週報與精選在英文版有對應文案，專案 highlight 在英文頁會改顯示 GitHub description。
+
 ## 新用戶快速開始
 
 ### 網站在哪裡？
@@ -18,10 +20,10 @@
 
 把這站當成「開源專案雷達」：看榜、點進專案、想推薦再去 GitHub 提報。
 
-1. **首頁** — 本週編輯推薦、週報、專案探索（可依分類篩選、搜尋）
-2. **熱度榜** — [rankings](https://irons163.github.io/open-forum/rankings/)：7 天增量、相對增幅、完整排序
+1. **首頁** — 本週編輯推薦、週報、專案探索（可依分類篩選、搜尋）；英文版：[en](https://irons163.github.io/open-forum/en/)
+2. **熱度榜** — [rankings](https://irons163.github.io/open-forum/rankings/)（[EN](https://irons163.github.io/open-forum/en/rankings/)）：7 天增量、相對增幅、完整排序
 3. **專案詳情** — 從榜單或首頁點進任一 repo，看 stars、成長曲線與 GitHub 連結
-4. **社群** — [community](https://irons163.github.io/open-forum/community/)：
+4. **社群** — [community](https://irons163.github.io/open-forum/community/)（[EN](https://irons163.github.io/open-forum/en/community/)）：
    - 推薦專案：填 [Issue Form](https://github.com/irons163/open-forum/issues/new?template=recommend-project.yml)（需 GitHub 帳號）
    - 討論：[Discussions](https://github.com/irons163/open-forum/discussions) 或頁面底部的 giscus 留言
 

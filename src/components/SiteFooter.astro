@@ -1,18 +1,21 @@
 ---
-import { baseUrl, siteRepoUrl } from '../lib/site';
+import { defaultLocale, localePath, t, type Locale } from '../i18n';
+import { siteRepoUrl } from '../lib/site';
+
+const { locale = defaultLocale } = Astro.props as { locale?: Locale };
 ---
 
 <footer class="site-footer">
   <div class="shell footer-shell">
     <div class="footer-brand">
       <strong>Open Forum</strong>
-      <p>追蹤開源 repo 熱度，精選值得看的專案，歡迎推薦與討論。</p>
+      <p>{t(locale, 'footer.blurb')}</p>
     </div>
     <div class="footer-links">
-      <a href={`${baseUrl}rankings/`}>熱度榜</a>
-      <a href={`${baseUrl}community/`}>社群</a>
-      <a href={`${baseUrl}launch/`}>站長工具</a>
-      {siteRepoUrl && <a href={siteRepoUrl}>原始碼</a>}
+      <a href={localePath(locale, 'rankings')}>{t(locale, 'nav.rankings')}</a>
+      <a href={localePath(locale, 'community')}>{t(locale, 'nav.community')}</a>
+      <a href={localePath('zh-Hant', 'launch')}>{t(locale, 'footer.launch')}</a>
+      {siteRepoUrl && <a href={siteRepoUrl}>{t(locale, 'footer.source')}</a>}
     </div>
   </div>
 </footer>

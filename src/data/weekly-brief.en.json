@@ -1,0 +1,19 @@
+{
+  "weekLabel": "2026 / 07 / 25",
+  "headline": "AI workflow and inference stacks still lead—but relative growth swapped leaders.",
+  "summary": "This week’s absolute 7-day gains still favor n8n, ComfyUI, and vLLM. On relative growth, though, langgraph and directus outpaced the board—signals you usually miss on a raw star leaderboard.",
+  "signals": [
+    {
+      "label": "This week",
+      "text": "n8n and ComfyUI each picked up nearly a thousand stars; workflow heat is not fading. vLLM follows steadily—inference-as-a-service looks like demand, not hype."
+    },
+    {
+      "label": "Under-read signal",
+      "text": "langgraph led the site at 1.47% weekly relative growth, a hint that agent orchestration is splitting out from the langchain mainline. directus is a rare Backend-category acceleration."
+    },
+    {
+      "label": "Next week’s prompt",
+      "text": "Worth a Discussions thread on relative growth vs absolute gains: when picking tools, do percentage jumps on smaller projects beat raw star deltas on giants?"
+    }
+  ]
+}

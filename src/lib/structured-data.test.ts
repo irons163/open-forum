@@ -60,9 +60,21 @@ describe('buildWebSiteSchema', () => {
 
     expect(schema['@type']).toBe('WebSite');
     expect(schema.url).toBe('https://example.com/open-forum/');
+    expect(schema.inLanguage).toBe('zh-Hant');
     expect(schema.potentialAction.target.urlTemplate).toBe(
       'https://example.com/open-forum/?q={search_term_string}',
     );
+  });
+
+  it('sets inLanguage for the English locale', () => {
+    const schema = buildWebSiteSchema(
+      'https://example.com/open-forum/en/',
+      'Open Forum',
+      'Radar',
+      'en',
+    );
+
+    expect(schema.inLanguage).toBe('en');
   });
 });
 
@@ -134,5 +146,11 @@ describe('buildRankingSchema', () => {
 
     expect(schema.numberOfItems).toBe(5);
     expect(schema.itemListElement).toHaveLength(5);
+  });
+
+  it('localizes the ranking list name', () => {
+    expect(buildRankingSchema([makeProject()], buildUrl, 20, 'en').name).toBe(
+      'Open-source project rankings',
+    );
   });
 });

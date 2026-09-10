@@ -1,76 +1,113 @@
 ---
+import {
+  categoryLabel,
+  defaultLocale,
+  localePath,
+  switchLocalePath,
+  t,
+  type Locale,
+} from '../i18n';
 import { categorySummaries } from '../lib/projects';
-import { baseUrl, discussionsUrl, siteRepoUrl } from '../lib/site';
+import { discussionsUrl, siteRepoUrl } from '../lib/site';
 import { themeColors, themeStorageKey } from '../lib/theme';
 
-const { current = 'home' } = Astro.props;
+const { current = 'home', locale = defaultLocale } = Astro.props as {
+  current?: string;
+  locale?: Locale;
+};
 
+const homePath = localePath(locale);
 const navItems = [
-  { key: 'home', label: '首頁', href: `${baseUrl}` },
-  { key: 'rankings', label: '熱度榜', href: `${baseUrl}rankings/` },
-  { key: 'community', label: '社群', href: `${baseUrl}community/` },
+  { key: 'home', label: t(locale, 'nav.home'), href: homePath },
+  { key: 'rankings', label: t(locale, 'nav.rankings'), href: localePath(locale, 'rankings') },
+  { key: 'community', label: t(locale, 'nav.community'), href: localePath(locale, 'community') },
 ];
 
 const quickLinks = [
-  { label: '探索專案', href: `${baseUrl}#discover-projects` },
-  { label: '熱度榜', href: `${baseUrl}rankings/` },
+  { label: t(locale, 'nav.explore'), href: `${homePath}#discover-projects` },
+  { label: t(locale, 'nav.rankings'), href: localePath(locale, 'rankings') },
   ...categorySummaries.slice(0, 4).map((summary) => ({
-    label: summary.name,
-    href: `${baseUrl}?category=${encodeURIComponent(summary.name)}#discover-projects`,
+    label: categoryLabel(locale, summary.name),
+    href: `${homePath}?category=${encodeURIComponent(summary.name)}#discover-projects`,
   })),
-  { label: '推薦收錄', href: `${baseUrl}community/` },
+  { label: t(locale, 'nav.recommend'), href: localePath(locale, 'community') },
 ];
+
+const zhHref = switchLocalePath(Astro.url, 'zh-Hant');
+const switchedEn = switchLocalePath(Astro.url, 'en');
+// Maintainer tools stay Chinese-only; send English visitors to the EN home.
+const enHref = switchedEn.includes('/launch/') ? localePath('en') : switchedEn;
+const themeToDark = t(locale, 'theme.toDark');
+const themeToLight = t(locale, 'theme.toLight');
 ---
 
 <header class="site-header">
   <div class="shell header-shell">
-    <a class="brand-mark" href={baseUrl}>
+    <a class="brand-mark" href={homePath}>
       <span class="brand-icon">◎</span>
       <span>
         <strong>Open Forum</strong>
-        <small>開源專案雷達</small>
+        <small>{t(locale, 'meta.tagline')}</small>
       </span>
     </a>
 
-    <form class="header-search" action={baseUrl} method="get" role="search">
-      <label class="visually-hidden" for="header-search-input">搜尋開源專案</label>
+    <form class="header-search" action={homePath} method="get" role="search">
+      <label class="visually-hidden" for="header-search-input">{t(locale, 'search.label')}</label>
       <input
         class="header-search-input"
         id="header-search-input"
         type="search"
         name="q"
-        placeholder="搜尋感興趣的開源倉庫、主題或分類"
+        placeholder={t(locale, 'search.placeholder')}
       />
       <input type="hidden" name="jump" value="discover-projects" />
     </form>
 
     <div class="header-links">
+      <nav class="lang-switch" aria-label={t(locale, 'nav.lang')}>
+        <a
+          class:list={['lang-link', locale === 'zh-Hant' && 'is-active']}
+          href={zhHref}
+          hreflang="zh-Hant"
+          aria-current={locale === 'zh-Hant' ? 'true' : undefined}
+        >
+          {t(locale, 'nav.lang.zh')}
+        </a>
+        <a
+          class:list={['lang-link', locale === 'en' && 'is-active']}
+          href={enHref}
+          hreflang="en"
+          aria-current={locale === 'en' ? 'true' : undefined}
+        >
+          {t(locale, 'nav.lang.en')}
+        </a>
+      </nav>
       {discussionsUrl && (
         <a class="button ghost compact" href={discussionsUrl} target="_blank" rel="noreferrer">
-          Discussions
+          {t(locale, 'common.discussions')}
         </a>
       )}
       {siteRepoUrl && (
         <a class="button compact" href={siteRepoUrl} target="_blank" rel="noreferrer">
-          Repo
+          {t(locale, 'common.repo')}
         </a>
       )}
       <button
         class="theme-toggle"
         type="button"
         data-theme-toggle
-        aria-label="切換到深色模式"
+        aria-label={themeToDark}
         aria-pressed="false"
-        title="切換到深色模式"
+        title={themeToDark}
       >
         <span class="theme-toggle-icon" data-theme-toggle-icon aria-hidden="true">☀</span>
-        <span class="visually-hidden" data-theme-toggle-label>切換到深色模式</span>
+        <span class="visually-hidden" data-theme-toggle-label>{themeToDark}</span>
       </button>
     </div>
   </div>
 
   <div class="shell header-subnav">
-    <nav class="header-nav" aria-label="主導覽">
+    <nav class="header-nav" aria-label={t(locale, 'nav.main')}>
       {navItems.map((item) => (
         <a class:list={['nav-link', current === item.key && 'is-active']} href={item.href}>
           {item.label}
@@ -78,7 +115,7 @@ const quickLinks = [
       ))}
     </nav>
 
-    <nav class="quick-links" aria-label="快速入口">
+    <nav class="quick-links" aria-label={t(locale, 'nav.quick')}>
       {quickLinks.map((item) => (
         <a class="quick-link" href={item.href}>{item.label}</a>
       ))}
@@ -86,7 +123,7 @@ const quickLinks = [
   </div>
 </header>
 
-<script is:inline define:vars={{ themeStorageKey, themeColors }}>
+<script is:inline define:vars={{ themeStorageKey, themeColors, themeToDark, themeToLight }}>
   (() => {
     const button = document.querySelector('[data-theme-toggle]');
     if (!button) return;
@@ -99,7 +136,7 @@ const quickLinks = [
     const getTheme = () => (root.dataset.theme === 'dark' ? 'dark' : 'light');
 
     const updateButton = (theme) => {
-      const nextLabel = theme === 'dark' ? '切換到淺色模式' : '切換到深色模式';
+      const nextLabel = theme === 'dark' ? themeToLight : themeToDark;
 
       button.setAttribute('aria-label', nextLabel);
       button.setAttribute('aria-pressed', String(theme === 'dark'));

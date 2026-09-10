@@ -1,6 +1,9 @@
 import rawProjects from '../data/projects.generated.json';
 import rawEditorialNotes from '../data/editorial-notes.json';
+import rawEditorialNotesEn from '../data/editorial-notes.en.json';
 import rawWeeklyBrief from '../data/weekly-brief.json';
+import rawWeeklyBriefEn from '../data/weekly-brief.en.json';
+import { dateLocale, defaultLocale, t, type Locale } from '../i18n';
 
 export type Project = {
   slug: string;
@@ -36,7 +39,8 @@ export type Project = {
 };
 
 const typedProjects = rawProjects as Project[];
-const editorialNotes = rawEditorialNotes as {
+
+type EditorialNotes = {
   featured: Array<{
     repo: string;
     kicker: string;
@@ -49,7 +53,8 @@ const editorialNotes = rawEditorialNotes as {
     description: string;
   }>;
 };
-export const weeklyBrief = rawWeeklyBrief as {
+
+type WeeklyBrief = {
   weekLabel: string;
   headline: string;
   summary: string;
@@ -58,6 +63,28 @@ export const weeklyBrief = rawWeeklyBrief as {
     text: string;
   }>;
 };
+
+const editorialNotesByLocale: Record<Locale, EditorialNotes> = {
+  'zh-Hant': rawEditorialNotes as EditorialNotes,
+  en: rawEditorialNotesEn as EditorialNotes,
+};
+
+const weeklyBriefByLocale: Record<Locale, WeeklyBrief> = {
+  'zh-Hant': rawWeeklyBrief as WeeklyBrief,
+  en: rawWeeklyBriefEn as WeeklyBrief,
+};
+
+const editorialNotes = editorialNotesByLocale[defaultLocale];
+export const weeklyBrief = weeklyBriefByLocale[defaultLocale];
+
+export function getWeeklyBrief(locale: Locale = defaultLocale) {
+  return weeklyBriefByLocale[locale];
+}
+
+export function getEditorialNotes(locale: Locale = defaultLocale) {
+  return editorialNotesByLocale[locale];
+}
+
 const dayInMs = 1000 * 60 * 60 * 24;
 
 function daysSince(date: string) {
@@ -150,6 +177,23 @@ export const categorySummaries = buildCategorySummaries(projects, categories);
 export const editorialFeaturedProjects = buildEditorialFeaturedProjects(editorialNotes.featured, projects);
 export const editorialWatchlist = editorialNotes.watchlist;
 
+export function getEditorialFeaturedProjects(locale: Locale = defaultLocale) {
+  return buildEditorialFeaturedProjects(getEditorialNotes(locale).featured, projects);
+}
+
+export function getEditorialWatchlist(locale: Locale = defaultLocale) {
+  return getEditorialNotes(locale).watchlist;
+}
+
+/** Prefer curated Chinese highlight; on English pages fall back to the GitHub description. */
+export function projectBlurb(project: Pick<Project, 'highlight' | 'description'>, locale: Locale = defaultLocale) {
+  if (locale === 'en') {
+    return project.description || project.highlight;
+  }
+
+  return project.highlight || project.description;
+}
+
 export function formatCompactNumber(value: number) {
   if (value >= 1_000_000) {
     return `${(value / 1_000_000).toFixed(1)}M`;
@@ -162,46 +206,49 @@ export function formatCompactNumber(value: number) {
   return `${value}`;
 }
 
-export function formatDate(value: string) {
-  return new Intl.DateTimeFormat('zh-TW', {
+export function formatDate(value: string, locale: Locale = defaultLocale) {
+  return new Intl.DateTimeFormat(dateLocale(locale), {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   }).format(new Date(value));
 }
 
-export function relativeDays(value: string) {
+export function relativeDays(value: string, locale: Locale = defaultLocale) {
   const diff = daysSince(value);
 
   if (diff === 0) {
-    return '今天有更新';
+    return t(locale, 'fmt.updatedToday');
   }
 
   if (diff === 1) {
-    return '1 天前更新';
+    return t(locale, 'fmt.updatedOneDay');
   }
 
-  return `${diff} 天前更新`;
+  return t(locale, 'fmt.updatedDays', { days: diff });
 }
 
-export function formatMomentum(project: Pick<Project, 'historyDays' | 'delta1d' | 'delta7d' | 'delta30d'>) {
+export function formatMomentum(
+  project: Pick<Project, 'historyDays' | 'delta1d' | 'delta7d' | 'delta30d'>,
+  locale: Locale = defaultLocale,
+) {
   if (project.historyDays < 7) {
-    return '剛開始追蹤';
+    return t(locale, 'fmt.trackingStart');
   }
 
   if (project.delta7d > 0) {
-    return `7d +${formatCompactNumber(project.delta7d)}`;
+    return t(locale, 'fmt.growth7d', { value: formatCompactNumber(project.delta7d) });
   }
 
   if (project.delta1d > 0) {
-    return `1d +${formatCompactNumber(project.delta1d)}`;
+    return t(locale, 'fmt.growth1d', { value: formatCompactNumber(project.delta1d) });
   }
 
   if (project.delta30d > 0) {
-    return `30d +${formatCompactNumber(project.delta30d)}`;
+    return t(locale, 'fmt.growth30d', { value: formatCompactNumber(project.delta30d) });
   }
 
-  return '暫時持平';
+  return t(locale, 'fmt.flat');
 }
 
 export function formatPercentage(value: number) {
@@ -236,61 +283,64 @@ export function formatDelta(value: number) {
   return '0';
 }
 
-export function buildTrendState(project: Pick<Project, 'historyDays' | 'delta1d' | 'delta7d' | 'delta30d' | 'growthRate7d' | 'lastPushedAt' | 'archived'>) {
+export function buildTrendState(
+  project: Pick<Project, 'historyDays' | 'delta1d' | 'delta7d' | 'delta30d' | 'growthRate7d' | 'lastPushedAt' | 'archived'>,
+  locale: Locale = defaultLocale,
+) {
   const inactiveDays = daysSince(project.lastPushedAt);
 
   if (project.archived) {
     return {
-      label: '已封存',
+      label: t(locale, 'trend.archived.label'),
       tone: 'archived',
-      description: '作者已在 GitHub 封存這個 repo，不會再有新提交。',
+      description: t(locale, 'trend.archived.description'),
     };
   }
 
   if (project.historyDays < 7) {
     return {
-      label: '觀察中',
+      label: t(locale, 'trend.tracking.label'),
       tone: 'tracking',
-      description: '資料還在累積，先建立基準線。',
+      description: t(locale, 'trend.tracking.description'),
     };
   }
 
   if (project.delta7d >= 250 || project.growthRate7d >= 4) {
     return {
-      label: '強勢上升',
+      label: t(locale, 'trend.surging.label'),
       tone: 'surging',
-      description: '近期增星明顯，值得放在榜單前段。',
+      description: t(locale, 'trend.surging.description'),
     };
   }
 
   if (project.delta7d >= 50 || project.delta1d >= 10 || project.growthRate7d >= 1.2) {
     return {
-      label: '正在升溫',
+      label: t(locale, 'trend.rising.label'),
       tone: 'rising',
-      description: '已經出現穩定動能，適合持續觀察。',
+      description: t(locale, 'trend.rising.description'),
     };
   }
 
   if (project.delta30d > 0 && inactiveDays <= 14) {
     return {
-      label: '穩定活躍',
+      label: t(locale, 'trend.steady.label'),
       tone: 'steady',
-      description: '不是爆衝型，但更新和增長都穩定。',
+      description: t(locale, 'trend.steady.description'),
     };
   }
 
   if (inactiveDays > 14) {
     return {
-      label: '熱度放緩',
+      label: t(locale, 'trend.cooling.label'),
       tone: 'cooling',
-      description: '近期更新放慢，適合放到次級觀察區。',
+      description: t(locale, 'trend.cooling.description'),
     };
   }
 
   return {
-    label: '持續觀察',
+    label: t(locale, 'trend.watch.label'),
     tone: 'steady',
-    description: '目前沒有明顯波峰，但仍保持活躍。',
+    description: t(locale, 'trend.watch.description'),
   };
 }
 
@@ -308,15 +358,18 @@ export type DataHealth = {
  * known numbers, which silently looks like live data. Derive that state from
  * fetchedAt so the page can say so instead of quietly lying.
  */
-export function getDataHealth(project: Pick<Project, 'archived' | 'fetchedAt'>): DataHealth {
+export function getDataHealth(
+  project: Pick<Project, 'archived' | 'fetchedAt'>,
+  locale: Locale = defaultLocale,
+): DataHealth {
   const staleDays = project.fetchedAt ? daysSince(project.fetchedAt) : 0;
 
   if (project.archived) {
     return {
       status: 'archived',
       staleDays,
-      label: '已封存',
-      description: '這個 repo 已在 GitHub 封存，不會再有新的提交，數據僅供參考。',
+      label: t(locale, 'health.archived.label'),
+      description: t(locale, 'health.archived.description'),
     };
   }
 
@@ -324,8 +377,8 @@ export function getDataHealth(project: Pick<Project, 'archived' | 'fetchedAt'>):
     return {
       status: 'stale',
       staleDays,
-      label: `${staleDays} 天未更新`,
-      description: `已連續 ${staleDays} 天無法從 GitHub 取得這個 repo 的資料，畫面上是最後一次成功抓取的數字。`,
+      label: t(locale, 'health.stale.label', { days: staleDays }),
+      description: t(locale, 'health.stale.description', { days: staleDays }),
     };
   }
 

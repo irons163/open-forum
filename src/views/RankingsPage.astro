@@ -1,0 +1,342 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Sparkline from '../components/Sparkline.astro';
+import { categoryLabel, defaultLocale, localePath, t, type Locale } from '../i18n';
+import { getStarSparkline } from '../lib/history';
+import {
+  activeProjects,
+  breakoutProjects,
+  buildTrendState,
+  discoveryProjects,
+  formatCompactNumber,
+  formatDate,
+  formatDelta,
+  formatMomentum,
+  formatPercentage,
+  getDataHealth,
+  lastSyncedAt,
+  projectBlurb,
+  projects,
+  relativeDays,
+  scaleLeaderProjects,
+  totalStars,
+  trendingProjects,
+} from '../lib/projects';
+import { buildRankingSchema } from '../lib/structured-data';
+
+const { locale = defaultLocale } = Astro.props as { locale?: Locale };
+const rankingSchema = Astro.site
+  ? buildRankingSchema(
+      projects,
+      (project) => new URL(localePath(locale, `projects/${project.slug}`), Astro.site).toString(),
+      20,
+      locale,
+    )
+  : undefined;
+
+const sortOptions = [
+  { key: 'trend', label: t(locale, 'rankings.sort.trend') },
+  { key: 'stars', label: t(locale, 'rankings.sort.stars') },
+  { key: 'delta7d', label: t(locale, 'rankings.sort.delta7d') },
+  { key: 'growth', label: t(locale, 'rankings.sort.growth') },
+];
+---
+
+<Layout
+  title={t(locale, 'meta.rankingsTitle')}
+  description={t(locale, 'meta.rankingsDescription')}
+  current="rankings"
+  schema={rankingSchema}
+  locale={locale}
+>
+  <section class="shell section-panel content-block">
+    <p class="eyebrow">{t(locale, 'rankings.eyebrow')}</p>
+    <h1 class="detail-title">{t(locale, 'rankings.title')}</h1>
+    <p class="hero-lead muted">{t(locale, 'rankings.lead')}</p>
+
+    <div class="notice">
+      <p class="muted">{t(locale, 'rankings.notice')}</p>
+    </div>
+
+    <div class="metric-grid" style="margin-top: 1.2rem;">
+      <div class="metric-card">
+        <span class="metric-label">{t(locale, 'rankings.metric.tracked')}</span>
+        <strong>{projects.length}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">{t(locale, 'rankings.metric.active30')}</span>
+        <strong>{activeProjects}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">{t(locale, 'home.metric.totalStars')}</span>
+        <strong>{formatCompactNumber(totalStars)}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">{t(locale, 'home.metric.synced')}</span>
+        <strong>{formatDate(lastSyncedAt, locale)}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{t(locale, 'rankings.views.eyebrow')}</p>
+        <h2>{t(locale, 'rankings.views.title')}</h2>
+      </div>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="meta-pair">
+          <p class="eyebrow">{t(locale, 'rankings.delta7d')}</p>
+          <span class="pill">{t(locale, 'rankings.delta7d.pill')}</span>
+        </div>
+        <div class="list-stack">
+          {trendingProjects.slice(0, 4).map((project, index) => (
+            <a class="list-link compact-link" href={localePath(locale, `projects/${project.slug}`)}>
+              <div class="rank-meta">
+                <span class="rank-number">{String(index + 1).padStart(2, '0')}</span>
+                <span>{formatMomentum(project, locale)}</span>
+              </div>
+              <h3>{project.fullName}</h3>
+              <p class="muted">{projectBlurb(project, locale)}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div class="insight-card">
+        <div class="meta-pair">
+          <p class="eyebrow">{t(locale, 'rankings.growth')}</p>
+          <span class="pill">{t(locale, 'rankings.growth.pill')}</span>
+        </div>
+        <div class="list-stack">
+          {breakoutProjects.slice(0, 4).map((project, index) => (
+            <a class="list-link compact-link" href={localePath(locale, `projects/${project.slug}`)}>
+              <div class="rank-meta">
+                <span class="rank-number">{String(index + 1).padStart(2, '0')}</span>
+                <span>
+                  {project.historyDays < 7
+                    ? t(locale, 'common.observing')
+                    : `7d ${formatPercentage(project.growthRate7d)}`}
+                </span>
+              </div>
+              <h3>{project.fullName}</h3>
+              <p class="muted">
+                {project.historyDays < 7
+                  ? t(locale, 'rankings.growth.waiting')
+                  : t(locale, 'rankings.growth.grown', {
+                      pct: formatPercentage(project.growthRate7d),
+                    })}
+              </p>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div class="insight-card">
+        <div class="meta-pair">
+          <p class="eyebrow">{t(locale, 'rankings.discovery')}</p>
+          <span class="pill">{t(locale, 'rankings.discovery.pill')}</span>
+        </div>
+        <div class="list-stack">
+          {discoveryProjects.slice(0, 4).map((project, index) => (
+            <a class="list-link compact-link" href={localePath(locale, `projects/${project.slug}`)}>
+              <div class="rank-meta">
+                <span class="rank-number">{String(index + 1).padStart(2, '0')}</span>
+                <span>{buildTrendState(project, locale).label}</span>
+              </div>
+              <h3>{project.fullName}</h3>
+              <p class="muted">{buildTrendState(project, locale).description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{t(locale, 'rankings.scale.eyebrow')}</p>
+        <h2>{t(locale, 'rankings.scale.title')}</h2>
+      </div>
+    </div>
+
+    <div class="list-stack">
+      {scaleLeaderProjects.slice(0, 3).map((project, index) => (
+        <a class="list-link compact-link" href={localePath(locale, `projects/${project.slug}`)}>
+          <div class="rank-meta">
+            <span class="rank-number">{String(index + 1).padStart(2, '0')}</span>
+            <span>{formatCompactNumber(project.stars)} {t(locale, 'common.stars')}</span>
+          </div>
+          <h3>{project.fullName}</h3>
+          <p class="muted">{projectBlurb(project, locale)}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{t(locale, 'rankings.full.eyebrow')}</p>
+        <h2>{t(locale, 'rankings.full.title')}</h2>
+      </div>
+    </div>
+
+    <div class="filter-pills" role="group" aria-label={t(locale, 'rankings.sortAria')}>
+      {sortOptions.map((option, index) => (
+        <button
+          class="pill"
+          type="button"
+          data-sort-button
+          data-sort={option.key}
+          data-active={index === 0 ? 'true' : 'false'}
+          aria-pressed={index === 0 ? 'true' : 'false'}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+
+    {
+      projects.length ? (
+        <div class="rank-list" style="margin-top: 1.2rem;" data-rank-list>
+          {projects.map((project, index) => (
+            <article
+              class="rank-card section-panel"
+              data-rank-card
+              data-sort-trend={project.trendScore}
+              data-sort-stars={project.stars}
+              data-sort-delta7d={project.delta7d}
+              data-sort-growth={project.historyDays < 7 ? -1 : project.growthRate7d}
+            >
+              <div class="rank-number" data-rank-number>{String(index + 1).padStart(2, '0')}</div>
+              <div>
+                <div class="rank-meta">
+                  <span class="pill">{categoryLabel(locale, project.category)}</span>
+                  {project.language && <span class="pill subtle">{project.language}</span>}
+                  <span class:list={['trend-badge', `trend-${buildTrendState(project, locale).tone}`]}>
+                    {buildTrendState(project, locale).label}
+                  </span>
+                  {getDataHealth(project, locale).status === 'stale' && (
+                    <span class="health-badge">{getDataHealth(project, locale).label}</span>
+                  )}
+                </div>
+                <h3>{project.fullName}</h3>
+                <p class="muted">{project.description}</p>
+                <p class="data-kicker">{buildTrendState(project, locale).description}</p>
+                <div class="rank-meta">
+                  <span>{formatCompactNumber(project.stars)} {t(locale, 'common.stars')}</span>
+                  <span>{formatMomentum(project, locale)}</span>
+                  <span>30d {formatDelta(project.delta30d)}</span>
+                  <span>{t(locale, 'rankings.sampleDays', { days: project.historyDays })}</span>
+                  <span>
+                    {project.historyDays < 7
+                      ? t(locale, 'rankings.growthPending')
+                      : t(locale, 'rankings.growthValue', {
+                          pct: formatPercentage(project.growthRate7d),
+                        })}
+                  </span>
+                  <span>
+                    {t(locale, 'rankings.trendScore', {
+                      score: formatCompactNumber(project.trendScore),
+                    })}
+                  </span>
+                  <span>{relativeDays(project.lastPushedAt, locale)}</span>
+                  <span>
+                    {t(locale, 'rankings.syncedAt', { date: formatDate(project.syncedAt, locale) })}
+                  </span>
+                </div>
+              </div>
+              <div class="rank-side">
+                <Sparkline
+                  shape={getStarSparkline(project.fullName, 30)}
+                  class="spark-wide"
+                  label={t(locale, 'rankings.sparkLabel', { name: project.fullName })}
+                />
+                <a class="button compact" href={localePath(locale, `projects/${project.slug}`)}>
+                  {t(locale, 'common.detail')}
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <p>{t(locale, 'rankings.empty')}</p>
+        </div>
+      )
+    }
+  </section>
+
+  <script is:inline>
+    const rankList = document.querySelector('[data-rank-list]');
+    const sortButtons = Array.from(document.querySelectorAll('[data-sort-button]'));
+
+    if (rankList && sortButtons.length) {
+      const cards = Array.from(rankList.querySelectorAll('[data-rank-card]'));
+      const attributeFor = {
+        trend: 'data-sort-trend',
+        stars: 'data-sort-stars',
+        delta7d: 'data-sort-delta7d',
+        growth: 'data-sort-growth',
+      };
+
+      function applySort(key) {
+        const attribute = attributeFor[key] || attributeFor.trend;
+        const ordered = [...cards].sort(
+          (left, right) =>
+            Number(right.getAttribute(attribute)) - Number(left.getAttribute(attribute)),
+        );
+
+        for (const [index, card] of ordered.entries()) {
+          card.querySelector('[data-rank-number]').textContent = String(index + 1).padStart(2, '0');
+          rankList.append(card);
+        }
+
+        for (const button of sortButtons) {
+          const isActive = button.getAttribute('data-sort') === key;
+
+          button.setAttribute('data-active', isActive ? 'true' : 'false');
+          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        }
+      }
+
+      function syncUrl(key) {
+        const params = new URLSearchParams(window.location.search);
+
+        if (key === 'trend') {
+          params.delete('sort');
+        } else {
+          params.set('sort', key);
+        }
+
+        const query = params.toString();
+
+        window.history.replaceState(
+          null,
+          '',
+          `${window.location.pathname}${query ? `?${query}` : ''}`,
+        );
+      }
+
+      for (const button of sortButtons) {
+        button.addEventListener('click', () => {
+          const key = button.getAttribute('data-sort') || 'trend';
+
+          applySort(key);
+          syncUrl(key);
+        });
+      }
+
+      const initialSort = new URLSearchParams(window.location.search).get('sort');
+
+      if (initialSort && attributeFor[initialSort]) {
+        applySort(initialSort);
+      }
+    }
+  </script>
+</Layout>

@@ -1,14 +1,14 @@
 ---
-import EditorialDesk from '../components/home/EditorialDesk.astro';
-import HomeHero from '../components/home/HomeHero.astro';
-import ProjectExplorer from '../components/home/ProjectExplorer.astro';
-import TrendSummary from '../components/home/TrendSummary.astro';
-import WeeklyNotes from '../components/home/WeeklyNotes.astro';
-import { defaultLocale, localePath, t } from '../i18n';
-import Layout from '../layouts/Layout.astro';
-import { buildWebSiteSchema } from '../lib/structured-data';
+import EditorialDesk from '../../components/home/EditorialDesk.astro';
+import HomeHero from '../../components/home/HomeHero.astro';
+import ProjectExplorer from '../../components/home/ProjectExplorer.astro';
+import TrendSummary from '../../components/home/TrendSummary.astro';
+import WeeklyNotes from '../../components/home/WeeklyNotes.astro';
+import { localePath, t } from '../../i18n';
+import Layout from '../../layouts/Layout.astro';
+import { buildWebSiteSchema } from '../../lib/structured-data';
 
-const locale = defaultLocale;
+const locale = 'en' as const;
 const title = t(locale, 'meta.homeTitle');
 const description = t(locale, 'meta.homeDescription');
 const homeUrl = Astro.site ? new URL(localePath(locale), Astro.site).toString() : undefined;

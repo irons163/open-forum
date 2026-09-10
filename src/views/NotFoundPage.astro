@@ -1,0 +1,52 @@
+---
+import { categoryLabel, defaultLocale, localePath, t, type Locale } from '../i18n';
+import Layout from '../layouts/Layout.astro';
+import { categorySummaries, featuredProjects, projectBlurb } from '../lib/projects';
+
+const { locale = defaultLocale } = Astro.props as { locale?: Locale };
+---
+
+<Layout
+  title={t(locale, 'meta.notFoundTitle')}
+  description={t(locale, 'meta.notFoundDescription')}
+  noindex
+  locale={locale}
+>
+  <section class="shell section-panel content-block">
+    <p class="eyebrow">404</p>
+    <h1 class="detail-title">{t(locale, 'notFound.title')}</h1>
+    <p class="hero-lead muted">{t(locale, 'notFound.lead')}</p>
+
+    <div class="card-actions">
+      <a class="button" href={localePath(locale)}>{t(locale, 'notFound.home')}</a>
+      <a class="button ghost" href={localePath(locale, 'rankings')}>{t(locale, 'notFound.rankings')}</a>
+      <a class="button ghost" href={localePath(locale, 'community')}>{t(locale, 'notFound.community')}</a>
+    </div>
+
+    <div class="filter-pills" style="margin-top: 1.4rem;">
+      {categorySummaries.map((summary) => (
+        <a class="pill" href={`${localePath(locale)}?category=${encodeURIComponent(summary.name)}`}>
+          {categoryLabel(locale, summary.name)}
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{t(locale, 'notFound.featured.eyebrow')}</p>
+        <h2>{t(locale, 'notFound.featured.title')}</h2>
+      </div>
+    </div>
+
+    <div class="list-stack">
+      {featuredProjects.slice(0, 4).map((project) => (
+        <a class="list-link" href={localePath(locale, `projects/${project.slug}`)}>
+          <h3>{project.fullName}</h3>
+          <p class="muted">{projectBlurb(project, locale)}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>

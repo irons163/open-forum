@@ -1,3 +1,4 @@
+import { defaultLocale, htmlLang, t, type Locale } from '../i18n';
 import type { Project } from './projects';
 
 /**
@@ -9,14 +10,19 @@ export function serializeJsonLd(data: unknown) {
   return JSON.stringify(data).replace(/</g, '\\u003c');
 }
 
-export function buildWebSiteSchema(siteUrl: string, name: string, description: string) {
+export function buildWebSiteSchema(
+  siteUrl: string,
+  name: string,
+  description: string,
+  locale: Locale = defaultLocale,
+) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name,
     description,
     url: siteUrl,
-    inLanguage: 'zh-Hant',
+    inLanguage: htmlLang(locale),
     potentialAction: {
       '@type': 'SearchAction',
       target: {
@@ -68,11 +74,12 @@ export function buildRankingSchema(
   projectList: Project[],
   buildUrl: (project: Project) => string,
   limit = 20,
+  locale: Locale = defaultLocale,
 ) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: '開源專案熱度榜',
+    name: t(locale, 'meta.rankingSchemaName'),
     numberOfItems: Math.min(projectList.length, limit),
     itemListElement: projectList.slice(0, limit).map((project, index) => ({
       '@type': 'ListItem',

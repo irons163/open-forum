@@ -71,4 +71,17 @@ describe('discovery helpers', () => {
       '',
     );
   });
+
+  it('fills recommend-issue defaults when candidate fields are sparse', () => {
+    const body = buildRecommendIssueBody({
+      fullName: 'acme/sparse',
+      repoUrl: '',
+      category: '',
+      description: '   ',
+    });
+
+    expect(body).toContain('https://github.com/acme/sparse');
+    expect(body).toContain('工具');
+    expect(body).toContain('（請說明為什麼值得收錄）');
+  });
 });

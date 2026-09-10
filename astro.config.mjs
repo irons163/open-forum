@@ -11,4 +11,11 @@ export default defineConfig({
   site,
   base,
   trailingSlash: 'always',
+  i18n: {
+    defaultLocale: 'zh-Hant',
+    locales: ['zh-Hant', 'en'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
 });

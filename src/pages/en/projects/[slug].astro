@@ -1,0 +1,16 @@
+---
+import ProjectPage from '../../../views/ProjectPage.astro';
+import { projects } from '../../../lib/projects';
+import type { Project } from '../../../lib/projects';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props as { project: Project };
+---
+
+<ProjectPage project={project} locale="en" />

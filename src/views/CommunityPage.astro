@@ -1,0 +1,142 @@
+---
+import GiscusComments from '../components/GiscusComments.astro';
+import { defaultLocale, localePath, t, type Locale } from '../i18n';
+import Layout from '../layouts/Layout.astro';
+import { discussionsUrl, recommendIssueUrl } from '../lib/site';
+
+const { locale = defaultLocale } = Astro.props as { locale?: Locale };
+---
+
+<Layout
+  title={t(locale, 'meta.communityTitle')}
+  description={t(locale, 'meta.communityDescription')}
+  current="community"
+  locale={locale}
+>
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <p class="eyebrow">{t(locale, 'community.eyebrow')}</p>
+      <h1 class="detail-title">{t(locale, 'community.title')}</h1>
+      <p class="muted">{t(locale, 'community.lead')}</p>
+
+      <div class="action-row">
+        {recommendIssueUrl && <a class="button" href={recommendIssueUrl}>{t(locale, 'community.submit')}</a>}
+        {discussionsUrl && (
+          <a class="button ghost" href={discussionsUrl} target="_blank" rel="noreferrer">
+            {t(locale, 'community.openDiscussions')}
+          </a>
+        )}
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">{t(locale, 'community.how.eyebrow')}</p>
+          <h2>{t(locale, 'community.how.title')}</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="flow-step">
+          <strong>{t(locale, 'community.how.1.title')}</strong>
+          <p class="muted">{t(locale, 'community.how.1.body')}</p>
+        </div>
+        <div class="flow-step">
+          <strong>{t(locale, 'community.how.2.title')}</strong>
+          <p class="muted">{t(locale, 'community.how.2.body')}</p>
+        </div>
+        <div class="flow-step">
+          <strong>{t(locale, 'community.how.3.title')}</strong>
+          <p class="muted">{t(locale, 'community.how.3.body')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">{t(locale, 'community.criteria.eyebrow')}</p>
+          <h2>{t(locale, 'community.criteria.title')}</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="stack-item">
+          <strong>{t(locale, 'community.criteria.1.title')}</strong>
+          <p class="muted">{t(locale, 'community.criteria.1.body')}</p>
+        </div>
+        <div class="stack-item">
+          <strong>{t(locale, 'community.criteria.2.title')}</strong>
+          <p class="muted">{t(locale, 'community.criteria.2.body')}</p>
+        </div>
+        <div class="stack-item">
+          <strong>{t(locale, 'community.criteria.3.title')}</strong>
+          <p class="muted">{t(locale, 'community.criteria.3.body')}</p>
+        </div>
+        <div class="stack-item">
+          <strong>{t(locale, 'community.criteria.4.title')}</strong>
+          <p class="muted">{t(locale, 'community.criteria.4.body')}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">{t(locale, 'community.reject.eyebrow')}</p>
+          <h2>{t(locale, 'community.reject.title')}</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="flow-step">
+          <strong>{t(locale, 'community.reject.1.title')}</strong>
+          <p class="muted">{t(locale, 'community.reject.1.body')}</p>
+        </div>
+        <div class="flow-step">
+          <strong>{t(locale, 'community.reject.2.title')}</strong>
+          <p class="muted">{t(locale, 'community.reject.2.body')}</p>
+        </div>
+        <div class="flow-step">
+          <strong>{t(locale, 'community.reject.3.title')}</strong>
+          <p class="muted">{t(locale, 'community.reject.3.body')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell section-panel content-block">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{t(locale, 'community.topics.eyebrow')}</p>
+        <h2>{t(locale, 'community.topics.title')}</h2>
+      </div>
+    </div>
+
+    <div class="list-stack">
+      <div class="stack-item">
+        <strong>{t(locale, 'community.topics.1.title')}</strong>
+        <p class="muted">
+          {t(locale, 'community.topics.1.body')}
+          {' '}
+          (<a href={localePath(locale, 'rankings')}>{t(locale, 'nav.rankings')}</a>)
+        </p>
+      </div>
+      <div class="stack-item">
+        <strong>{t(locale, 'community.topics.2.title')}</strong>
+        <p class="muted">{t(locale, 'community.topics.2.body')}</p>
+      </div>
+      <div class="stack-item">
+        <strong>{t(locale, 'community.topics.3.title')}</strong>
+        <p class="muted">{t(locale, 'community.topics.3.body')}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell">
+    <GiscusComments locale={locale} />
+  </section>
+</Layout>

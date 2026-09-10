@@ -1,0 +1,248 @@
+---
+import GiscusComments from '../components/GiscusComments.astro';
+import Sparkline from '../components/Sparkline.astro';
+import {
+  categoryLabel,
+  defaultLocale,
+  localePath,
+  t,
+  type Locale,
+} from '../i18n';
+import Layout from '../layouts/Layout.astro';
+import { getStarSparkline } from '../lib/history';
+import type { Project } from '../lib/projects';
+import {
+  buildTrendState,
+  formatCompactNumber,
+  formatDate,
+  formatDelta,
+  formatMomentum,
+  formatPercentage,
+  getDataHealth,
+  projectBlurb,
+  projects,
+  relativeDays,
+} from '../lib/projects';
+import { recommendIssueUrl } from '../lib/site';
+import { buildBreadcrumbSchema, buildProjectSchema } from '../lib/structured-data';
+
+const { project, locale = defaultLocale } = Astro.props as {
+  project: Project;
+  locale?: Locale;
+};
+const peers = projects
+  .filter((candidate) => candidate.category === project.category && candidate.slug !== project.slug)
+  .slice(0, 3);
+const starTrend = getStarSparkline(project.fullName, 45);
+const health = getDataHealth(project, locale);
+const homePath = localePath(locale);
+const categoryUrl = `${homePath}?category=${encodeURIComponent(project.category)}`;
+const absolute = (pathname: string) =>
+  Astro.site ? new URL(pathname, Astro.site).toString() : pathname;
+const schema = Astro.site
+  ? [
+      buildProjectSchema(project, absolute(Astro.url.pathname)),
+      buildBreadcrumbSchema([
+        { name: t(locale, 'nav.home'), url: absolute(homePath) },
+        { name: categoryLabel(locale, project.category), url: absolute(categoryUrl) },
+        { name: project.fullName, url: absolute(Astro.url.pathname) },
+      ]),
+    ]
+  : undefined;
+const trend = buildTrendState(project, locale);
+---
+
+<Layout
+  title={`${project.fullName} | Open Forum`}
+  description={project.description}
+  current=""
+  schema={schema}
+  locale={locale}
+>
+  <section class="shell detail-hero">
+    <div class="section-panel content-block">
+      <nav class="breadcrumb" aria-label={t(locale, 'common.breadcrumb')}>
+        <a href={homePath}>{t(locale, 'nav.home')}</a>
+        <span aria-hidden="true">/</span>
+        <a href={categoryUrl}>{categoryLabel(locale, project.category)}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{project.name}</span>
+      </nav>
+
+      <div class="owner-row">
+        <img
+          src={project.avatarUrl}
+          alt={`${project.owner} avatar`}
+          width="48"
+          height="48"
+          loading="lazy"
+        />
+        <div>
+          <div class="meta-line">
+            <span class="pill">{categoryLabel(locale, project.category)}</span>
+            {project.language && <span class="pill subtle">{project.language}</span>}
+            {health.label && <span class="health-badge">{health.label}</span>}
+          </div>
+          <h1 class="detail-title">{project.fullName}</h1>
+        </div>
+      </div>
+
+      <p class="muted">{project.description}</p>
+      {locale === 'zh-Hant' && <p class="highlight-note">{project.highlight}</p>}
+
+      {
+        health.description && (
+          <div class="health-notice" role="status">
+            <p>{health.description}</p>
+          </div>
+        )
+      }
+
+      {
+        starTrend && (
+          <div class="detail-chart">
+            <div class="spark-caption" style="margin: 0;">
+              <span>{t(locale, 'project.chartCaption', { days: starTrend.points.length })}</span>
+              <span>{formatCompactNumber(project.stars)} {t(locale, 'common.stars')}</span>
+            </div>
+            <Sparkline
+              shape={starTrend}
+              class="spark-wide"
+              label={t(locale, 'project.sparkLabel', { name: project.fullName })}
+            />
+            <div class="spark-caption">
+              <span>1d {formatDelta(project.delta1d)}</span>
+              <span>7d {formatDelta(project.delta7d)}</span>
+              <span>30d {formatDelta(project.delta30d)}</span>
+            </div>
+          </div>
+        )
+      }
+
+      <div class="tag-row" style="margin-top: 1.1rem;">
+        {project.topics.map((topic) => (
+          <span class="tag">#{topic}</span>
+        ))}
+      </div>
+
+      <div class="card-actions">
+        <a class="button" href={project.repoUrl} target="_blank" rel="noreferrer">
+          {t(locale, 'project.openGithub')}
+        </a>
+        {project.homepage && (
+          <a class="button ghost" href={project.homepage} target="_blank" rel="noreferrer">
+            {t(locale, 'common.homepage')}
+          </a>
+        )}
+        {recommendIssueUrl && (
+          <a class="button ghost" href={recommendIssueUrl}>{t(locale, 'project.recommendSimilar')}</a>
+        )}
+      </div>
+    </div>
+
+    <aside class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">{t(locale, 'project.metrics.eyebrow')}</p>
+          <h2>{t(locale, 'project.metrics.title')}</h2>
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card">
+          <span class="metric-label">Stars</span>
+          <strong>{formatCompactNumber(project.stars)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Forks</span>
+          <strong>{formatCompactNumber(project.forks)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">{t(locale, 'project.metric.delta1d')}</span>
+          <strong>{formatDelta(project.delta1d)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">{t(locale, 'project.metric.delta7d')}</span>
+          <strong>{formatMomentum(project, locale)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">{t(locale, 'project.metric.delta30d')}</span>
+          <strong>{formatDelta(project.delta30d)}</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">{t(locale, 'project.metric.growth')}</span>
+          <strong>
+            {project.historyDays < 7
+              ? t(locale, 'common.accumulating')
+              : formatPercentage(project.growthRate7d)}
+          </strong>
+        </div>
+      </div>
+
+      <div class="notice" style="margin-top: 1rem;">
+        <p>{t(locale, 'project.trendStatus', { label: trend.label })}</p>
+        <p>{trend.description}</p>
+        <p>{t(locale, 'project.lastUpdate', { value: relativeDays(project.lastPushedAt, locale) })}</p>
+        <p>{t(locale, 'project.lastSync', { value: formatDate(project.syncedAt, locale) })}</p>
+        <p>{t(locale, 'project.sample', { days: project.historyDays })}</p>
+        <p>
+          {t(locale, 'project.license', {
+            value: project.license || t(locale, 'common.licenseUnknown'),
+          })}
+        </p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="shell two-column">
+    <div class="section-panel content-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">{t(locale, 'project.why.eyebrow')}</p>
+          <h2>{t(locale, 'project.why.title')}</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        <div class="stack-item">
+          <strong>{t(locale, 'project.why.1.title')}</strong>
+          <p class="muted">{t(locale, 'project.why.1.body')}</p>
+        </div>
+        <div class="stack-item">
+          <strong>
+            {t(locale, 'project.why.category', {
+              category: categoryLabel(locale, project.category),
+            })}
+          </strong>
+          <p class="muted">{projectBlurb(project, locale)}</p>
+        </div>
+        <div class="stack-item">
+          <strong>{t(locale, 'project.why.3.title')}</strong>
+          <p class="muted">{t(locale, 'project.why.3.body')}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-panel sidebar-block">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">{t(locale, 'project.peers.eyebrow')}</p>
+          <h2>{t(locale, 'project.peers.title')}</h2>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {peers.map((peer) => (
+          <a class="list-link" href={localePath(locale, `projects/${peer.slug}`)}>
+            <h3>{peer.fullName}</h3>
+            <p class="muted">{projectBlurb(peer, locale)}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="shell">
+    <GiscusComments locale={locale} />
+  </section>
+</Layout>

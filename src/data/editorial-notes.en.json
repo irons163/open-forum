@@ -1,0 +1,39 @@
+{
+  "featured": [
+    {
+      "repo": "ollama/ollama",
+      "kicker": "Editor pick",
+      "angle": "Local AI toolchain",
+      "summary": "The shortest path to running open models on your own machine. Pull a model and expose a local API in one command—no cloud account required to wire an LLM into a project.",
+      "whyNow": "When data cannot leave the building—or you refuse metered APIs—local inference is the only option. Evaluating on-prem starts faster here than in papers."
+    },
+    {
+      "repo": "withastro/astro",
+      "kicker": "Editor pick",
+      "angle": "Content-first web framework",
+      "summary": "Ships zero-JS by default and hydrates only where needed (islands). Ideal for docs, blogs, and marketing sites that are mostly content.",
+      "whyNow": "If most of your site is content with a few interactive pockets, a full SPA tax is unnecessary. This site itself is built with Astro."
+    },
+    {
+      "repo": "n8n-io/n8n",
+      "kicker": "Editor pick",
+      "angle": "Automation & workflows",
+      "summary": "Self-hostable visual automation. Wire APIs, databases, and AI models into versionable workflows instead of one-off glue scripts.",
+      "whyNow": "Top 7-day star gains on the board. AI agents need a glue layer to real systems—workflow engines sit exactly there."
+    }
+  ],
+  "watchlist": [
+    {
+      "title": "Category matchups",
+      "description": "Supabase vs Appwrite, Next.js vs Astro—how do you choose? Share real experience in Discussions."
+    },
+    {
+      "title": "Fast risers",
+      "description": "Which relative-growth row on Rankings surprised you most? Open the detail sparkline, then talk."
+    },
+    {
+      "title": "What are you using",
+      "description": "Which open-source tool carries your workflow or side project right now? One honest note helps."
+    }
+  ]
+}

@@ -1,14 +1,25 @@
 ---
 import ProjectCard from '../ProjectCard.astro';
+import {
+  allCategoryToken,
+  categoryLabel,
+  defaultLocale,
+  localePath,
+  t,
+  type Locale,
+} from '../../i18n';
+import { ui } from '../../i18n/ui';
 import { categorySummaries, formatCompactNumber, projects } from '../../lib/projects';
-import { baseUrl } from '../../lib/site';
+
+const { locale = defaultLocale } = Astro.props as { locale?: Locale };
+const countTemplate = ui[locale]['search.count'];
 ---
 
 <section class="shell section-panel content-block">
   <div class="section-heading">
     <div>
-      <p class="eyebrow">依分類探索</p>
-      <h2>從你關心的領域開始逛</h2>
+      <p class="eyebrow">{t(locale, 'explore.eyebrow')}</p>
+      <h2>{t(locale, 'explore.title')}</h2>
     </div>
   </div>
 
@@ -19,15 +30,17 @@ import { baseUrl } from '../../lib/site';
         type="button"
         data-category-jump={summary.name}
       >
-        <span class="pill">{summary.name}</span>
-        <h3>{summary.count} 個追蹤專案</h3>
+        <span class="pill">{categoryLabel(locale, summary.name)}</span>
+        <h3>{t(locale, 'explore.count', { count: summary.count })}</h3>
         <p class="muted">
-          目前累積 {formatCompactNumber(summary.stars)} stars，
-          其中 {summary.activeCount} 個專案近 30 天內有更新。
+          {t(locale, 'explore.summary', {
+            stars: formatCompactNumber(summary.stars),
+            active: summary.activeCount,
+          })}
         </p>
         {summary.leadProject && (
           <div class="stat-line">
-            <span>代表專案</span>
+            <span>{t(locale, 'explore.lead')}</span>
             <strong>{summary.leadProject.fullName}</strong>
           </div>
         )}
@@ -39,37 +52,37 @@ import { baseUrl } from '../../lib/site';
 <section class="shell section-panel content-block" id="discover-projects" data-discover-section>
   <div class="section-heading">
     <div>
-      <p class="eyebrow">推薦專案</p>
-      <h2>目前追蹤的開源專案</h2>
+      <p class="eyebrow">{t(locale, 'explore.list.eyebrow')}</p>
+      <h2>{t(locale, 'explore.list.title')}</h2>
     </div>
-    <a class="button ghost" href={`${baseUrl}community/`}>推薦收錄</a>
+    <a class="button ghost" href={localePath(locale, 'community')}>{t(locale, 'nav.recommend')}</a>
   </div>
 
   <div class="search-row">
-    <label class="visually-hidden" for="project-search-input">搜尋追蹤中的專案</label>
+    <label class="visually-hidden" for="project-search-input">{t(locale, 'search.projectLabel')}</label>
     <input
       class="search-input"
       id="project-search-input"
       type="search"
-      placeholder="搜尋 repo、類別、描述或 topic"
+      placeholder={t(locale, 'search.projectPlaceholder')}
       data-project-search
     />
     <div class="search-caption">
       <span class="project-count" data-search-count aria-live="polite">
-        顯示 {projects.length} / {projects.length}
+        {t(locale, 'search.count', { visible: projects.length, total: projects.length })}
       </span>
-      <span class="muted">可以直接搜 repo 名稱、owner、分類、語言或 topic</span>
+      <span class="muted">{t(locale, 'search.hint')}</span>
     </div>
-    <div class="filter-pills" role="group" aria-label="依分類篩選">
+    <div class="filter-pills" role="group" aria-label={t(locale, 'search.filterAria')}>
       <button
         class="pill"
         type="button"
         data-category-button
-        data-category="全部"
+        data-category={allCategoryToken}
         data-active="true"
         aria-pressed="true"
       >
-        全部
+        {t(locale, 'search.all')}
       </button>
       {categorySummaries.map((summary) => (
         <button
@@ -80,7 +93,7 @@ import { baseUrl } from '../../lib/site';
           data-active="false"
           aria-pressed="false"
         >
-          {summary.name}
+          {categoryLabel(locale, summary.name)}
         </button>
       ))}
     </div>
@@ -91,22 +104,22 @@ import { baseUrl } from '../../lib/site';
       <>
         <div class="project-grid">
           {projects.map((project) => (
-            <ProjectCard project={project} />
+            <ProjectCard project={project} locale={locale} />
           ))}
         </div>
         <p class="empty-state muted" hidden data-empty-state>
-          沒找到符合條件的專案，換個關鍵字或分類試試看。
+          {t(locale, 'search.empty')}
         </p>
       </>
     ) : (
       <div class="empty-state">
-        <p>專案資料同步中，稍後再回來看看。</p>
+        <p>{t(locale, 'search.syncing')}</p>
       </div>
     )
   }
 </section>
 
-<script is:inline>
+<script is:inline define:vars={{ allCategoryToken, countTemplate }}>
   const searchInput = document.querySelector('[data-project-search]');
   const categoryButtons = Array.from(document.querySelectorAll('[data-category-button]'));
   const categoryJumpButtons = Array.from(document.querySelectorAll('[data-category-jump]'));
@@ -116,7 +129,7 @@ import { baseUrl } from '../../lib/site';
   const discoverSection = document.querySelector('[data-discover-section]');
   const params = new URLSearchParams(window.location.search);
 
-  let activeCategory = '全部';
+  let activeCategory = allCategoryToken;
 
   const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
 
@@ -138,7 +151,6 @@ import { baseUrl } from '../../lib/site';
     }
   }
 
-  // Keep the URL in sync so a filtered view can be shared or reloaded.
   function syncUrl() {
     const keyword = (searchInput?.value || '').trim();
     const nextParams = new URLSearchParams(window.location.search);
@@ -151,7 +163,7 @@ import { baseUrl } from '../../lib/site';
       nextParams.delete('q');
     }
 
-    if (activeCategory && activeCategory !== '全部') {
+    if (activeCategory && activeCategory !== allCategoryToken) {
       nextParams.set('category', activeCategory);
     } else {
       nextParams.delete('category');
@@ -173,7 +185,7 @@ import { baseUrl } from '../../lib/site';
     for (const card of projectCards) {
       const category = card.getAttribute('data-category') || '';
       const searchBlob = card.getAttribute('data-search') || '';
-      const matchesCategory = activeCategory === '全部' || category === activeCategory;
+      const matchesCategory = activeCategory === allCategoryToken || category === activeCategory;
       const matchesKeyword = !keyword || searchBlob.includes(keyword);
       const visible = matchesCategory && matchesKeyword;
 
@@ -186,7 +198,9 @@ import { baseUrl } from '../../lib/site';
     }
 
     if (searchCount) {
-      searchCount.textContent = `顯示 ${visibleCount} / ${projectCards.length}`;
+      searchCount.textContent = countTemplate
+        .replace('{visible}', String(visibleCount))
+        .replace('{total}', String(projectCards.length));
     }
   }
 
@@ -215,7 +229,7 @@ import { baseUrl } from '../../lib/site';
 
   for (const button of categoryButtons) {
     button.addEventListener('click', () => {
-      setActiveCategory(button.getAttribute('data-category') || '全部');
+      setActiveCategory(button.getAttribute('data-category') || allCategoryToken);
       applyFilters();
       syncUrl();
     });
@@ -223,7 +237,7 @@ import { baseUrl } from '../../lib/site';
 
   for (const button of categoryJumpButtons) {
     button.addEventListener('click', () => {
-      const nextCategory = button.getAttribute('data-category-jump') || '全部';
+      const nextCategory = button.getAttribute('data-category-jump') || allCategoryToken;
       setActiveCategory(nextCategory);
       applyFilters();
       syncUrl();

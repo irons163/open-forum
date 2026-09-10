@@ -1,29 +1,34 @@
 ---
+import { categoryLabel, defaultLocale, localePath, t, type Locale } from '../../i18n';
 import {
   buildTrendState,
-  editorialFeaturedProjects,
-  editorialWatchlist,
   formatCompactNumber,
   formatMomentum,
+  getEditorialFeaturedProjects,
+  getEditorialWatchlist,
 } from '../../lib/projects';
-import { baseUrl, discussionsUrl } from '../../lib/site';
+import { discussionsUrl } from '../../lib/site';
+
+const { locale = defaultLocale } = Astro.props as { locale?: Locale };
+const featured = getEditorialFeaturedProjects(locale);
+const watchlist = getEditorialWatchlist(locale);
 ---
 
 <section class="shell two-column">
   <div class="section-panel content-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">編輯精選</p>
-        <h2>不只看數字，也給一點判斷方向</h2>
+        <p class="eyebrow">{t(locale, 'editorial.eyebrow')}</p>
+        <h2>{t(locale, 'editorial.title')}</h2>
       </div>
-      <a class="button ghost" href={`${baseUrl}community/`}>推薦收錄</a>
+      <a class="button ghost" href={localePath(locale, 'community')}>{t(locale, 'nav.recommend')}</a>
     </div>
 
     <div class="list-stack">
-      {editorialFeaturedProjects.map((entry) => (
+      {featured.map((entry) => (
         <article class="stack-item">
           <div class="rank-meta">
-            <span class="pill">{entry.project.category}</span>
+            <span class="pill">{categoryLabel(locale, entry.project.category)}</span>
             <span class="pill subtle">{entry.angle}</span>
             <span>{entry.kicker}</span>
           </div>
@@ -31,14 +36,16 @@ import { baseUrl, discussionsUrl } from '../../lib/site';
           <p class="muted">{entry.summary}</p>
           <p class="data-kicker">{entry.whyNow}</p>
           <div class="rank-meta">
-            <span>{formatCompactNumber(entry.project.stars)} stars</span>
-            <span>{formatMomentum(entry.project)}</span>
-            <span>{buildTrendState(entry.project).label}</span>
+            <span>{formatCompactNumber(entry.project.stars)} {t(locale, 'common.stars')}</span>
+            <span>{formatMomentum(entry.project, locale)}</span>
+            <span>{buildTrendState(entry.project, locale).label}</span>
           </div>
           <div class="card-actions">
-            <a class="button compact" href={`${baseUrl}projects/${entry.project.slug}/`}>看詳情</a>
+            <a class="button compact" href={localePath(locale, `projects/${entry.project.slug}`)}>
+              {t(locale, 'common.details')}
+            </a>
             <a class="button ghost compact" href={entry.project.repoUrl} target="_blank" rel="noreferrer">
-              GitHub
+              {t(locale, 'common.github')}
             </a>
           </div>
         </article>
@@ -49,13 +56,13 @@ import { baseUrl, discussionsUrl } from '../../lib/site';
   <div class="section-panel sidebar-block">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">延伸話題</p>
-        <h2>適合拿去討論的題目</h2>
+        <p class="eyebrow">{t(locale, 'editorial.topics.eyebrow')}</p>
+        <h2>{t(locale, 'editorial.topics.title')}</h2>
       </div>
     </div>
 
     <div class="list-stack">
-      {editorialWatchlist.map((item, index) => (
+      {watchlist.map((item, index) => (
         <div class="flow-step">
           <strong>{String(index + 1).padStart(2, '0')} {item.title}</strong>
           <p class="muted">{item.description}</p>
@@ -66,7 +73,9 @@ import { baseUrl, discussionsUrl } from '../../lib/site';
     {discussionsUrl && (
       <div class="notice">
         <p>
-          有想法？到 <a href={discussionsUrl} target="_blank" rel="noreferrer">Discussions</a> 開串討論，或從下方專案頁留言。
+          {t(locale, 'editorial.discuss.before')}
+          <a href={discussionsUrl} target="_blank" rel="noreferrer">Discussions</a>
+          {t(locale, 'editorial.discuss.after')}
         </p>
       </div>
     )}

@@ -1,24 +1,34 @@
 ---
 import Sparkline from './Sparkline.astro';
+import { categoryLabel, defaultLocale, localePath, t, type Locale } from '../i18n';
 import type { Project } from '../lib/projects';
-import { formatCompactNumber, formatMomentum, getDataHealth, relativeDays } from '../lib/projects';
+import {
+  formatCompactNumber,
+  formatMomentum,
+  getDataHealth,
+  projectBlurb,
+  relativeDays,
+} from '../lib/projects';
 import { getStarSparkline } from '../lib/history';
 
-const { project } = Astro.props as { project: Project };
-const baseUrl = import.meta.env.BASE_URL;
-const detailUrl = `${baseUrl}projects/${project.slug}/`;
+const { project, locale = defaultLocale } = Astro.props as {
+  project: Project;
+  locale?: Locale;
+};
+const detailUrl = localePath(locale, `projects/${project.slug}`);
 const spark = getStarSparkline(project.fullName, 30);
-const health = getDataHealth(project);
+const health = getDataHealth(project, locale);
+const blurb = projectBlurb(project, locale);
 ---
 
 <article
   class="project-card section-panel"
   data-project-card
   data-category={project.category}
-  data-search={`${project.name} ${project.fullName} ${project.owner} ${project.category} ${project.language || ''} ${project.description} ${project.highlight} ${project.topics.join(' ')}`.toLowerCase()}
+  data-search={`${project.name} ${project.fullName} ${project.owner} ${project.category} ${categoryLabel(locale, project.category)} ${project.language || ''} ${project.description} ${project.highlight} ${project.topics.join(' ')}`.toLowerCase()}
 >
   <div class="card-top">
-    <span class="pill">{project.category}</span>
+    <span class="pill">{categoryLabel(locale, project.category)}</span>
     {project.language && <span class="pill subtle">{project.language}</span>}
     {health.label && <span class="health-badge">{health.label}</span>}
   </div>
@@ -39,9 +49,13 @@ const health = getDataHealth(project);
 
   <h3>{project.fullName}</h3>
   <p class="muted">{project.description}</p>
-  <p class="highlight-note">{project.highlight}</p>
+  {locale === 'zh-Hant' && blurb && <p class="highlight-note">{blurb}</p>}
 
-  <Sparkline shape={spark} class="spark-wide" label={`${project.fullName} 近 30 天 star 走勢`} />
+  <Sparkline
+    shape={spark}
+    class="spark-wide"
+    label={t(locale, 'home.sparkLabel', { name: project.fullName })}
+  />
 
   <div class="metric-strip">
     <div>
@@ -49,12 +63,12 @@ const health = getDataHealth(project);
       <strong>{formatCompactNumber(project.stars)}</strong>
     </div>
     <div>
-      <span class="metric-label">動能</span>
-      <strong>{formatMomentum(project)}</strong>
+      <span class="metric-label">{t(locale, 'card.momentum')}</span>
+      <strong>{formatMomentum(project, locale)}</strong>
     </div>
     <div>
-      <span class="metric-label">活躍</span>
-      <strong style="font-size: 0.8rem;">{relativeDays(project.lastPushedAt)}</strong>
+      <span class="metric-label">{t(locale, 'card.activity')}</span>
+      <strong style="font-size: 0.8rem;">{relativeDays(project.lastPushedAt, locale)}</strong>
     </div>
   </div>
 
@@ -65,9 +79,9 @@ const health = getDataHealth(project);
   </div>
 
   <div class="card-actions">
-    <a class="button compact" href={detailUrl}>看詳情</a>
+    <a class="button compact" href={detailUrl}>{t(locale, 'common.details')}</a>
     <a class="button ghost compact" href={project.repoUrl} target="_blank" rel="noreferrer">
-      GitHub
+      {t(locale, 'common.github')}
     </a>
   </div>
 </article>

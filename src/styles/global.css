@@ -390,6 +390,37 @@ h3,
   flex-wrap: wrap;
 }
 
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.15rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.lang-link {
+  min-width: 2.4rem;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
+  text-decoration: none;
+}
+
+.lang-link:hover {
+  color: var(--ink);
+}
+
+.lang-link.is-active {
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
 .header-links {
   flex: 0 0 auto;
   align-items: center;
